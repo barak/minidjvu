@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 
 /* Stuff for not using malloc in C++
@@ -202,7 +203,11 @@ static int32 get_tags_from_classification(mdjvu_pattern_t *b, int32 *r, int32 n,
     while (node)
     {
         ClassNode *t;
-        while (!b[i]) r[i++] = 0;
+        while (!b[i])
+        {
+            r[i++] = 0;
+            assert(i < n); /* because we have a node */
+        }
         r[i++] = node->tag;
         t = node;
         node = node->global_next;
@@ -326,6 +331,7 @@ MDJVU_IMPLEMENT int32 mdjvu_multipage_classify_patterns
     return max_tag;
 }
 
+
 MDJVU_IMPLEMENT int32 mdjvu_multipage_classify_bitmaps
     (int32 npages, int32 total_patterns_count, mdjvu_image_t *pages,
      int32 *result, mdjvu_matcher_options_t options,
@@ -350,10 +356,15 @@ MDJVU_IMPLEMENT int32 mdjvu_multipage_classify_bitmaps
         pointers[page] = patterns + patterns_created;
         for (i = 0; i < c; i++)
         {
-            patterns[patterns_created++] = mdjvu_pattern_create(
-                options,
-                mdjvu_image_get_bitmap(current_image, i)
-            );
+            if (mdjvu_image_get_not_a_letter_flag(current_image, mdjvu_image_get_bitmap(current_image, i)))
+                patterns[patterns_created++] = NULL;
+            else
+            {
+                patterns[patterns_created++] = mdjvu_pattern_create(
+                    options,
+                    mdjvu_image_get_bitmap(current_image, i)
+                );
+            }
         }
     }
 
@@ -363,7 +374,8 @@ MDJVU_IMPLEMENT int32 mdjvu_multipage_classify_bitmaps
 
     for (k = 0; k < total_patterns_count; k++)
     {
-        mdjvu_pattern_destroy(patterns[k]);
+        if (patterns[k])
+            mdjvu_pattern_destroy(patterns[k]);
     }
     free(patterns);
     free(pointers);

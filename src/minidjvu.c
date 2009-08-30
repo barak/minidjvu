@@ -28,7 +28,7 @@ int report = 0;
 int no_prototypes = 0;
 int warnings = 0;
 
-/* Under Windows, there is usually no strcasecmp.
+/* Under Windows (MSVC), there is usually no strcasecmp.
  * So here's the rewrite.
  */
 static int my_strcasecmp(const char *s1, const char *s2)
@@ -342,6 +342,7 @@ static void decode(int argc, char **argv)
     mdjvu_bitmap_destroy(bitmap);
 }
 
+
 static mdjvu_image_t split_and_destroy(mdjvu_bitmap_t bitmap)
 {
     mdjvu_image_t image;
@@ -366,6 +367,7 @@ static mdjvu_image_t split_and_destroy(mdjvu_bitmap_t bitmap)
     return image;
 }
 
+
 static void encode(int argc, char **argv)
 {
     mdjvu_bitmap_t bitmap;
@@ -381,6 +383,7 @@ static void encode(int argc, char **argv)
     mdjvu_image_destroy(image);
 }
 
+
 /* Filtering is nondjvu->nondjvu job. */
 static void filter(int argc, char **argv)
 {
@@ -393,6 +396,23 @@ static void filter(int argc, char **argv)
     save_bitmap(bitmap, argv[2]);
     mdjvu_bitmap_destroy(bitmap);
 }
+
+
+static const char *strip(const char *str, char sep)
+{
+    const char *t = strrchr(str, sep);
+    if (t)
+        return t + 1;
+    else
+        return str;
+}
+
+/* return path without a directory name */ 
+static const char *strip_dir(const char *path)
+{
+    return strip(strip(path, '\\'), '/');
+}
+
 
 static void multipage_encode(int n, char **pages, char *pattern)
 {
@@ -479,7 +499,7 @@ static void multipage_encode(int n, char **pages, char *pattern)
         {
             plant_number_into_template(pages_compressed + i + 1, pattern, pattern_len);
             if (verbose) printf("saving page #%d into %s using dictionary %s\n", pages_compressed + i + 1, pattern, dict_template);
-            if (!mdjvu_save_djvu_page(images[i], pattern, dict_template, &error, erosion))
+            if (!mdjvu_save_djvu_page(images[i], pattern, strip_dir(dict_template), &error, erosion))
             {
                 fprintf(stderr, "%s: %s\n", pattern, mdjvu_get_error_message(error));
                 exit(1);
@@ -555,14 +575,14 @@ static int process_options(int argc, char **argv)
             clean = 1;
             averaging = 1;
         }
-        else if (same_option(option, "pages_per_dict"))
+        else if (same_option(option, "pages-per-dict"))
         {
             i++;
             if (i == argc) show_usage_and_exit();
             pages_per_dict = atoi(argv[i]);
             if (pages_per_dict <= 0)
             {
-                fprintf(stderr, "bad --pages_per_dict value\n");
+                fprintf(stderr, "bad --pages-per-dict value\n");
                 exit(2);
             }
         }
@@ -630,5 +650,9 @@ int main(int argc, char **argv)
     }
 
     if (verbose) printf("\n");
+    #ifndef NDEBUG 
+        if (alive_bitmap_counter)
+           printf("alive_bitmap_counter = %d\n", alive_bitmap_counter);
+    #endif
     return 0;
 }

@@ -1,0 +1,223 @@
+<!-- vim: ft=html
+ This is the minimalistic GUI wrapper for minidjvu and other programs.
+ .hta extension allows it to run under Windows as an application.
+ Hopefully it might be useful under Linux as well, but I wonder how.
+-->
+
+<HTML><HEAD><TITLE>TIFF to DjVu (minidjvu 0.7 with friends)</TITLE>
+<SCRIPT>
+
+var shell = new ActiveXObject("WScript.Shell");
+var fs = new ActiveXObject("Scripting.FileSystemObject");
+
+// Return the index of last / or \ char
+function lastSeparator(s)
+{
+    var i = s.lastIndexOf("\\", s.length);
+    var j = s.lastIndexOf("/", s.length);
+    if (i > j)
+        return i;
+    else
+        return j;
+}
+
+
+// a\b\c  ->  a\b
+function getDir(s)
+{
+    var i = lastSeparator(s);
+    if (i == -1)
+        return ".";
+    else
+        return s.substring(0, i);
+}
+
+
+// a\b -> "a\\b"
+function bashize(s)
+{
+    var r = "";
+    for (var i = 0; i < s.length; i++)
+    {
+        var c = s.charAt(i);
+        if (c == '\\')
+            r += "\\\\";
+        else
+            r += c; 
+    }
+    return "\"" + r + "\"";
+}
+
+
+// a/b\c -> a\/b\\c
+function sedize(s)
+{
+    var r = "";
+    for (var i = 0; i < s.length; i++)
+    {
+        var c = s.charAt(i);
+        if (c == '\\' || c == '/')
+        {
+            r += '\\';
+            r += c;
+        }
+        else
+            r += c; 
+    }
+    return r;
+}
+
+// a\b\c -> c
+function getName(s)
+{
+    return s.substr(lastSeparator(s) + 1);
+}
+
+// a\b\c.ext -> c
+function getBaseName(s)
+{
+    s = getName(s);
+    var i = s.lastIndexOf(".", s.length);
+    if (i == -1)
+        return s;
+    else
+        return s.substring(0, i);
+}
+
+
+function update()
+{
+    if (shell && fs)
+        run.innerHTML="<BUTTON TYPE=submit onClick=\"onRun()\"><FONT SIZE=+1>Run</FONT></BUTTON>";
+
+    job.value = "export PATH=.:$PATH # for Windows\n";
+    var ourDir = bashize(getDir(inputfile.value));
+
+
+    // Decide what input files are
+    if (wholedir.checked)
+        input = ourDir + "/*.tif*";
+    else if (multitiff.checked)
+        input = ourDir + "/mdjvu_in_*.tif";
+    else
+        input = bashize(inputfile.value);
+
+
+    // Decide what output file is    
+    if (specifyOutput.checked)
+        output = ourDir + "/" + outputfile.value;
+    else
+        output = ourDir + "/" + getBaseName(inputfile.value) + ".djvu";
+    
+
+    // tiffsplit if needed
+
+    if (multitiff.checked)
+        job.value += "tiffsplit " + bashize(inputfile.value) + " " + ourDir + "/mdjvu_in_\n";
+
+
+    // minidjvu
+
+    options = "";
+
+    if (usedpi.checked)
+        options += " --dpi " + dpi.value;
+
+    if (usedict.checked && !singlepage.checked)
+        options += " --report --pages-per-dict " + ppd.value;
+
+    if (uselossy.checked)
+        options += " --lossy --aggression " + aggression.value;
+
+    if (singlepage.checked)
+        mdjvuOutput = output;
+    else
+        mdjvuOutput = ourDir + "/mdjvu_out_00000.djvu";
+
+    job.value += "minidjvu" + options + " " + input + " " + mdjvuOutput + "\n";
+
+
+    // djvm
+
+    if (!singlepage.checked)
+        job.value += "djvm -c " + output + " " + ourDir + "/mdjvu_out_*.djvu\n";
+
+
+    // rm
+
+    if (rmtemp.checked && !singlepage.checked)
+        job.value += "rm -f " + ourDir + "/mdjvu_*\n";
+
+
+    // windjview
+
+    if (view.checked)
+        job.value += "windjview " + output + "\n";
+}
+
+
+function onSave()
+{
+    var f = fs.openTextFile("job.sh", 2 /* for writing */, /* create: */ true);
+    f.writeLine(job.value);
+    f.close();
+}
+
+
+function onRun()
+{
+    onSave();
+    shell.run("bash job.sh");
+}
+
+</SCRIPT>
+</HEAD>
+<BODY BGCOLOR="#E0E0E0"><FONT FACE="Arial, Verdana">
+
+<TABLE CELLPADDING=10 WIDTH=100%>
+<TR><TD>
+<TABLE CELLPADDING=5>
+    <TR><TD>
+    <FIELDSET><LEGEND>Input</LEGEND>
+        <TABLE CELLSPACING=3>
+            <TR><TD>
+                &nbsp;Pick&nbsp;a&nbsp;file:&nbsp;<INPUT ID=inputfile TYPE=file onChange="update()">&nbsp;
+            <TR><TD>
+            <TR><TD>
+                <INPUT ID=wholedir type=radio name=inputtype checked onChange="update()"> File from an input directory
+            <TR><TD>
+                <INPUT ID=multitiff type=radio name=inputtype onChange="update()"> Multipage TIFF
+            <TR><TD>
+                <INPUT ID=singlepage type=radio name=inputtype onChange="update()"> Single page
+            <TR><TD>
+        </TABLE>
+    </FIELDSET>
+    <TR><TD>
+    <FIELDSET>
+        <LEGEND>Options</LEGEND>
+        <TABLE WIDTH=100%>
+            <TR><TD><INPUT ID=specifyOutput type=checkbox onChange="update()">&nbsp;output djvu
+                <TD><INPUT ID=outputfile type=text  onChange="specifyOutput.checked = true; update()">
+            <TR><TD><INPUT ID=uselossy type=checkbox checked onChange="update()">&nbsp;aggression
+                <TD><INPUT ID=aggression TYPE=text SIZE=5 VALUE="100"  onChange="uselossy.checked = true; update()">
+            <TR><TD><INPUT ID=usedict type=checkbox checked onChange="update()">&nbsp;pages/dict
+                <TD><INPUT ID=ppd TYPE=text SIZE=5 VALUE="5"  onChange="usedict.checked = true; update()">
+            <TR><TD><INPUT ID=usedpi type=checkbox onChange="update()">&nbsp;resolution
+                <TD><INPUT ID=dpi TYPE=text SIZE=5 VALUE="300" onChange="usedpi.checked = true; update()">
+            <TR><TD COLSPAN=2><INPUT ID=rmtemp type=checkbox onChange="update()">&nbsp;remove temporary files (mdjvu_*)
+            <TR><TD COLSPAN=2><INPUT ID=view type=checkbox onChange="update()">&nbsp;view result with WinDjView
+            <TR><TD>
+        </TABLE>
+    </FIELDSET>
+</TABLE>
+<TD>
+<FONT SIZE=+1><a href="doc/tifftodjvu_help.html">Help</a></FONT>
+<P>
+Preview of the bash script to run:
+<P>
+<TEXTAREA ID=job rows=11 cols=40 readonly></TEXTAREA>
+<P>
+<DIV ID=run></DIV>
+<!-- &nbsp; <BUTTON onClick="onSave()"><FONT SIZE=+1>Save</FONT></BUTTON>-->
+</TABLE>
+</HTML>

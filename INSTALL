@@ -2,8 +2,7 @@ USUAL INSTALLATION
 __________________
 
 Check that development package of libtiff is installed.
-Run `make', then copy the `minidjvu' executable into place.
-Note: by default, 0.6 does not compile as a library.
+Run "make". Then, "make install" will copy bin/minidjvu into /usr/local/bin.
 
 
 
@@ -33,8 +32,8 @@ to the include path, then link against libtiff.
 
 
 
-STATIC COMPILATION
-__________________
+OTHERWISE
+_________
 
 Under Linux, you can always try something like
 
@@ -44,13 +43,16 @@ or, if you want TIFF support,
 
     g++ -DHAVE_TIFF=1 -I. `find -name "*.c*"` -O2 -ltiff -o bin/minidjvu
 
-To compile it statically under Windows, you have to disable
-__declspec directives in `minidjvu/base/0porting/0porting.h'.
+Under MSVC, watch for those __declspec directives in
+`minidjvu/base/0porting/0porting.h' - if you wish a DLL, turn them on.
 
 
 
 COMPILING ON MAC
 ________________
+
+That instruction was useful when there were configure scripts (are they
+really useful if they can't handle the Mac stuff?).
 
 /* This instructions were kindly sent to me by Alejandro David Weil.
  * Apparently, there are some problems with Macs, but I don't know why.

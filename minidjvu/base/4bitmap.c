@@ -15,6 +15,11 @@ typedef struct
     int32 index;
 } Bitmap;
 
+
+#ifndef NDEBUG
+int32 alive_bitmap_counter = 0;
+#endif
+
 #define BYTES_PER_ROW(WIDTH) (((WIDTH) + 7) >> 3)
 
 /* __________________________   create/destroy   ___________________________ */
@@ -22,6 +27,9 @@ typedef struct
 MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_bitmap_create(int32 width, int32 height)
 {
     Bitmap *b = (Bitmap *) malloc(sizeof(Bitmap));
+    #ifndef NDEBUG
+        alive_bitmap_counter++;
+    #endif
     b->width = width;
     b->height = height;
     b->index = -1;
@@ -32,6 +40,9 @@ MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_bitmap_create(int32 width, int32 height)
 MDJVU_IMPLEMENT void mdjvu_bitmap_destroy(mdjvu_bitmap_t bmp)
 {
     Bitmap *b = (Bitmap *) bmp;
+    #ifndef NDEBUG
+        alive_bitmap_counter--;
+    #endif
     mdjvu_destroy_2d_array(b->data);
     free(b);
 }

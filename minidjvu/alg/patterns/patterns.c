@@ -69,18 +69,18 @@ static void interpolate(Options *opt, const double *v1, const double *v2,
 
 MDJVU_IMPLEMENT void mdjvu_set_aggression(mdjvu_matcher_options_t opt, int level)
 {
-    const double set200[5] = {7, 15, 60,  80, 170};
-    const double set150[5] = {5, 13, 50,  70, 160};
+    const double set150[5] = {7, 15, 60,  80, 170};
+    const double set100[5] = {5, 13, 50,  70, 160};
     const double   set0[5] = {0,  0,  0,   0,   0};
 
     if (level < 0) level = 0;
 
     ((Options *) opt)->aggression = level;
 
-    if (level > 150)
-        interpolate((Options *) opt, set150, set200, 150, 200, level);
+    if (level > 100)
+        interpolate((Options *) opt, set100, set150, 100, 150, level);
     else
-        interpolate((Options *) opt, set0, set150, 0, 150, level);
+        interpolate((Options *) opt, set0, set150, 0, 100, level);
 }
 
 /* ========================================================================== */

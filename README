@@ -1,14 +1,11 @@
-minidjvu is an encoder/decoder of black-and-white DjVu pages.
-There's also a multipage encoder.
-
+minidjvu is a multipage DjVu encoder and single page encoder/decoder.
+No colors or grayscales - just black and white.
 
 Besides DjVu, minidjvu understands PBM, Windows BMP and TIFF (through libtiff).
 
 
-When applied in lossy mode to an existing DjVu file, minidjvu can usually
-shrink it by about 5-10% of its size. That, of course, does not apply to files
-created by minidjvu itself. So, minidjvu can nicely complement some commercial
-encoders (single-page only yet, alas).
+For a quick start, see tifftodjvu.html.
+That javascripted page shows samples of encoding TIFFs to DjVu.
 
 
 minidjvu is derived from DjVuLibre, the primary DjVu support library.

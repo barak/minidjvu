@@ -1,0 +1,50 @@
+<H3>Notes</H3>
+<UL>
+<LI>TIFFs <I>must</I> be black-and-white, no grayscales/colors.
+<LI>Windows' standard CMD interpreter won't run bash scripts.
+<LI>Even if it has ".hta" extension, it is still an HTML page.
+<LI>"Run" button will only appear/work under Windows.
+<LI>Ignore TIFF warnings coming from tiffsplit.
+<LI>Ignore Bash warning about creating /tmp.
+<LI>My firewall said Bash wanted a network connection. I blocked it.
+</UL>
+
+<A name=wholedir>
+<H3>File from an input directory</H3>
+Compress all TIFF files in the directory where the picked file lies.
+Order is alphabetical.
+
+<A name=outfile>
+<H3>Output file</H3>
+The default output file name is the name of the file you picked, but with .djvu extension.
+Enter another name here, if you want (relative to the directory where the picked file
+dwells).
+
+<A name=aggression>
+<H3>Aggression</H3>
+This is the likelihood of substituting one letter image for another.
+The bigger the value, the better the compression, but also the higher is the
+risk of incorrect substitution. Uncheck the box to compress without losses.
+
+<A name=ppd>
+<H3>Pages/dict</H3>
+
+This option says how much pages should be processed together to form a shared dictionary.
+The bigger the value, the better the compression, but also the more time/memory consumed.
+
+
+<A name=resolution>
+<H3>Resolution</H3>
+
+If the box is checked, then TIFF resolution information is discarded and the resolution
+supplied here is used instead.
+
+<A name=run>
+<H3>Run</H3>
+For the "Run" button to work, you need Windows and Internet Explorer.
+It will save the script (as "job.sh") and execute it with bash.
+<P>
+Some security-obsessed programs might react aggressively to this little script
+(even if it's in an HTA file). If necessary, enable ActiveX support.
+
+</HTML>

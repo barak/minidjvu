@@ -4,6 +4,12 @@
 
 typedef struct MinidjvuBitmap *mdjvu_bitmap_t;
 
+
+#ifndef NDEBUG
+extern int32 alive_bitmap_counter;
+#endif
+
+
 /* Create a bitmap.
  * Width and height must be positive, or NULL is returned.
  */

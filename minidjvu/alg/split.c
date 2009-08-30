@@ -279,6 +279,7 @@ static void process_row(unsigned char **pixels, unsigned char **map,
                     add_to_image(image, chunk, dpi, opt,
                                  shift_x + chunk_x + min_x + blit_shift_x,
                                  y + shift_y + blit_shift_y, /* big: */ 1);
+                    mdjvu_bitmap_destroy(chunk);
                 }
                 mdjvu_bitmap_destroy(bitmap);
             } /* if (shape_width <= max_shape_width) */

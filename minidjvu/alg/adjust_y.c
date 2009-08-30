@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <assert.h>
 
+
+#define DO_NOT_ADJUST -10000
+
+
 /*
  * This algorithm was made by Leon Bottou.
  * I remember, I had another (simpler) version
@@ -94,6 +98,8 @@ static int32 *get_baselines(mdjvu_image_t image)
         mdjvu_bitmap_t bitmap = mdjvu_image_get_bitmap(image, i);
         if (mdjvu_image_has_not_a_letter_flags(image) && !mdjvu_image_get_not_a_letter_flag(image, bitmap))
             baseline[i] = compute_baseline(bitmap);
+        else
+            baseline[i] = DO_NOT_ADJUST;
     }
     return baseline;
 }
@@ -179,7 +185,7 @@ static void adjust_page(mdjvu_image_t dict,
         mdjvu_bitmap_t subst = mdjvu_image_get_substitution(image, bitmap);
         int32 subst_baseline;
 
-        if (subst == bitmap) continue;
+        if (subst == bitmap || baseline[i] == DO_NOT_ADJUST) continue;
 
         if (mdjvu_image_has_bitmap(dict, subst))
             subst_baseline = dict_baselines[mdjvu_bitmap_get_index(subst)];

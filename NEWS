@@ -1,4 +1,15 @@
 ---
+0.7
+---
+    bugfix: no more attempts to substitute pictures on multipage compression
+    bugfix: no longer writes full paths to INCL chunks
+    Memory leaks (hopefully) eliminated.
+    Slightly increased aggression.
+    A javascripted page illustrating using the most common options;
+        under Windows, that will be a GUI (not too pretty, but better than nothing).
+
+
+---
 0.6
 ---
     bugfix: new pattern matcher works multipagely

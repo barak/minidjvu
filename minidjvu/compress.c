@@ -302,7 +302,7 @@ static void report_prototypes(void *param, int page_completed)
 
 MDJVU_FUNCTION mdjvu_image_t mdjvu_compress_multipage(int n, mdjvu_image_t *pages, mdjvu_compression_options_t options)
 {
-    mdjvu_image_t dictionary;
+    mdjvu_image_t dictionary = NULL;
     int i;
     int32 total_bitmaps_count, max_tag;
     mdjvu_bitmap_t *representatives;
@@ -323,7 +323,6 @@ MDJVU_FUNCTION mdjvu_image_t mdjvu_compress_multipage(int n, mdjvu_image_t *page
         mdjvu_image_sort_bitmaps(pages[i]);
     }
 
-
     tags = MDJVU_MALLOCV(int32, total_bitmaps_count);
     if (options->report) printf("started classification\n");
     max_tag = mdjvu_multipage_classify_bitmaps
@@ -338,7 +337,9 @@ MDJVU_FUNCTION mdjvu_image_t mdjvu_compress_multipage(int n, mdjvu_image_t *page
 
     npatterns = MDJVU_MALLOCV(int32, n);
     for (i = 0; i < n; i++)
+    {
         npatterns[i] = mdjvu_image_get_bitmap_count(pages[i]);
+    }
     mdjvu_multipage_get_dictionary_flags(n, npatterns,
                                max_tag, tags, dictionary_flags);
     MDJVU_FREEV(npatterns);
@@ -362,5 +363,6 @@ MDJVU_FUNCTION mdjvu_image_t mdjvu_compress_multipage(int n, mdjvu_image_t *page
     free(dictionary_flags);
     free(representatives);
     MDJVU_FREEV(tags);
+
     return dictionary;
 }

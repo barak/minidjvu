@@ -1,4 +1,4 @@
-.PHONY: clean rebuild
+.PHONY: clean rebuild install
 
 
 CFLAGS:=-pipe -O3 -I. \
@@ -34,9 +34,9 @@ CXX:=g++
 
 
 ifeq ($(shell uname -o),Cygwin)
-    TARGET:=minidjvu.exe
+    TARGET:=bin/minidjvu.exe
 else
-    TARGET:=minidjvu
+    TARGET:=bin/minidjvu
 endif
 
 
@@ -49,6 +49,9 @@ clean:
 	rm -f $(OBJECTS)
 
 rebuild: clean $(TARGET)
+
+install: $(TARGET)
+	cp $(TARGET) /usr/local/bin
 
 $(OBJDIR)/%.o: %.c $(HEADERS) $(THISFILE)
 	@mkdir -p $(dir $@)
