@@ -1,0 +1,6 @@
+---
+0.1
+---
+
+    Initial release.
+    Supports only decompression of black-and-white single-page DjVu files.

@@ -1,0 +1,12 @@
+This is the base of minidjvu. All algorithms depend on the base.
+
+The base units depend on each other in the order suggested by the numbers.
+So, `0porting' does not depend on anything and `4image' depends on all others.
+
+Here is the description of units:
+
+    0porting - portability stuff (one or two typedefs)
+    1io      - stdio wrapper (we can have many `stdio's on Windows)
+    2graymap - small number of 2D-arrays handling routines.
+    3bitmap  - the bitmap class (useful in a bitmap-processing library, right?)
+    4image   - the "split" image class (that's what minidjvu is all about)
