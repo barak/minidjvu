@@ -56,18 +56,20 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 #include "jb2coder.h"
 #include <stdlib.h>
 
 static int open_bitmap_record(mdjvu_image_t img, int32 index,
     bool with_blit, int32 *table, int32 &library_size, JB2Encoder &jb2,
-    mdjvu_error_t *perr)
+    mdjvu_error_t *perr, int erosion)
 {
     table[index] = -2;
     mdjvu_bitmap_t bitmap = mdjvu_image_get_bitmap(img, index);
-    mdjvu_bitmap_t proto = mdjvu_image_get_prototype(img, bitmap);
+    mdjvu_bitmap_t proto =
+        mdjvu_image_get_substitution(img,
+            mdjvu_image_get_prototype(img, bitmap));
     int32 proto_index = mdjvu_bitmap_get_index(proto);
     if (proto_index == -1)
     {
@@ -77,7 +79,14 @@ static int open_bitmap_record(mdjvu_image_t img, int32 index,
             jb2.open_record(jb2_new_symbol_add_to_image_and_library);
         else
             jb2.open_record(jb2_new_symbol_add_to_library_only);
-        jb2.encode(bitmap);
+        if (erosion)
+        {
+            mdjvu_bitmap_t flip_candidates = mdjvu_get_erosion_mask(bitmap);
+            jb2.encode(bitmap, NULL, flip_candidates);
+            mdjvu_bitmap_destroy(flip_candidates);
+        }
+        else
+            jb2.encode(bitmap);
     }
     else
     {
@@ -91,9 +100,17 @@ static int open_bitmap_record(mdjvu_image_t img, int32 index,
         if (table[proto_index] == -1)
         {
             // prototype is not yet encoded - encode it
+            int32 bl, bt, bw, bh;
+            mdjvu_bitmap_get_bounding_box(bitmap, &bl, &bt, &bw, &bh);
+            assert(!bl);
+            assert(!bt);
+            assert(bw == mdjvu_bitmap_get_width(bitmap));
+            assert(bh == mdjvu_bitmap_get_height(bitmap));
+
             int result = open_bitmap_record
-                (img, proto_index, false, table, library_size, jb2, perr);
+                (img, proto_index, false, table, library_size, jb2, perr, erosion);
             if (!result) return 0;
+            jb2.close_record();
         }
 
         if (with_blit)
@@ -102,13 +119,21 @@ static int open_bitmap_record(mdjvu_image_t img, int32 index,
             jb2.open_record(jb2_matched_symbol_with_refinement_add_to_library_only);
         jb2.matching_symbol_index.set_interval(0, library_size - 1);
         jb2.zp.encode(table[proto_index], jb2.matching_symbol_index);
-        jb2.encode(bitmap, proto);
+
+        if (erosion)
+        {
+            mdjvu_bitmap_t flip_candidates = mdjvu_get_erosion_mask(bitmap);
+            jb2.encode(bitmap, proto, flip_candidates);
+            mdjvu_bitmap_destroy(flip_candidates);
+        }
+        else
+            jb2.encode(bitmap, proto);
     }
     table[index] = library_size++;
     return 1;
 }
 
-MDJVU_IMPLEMENT int mdjvu_file_save_jb2(mdjvu_image_t image, mdjvu_file_t f, mdjvu_error_t *perr)
+MDJVU_IMPLEMENT int mdjvu_file_save_jb2(mdjvu_image_t image, mdjvu_file_t f, mdjvu_error_t *perr, int erosion)
 {
     if (!mdjvu_image_has_prototypes(image))
         mdjvu_find_prototypes(image);
@@ -127,7 +152,6 @@ MDJVU_IMPLEMENT int mdjvu_file_save_jb2(mdjvu_image_t image, mdjvu_file_t f, mdj
     jb2.close_record();
 
     /* Now let's start. */
-    int32 encoded_bitmaps_count = 0;
     int32 library_size = 0;
 
     // The library table keeps indices of shapes in the encoded library.
@@ -137,15 +161,6 @@ MDJVU_IMPLEMENT int mdjvu_file_save_jb2(mdjvu_image_t image, mdjvu_file_t f, mdj
     int32 i;
     for (i = 0; i < n; i++) library_table[i] = -1;
 
-    int32 *usage_count = (int32 *) calloc(n, sizeof(int32));
-    for (i = 0; i < b; i++)
-    {
-        mdjvu_bitmap_t bitmap =
-            mdjvu_image_get_substitution(image,
-                mdjvu_image_get_blit_bitmap(image, i));
-        usage_count[mdjvu_bitmap_get_index(bitmap)]++;
-    }
-
     /* encode all blits with bitmaps as necessary */
     for (i = 0; i < b; i++)
     {
@@ -154,23 +169,16 @@ MDJVU_IMPLEMENT int mdjvu_file_save_jb2(mdjvu_image_t image, mdjvu_file_t f, mdj
                 mdjvu_image_get_blit_bitmap(image, i));
         int32 bmp_i = mdjvu_bitmap_get_index(bitmap);
 
-        if (encoded_bitmaps_count <= bmp_i)
+        if (library_table[bmp_i] == -1)
         {
             // we have not encoded the bitmap yet
-            /* encode bitmaps prior to the current one and it */
-            while (encoded_bitmaps_count <= bmp_i)
+            // encode it!
+            if (!open_bitmap_record(image, bmp_i, true, library_table,
+                                                        library_size,
+                                                        jb2, perr, erosion))
             {
-                int32 k = encoded_bitmaps_count++;
-                if (!usage_count[k]) continue;
-                if (!open_bitmap_record(image, k, k == bmp_i, library_table,
-                                                              library_size,
-                                                              jb2, perr))
-                {
-                    free(library_table);
-                    free(usage_count);
-                    return 0;
-                }
-                if (k != bmp_i) jb2.close_record();
+                free(library_table);
+                return 0;
             }
         }
         else
@@ -181,20 +189,20 @@ MDJVU_IMPLEMENT int mdjvu_file_save_jb2(mdjvu_image_t image, mdjvu_file_t f, mdj
             jb2.matching_symbol_index.set_interval(0, library_size - 1);
             jb2.zp.encode(library_table[bmp_i], jb2.matching_symbol_index);
         }
-        jb2.encode_blit(image, i);
+        jb2.encode_blit(image, i, mdjvu_bitmap_get_width(bitmap),
+                                  mdjvu_bitmap_get_height(bitmap));
         jb2.close_record();
     }
 
-    /* closing record */
+    /* end of data record */
     jb2.open_record(jb2_end_of_data);
     jb2.close_record();
 
     free(library_table);
-    free(usage_count);
     return 1;
 }
 
-MDJVU_IMPLEMENT int mdjvu_save_to_jb2(mdjvu_image_t image, const char *path, mdjvu_error_t *perr)
+MDJVU_IMPLEMENT int mdjvu_save_jb2(mdjvu_image_t image, const char *path, mdjvu_error_t *perr, int erosion)
 {
     FILE *f = fopen(path, "wb");
     if (perr) *perr = NULL;
@@ -203,7 +211,7 @@ MDJVU_IMPLEMENT int mdjvu_save_to_jb2(mdjvu_image_t image, const char *path, mdj
         if (perr) *perr = mdjvu_get_error(mdjvu_error_fopen_write);
         return 0;
     }
-    int result = mdjvu_file_save_jb2(image, (mdjvu_file_t) f, perr);
+    int result = mdjvu_file_save_jb2(image, (mdjvu_file_t) f, perr, erosion);
     fclose(f);
     return result;
 }

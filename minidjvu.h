@@ -63,5 +63,6 @@
 #include <minidjvu/version.h>
 #include <minidjvu/alg/alg.h>
 #include <minidjvu/formats/formats.h>
+#include <minidjvu/compress.h>
 
 #endif

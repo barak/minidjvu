@@ -56,8 +56,8 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 
 MDJVU_IMPLEMENT const char *mdjvu_get_version()
 {

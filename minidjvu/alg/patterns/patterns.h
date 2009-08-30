@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * config.h - file to be included first in all .c and .cpp files in the library
+ * patterns.h - matching patterns
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,9 +56,74 @@
  * +------------------------------------------------------------------
  */
 
-/* This is NOT a `configure.h' config file! */
+#ifndef MDJVU_PATTERNS_H
+#define MDJVU_PATTERNS_H
 
-/*
- * This is needed, for example, to distinguish between dllexport and dllimport.
+
+/* To get an image ready for comparisons, one have to `prepare' it.
+ * A prepared image is called a `pattern' here.
  */
-#define MINIDJVU_INCLUDED_FROM_INSIDE
+
+/* the struct itself is not defined in this header */
+typedef struct MinidjvuPattern *mdjvu_pattern_t;
+
+
+/* Allocate a pattern and calculate all necessary information.
+ * Memory consumption is byte per pixel + constant.
+ * The pattern would be completely independent on the bitmap given.
+ *     (that is, you can destroy the bitmap immediately)
+ */
+
+MDJVU_FUNCTION mdjvu_pattern_t mdjvu_pattern_create(mdjvu_bitmap_t);
+
+/* Same, but create from two-dimensional array.
+ */
+
+MDJVU_FUNCTION mdjvu_pattern_t mdjvu_pattern_create_from_array
+    (unsigned char **, int32 w, int32 h);
+
+
+/* Destroy the pattern. */
+
+MDJVU_FUNCTION void mdjvu_pattern_destroy(mdjvu_pattern_t);
+
+
+typedef struct MinidjvuMatcherOptions *mdjvu_matcher_options_t;
+
+MDJVU_FUNCTION mdjvu_matcher_options_t mdjvu_matcher_options_create(void);
+MDJVU_FUNCTION void mdjvu_set_aggression(mdjvu_matcher_options_t, int level);
+MDJVU_FUNCTION void mdjvu_matcher_options_destroy(mdjvu_matcher_options_t);
+
+
+/* Compare patterns.
+ * Returns
+ * +1 if images are considered equivalent,
+ * -1 if they are considered totally different (just to speed up things),
+ *  0 if unknown, but probably different.
+ * Exchanging the order of arguments should not change the outcome.
+ * If you have found that A ~ B and B ~ C,
+ *     then you may assume A ~ C regardless of this function's result.
+ *
+ * Options may be NULL.
+ */
+
+MDJVU_FUNCTION int mdjvu_match_patterns(mdjvu_pattern_t, mdjvu_pattern_t,
+                                        int32 dpi,
+                                        mdjvu_matcher_options_t);
+
+
+/* Auxiliary functions used in pattern matcher (TODO: comment them) */
+
+/* `result' and `pixels' may be the same array */
+MDJVU_FUNCTION void mdjvu_soften_pattern(unsigned char **result,
+    unsigned char **pixels, int32 w, int32 h);
+
+MDJVU_FUNCTION void mdjvu_get_gray_signature(
+    unsigned char **data, int32 w, int32 h,
+    unsigned char *result, int32 size);
+
+MDJVU_FUNCTION void mdjvu_get_black_and_white_signature(
+    unsigned char **data, int32 w, int32 h,
+    unsigned char *result, int32 size);
+
+#endif

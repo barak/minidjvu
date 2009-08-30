@@ -56,11 +56,14 @@
  * +------------------------------------------------------------------
  */
 
-typedef int int32;
-#define MDJVU_INT32_FORMAT "%d"
-typedef unsigned int uint32;
-#define MDJVU_UINT32_FORMAT "%u"
-typedef unsigned short uint16;
+#ifndef MDJVU_USE_TIFFIO /* kluge not to typedef twice when using tiffio.h */
+    typedef long int32;
+    typedef unsigned long uint32;
+    typedef unsigned short uint16;
+#endif
+
+#define MDJVU_INT32_FORMAT "%ld"
+#define MDJVU_UINT32_FORMAT "%lu"
 #define MDJVU_UINT16_FORMAT "%d"
 
 /* MDJVU_FUNCTION and MDJVU_IMPLEMENT are prefixes of exported functions.
@@ -97,6 +100,7 @@ typedef unsigned short uint16;
 #endif
 
 /* Check that the portability typedefs work as expected.
- * If not, print to stderr and exit.
+ * If not, returns an error message.
+ * Returns NULL if OK.
  */
-MDJVU_FUNCTION void mdjvu_check_sanity(void);
+MDJVU_FUNCTION const char *mdjvu_check_sanity(void);

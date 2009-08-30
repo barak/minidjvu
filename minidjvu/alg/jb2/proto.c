@@ -56,8 +56,8 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -66,7 +66,7 @@
 static const int32 maxint = ~(1 << 31);
 static const int32 bigint = ~(1 << 31) / 100 - 1;
 
-/* THIS THING IS THE PRIMARY BOTTLENECK
+/* THIS THING IS THE PRIMARY BOTTLENECK FOR LOSSLESS COMPRESSION
  * TODO: OPTIMIZE IT!
  * ceiling is an optimization - if we have more, quit
  */
@@ -82,11 +82,14 @@ static int diff(mdjvu_bitmap_t image,
     int32 ih = mdjvu_bitmap_get_height(image);
     int32 shift_x, shift_y;
     int32 s = 0, i, n = pw + 2;
-    unsigned char *ir = (unsigned char *) malloc(n);
-    unsigned char *pr = (unsigned char *) malloc(n);
+    unsigned char *ir;
+    unsigned char *pr;
 
     if (abs(iw - pw) > 2) return maxint;
     if (abs(ih - ph) > 2) return maxint;
+
+    ir = (unsigned char *) malloc(n);
+    pr = (unsigned char *) malloc(n);
 
     /* (shift_x, shift_y) is a shift of image with respect to prototype */
     shift_x = (pw - pw/2) - (iw - iw/2); /* center favors right */
@@ -111,7 +114,12 @@ static int diff(mdjvu_bitmap_t image,
 
         /* reusing y */
         for (y = 0; y < n; y++) if (ir[y] != pr[y]) s++;
-        if (s > ceiling) return s;
+        if (s > ceiling)
+        {
+            free(ir);
+            free(pr);
+            return s;
+        }
     }
 
     free(ir);
@@ -135,8 +143,10 @@ MDJVU_IMPLEMENT void mdjvu_find_prototypes(mdjvu_image_t img)
         mdjvu_bitmap_unpack_all_0_or_1(current, uncompressed_bitmaps[i]);
     }
 
-    mdjvu_image_enable_prototypes(img);
-    mdjvu_image_enable_substitutions(img);
+    if (!mdjvu_image_has_prototypes(img))
+        mdjvu_image_enable_prototypes(img);
+    if (!mdjvu_image_has_substitutions(img))
+        mdjvu_image_enable_substitutions(img);
     if (!mdjvu_image_has_masses(img))
         mdjvu_image_enable_masses(img); /* calculates them, not just enables */
     for (i = 0; i < n; i++)

@@ -59,11 +59,9 @@
 /* The algorithm is taken from DjVuLibre with minor (stupid) changes. */
 
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 #include <stdlib.h>
-#include <stdio.h>
-
 
 /* This function sorts bitmaps approximately according to blits.
  * Algorithm is simple: which shape is used earlier goes first.
@@ -138,12 +136,15 @@ MDJVU_IMPLEMENT void mdjvu_sort_blits_and_bitmaps(mdjvu_image_t img)
     BlitPassport *bps;
     int32 *bottoms, *passport_of_blit;
 
-    /* Count blits with `is_a_letter' flag set */
+    if (!mdjvu_image_has_no_substitution_flag(img))
+        mdjvu_calculate_no_substitution_flag(img);
+
+    /* Count letter blits */
     blit_count = mdjvu_image_get_blit_count(img);
     for (i = 0; i < blit_count; i++)
     {
         mdjvu_bitmap_t bmp = mdjvu_image_get_blit_bitmap(img, i);
-        if (mdjvu_image_bitmap_is_a_letter(img, bmp))
+        if (!mdjvu_image_get_no_substitution_flag(img, bmp))
             char_blit_count++;
     }
 
@@ -158,7 +159,7 @@ MDJVU_IMPLEMENT void mdjvu_sort_blits_and_bitmaps(mdjvu_image_t img)
     for (i = 0; i < blit_count; i++)
     {
         mdjvu_bitmap_t bmp = mdjvu_image_get_blit_bitmap(img, i);
-        if (mdjvu_image_bitmap_is_a_letter(img, bmp))
+        if (!mdjvu_image_get_no_substitution_flag(img, bmp))
         {
             int32 x = bps[j].left = mdjvu_image_get_blit_x(img, i);
             int32 y = bps[j].top  = mdjvu_image_get_blit_y(img, i);;
@@ -237,7 +238,8 @@ MDJVU_IMPLEMENT void mdjvu_sort_blits_and_bitmaps(mdjvu_image_t img)
     {
         int32 blit_to_put_here = bps[i].original_index;
         mdjvu_image_exchange_blits(img, blit_to_put_here, i);
-        bps[passport_of_blit[i]].original_index = blit_to_put_here;
+        if (passport_of_blit[i] != -1)
+            bps[passport_of_blit[i]].original_index = blit_to_put_here;
         passport_of_blit[blit_to_put_here] = passport_of_blit[i];
     }
 

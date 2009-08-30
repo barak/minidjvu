@@ -56,7 +56,7 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
+#include "mdjvucfg.h"
 #include "minidjvu.h"
 
 MDJVU_IMPLEMENT const char *mdjvu_get_error_message(mdjvu_error_t error)
@@ -88,8 +88,10 @@ MDJVU_IMPLEMENT mdjvu_error_t mdjvu_get_error(MinidjvuErrorType e)
             return (mdjvu_error_t) "bilevel data not found in DjVu file";
         case mdjvu_error_recursive_prototypes:
             return (mdjvu_error_t) "somehow prototype references recursed";
+        case mdjvu_error_tiff_support_disabled:
+            return (mdjvu_error_t) "minidjvu was compiled without TIFF support";
         default:
             return (mdjvu_error_t)
-                "some weird error happened, probably caused by a bug";
+                "some weird error happened, probably caused by a bug in minidjvu";
     }
 }

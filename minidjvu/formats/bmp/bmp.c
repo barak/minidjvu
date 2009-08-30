@@ -56,8 +56,8 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -68,13 +68,13 @@ typedef struct {
    uint32 offset;                     /* Offset to image data, bytes */
    uint32 size;                       /* Header size in bytes        */
    uint32 width,height;               /* Width and height of image   */
-   uint16 planes;                     /* Number of color planes     */
+   uint16 planes;                     /* Number of color planes      */
    uint16 bits;                       /* Bits per pixel              */
    uint32 compression;                /* Compression type            */
    uint32 imagesize;                  /* Image size in bytes         */
    uint32 xresolution,yresolution;    /* Pixels per meter            */
-   uint32 ncolors;                   /* Number of colors           */
-   uint32 importantcolors;           /* Important colors           */
+   uint32 ncolors;                    /* Number of colors            */
+   uint32 importantcolors;            /* Important colors            */
    uint32 color_0;                    /* Color of 0 bits             */
    uint32 color_1;                    /* Color of 1 bits             */
 } Header;
@@ -92,7 +92,7 @@ static uint32 read_uint32(FILE *f)
 static uint16 read_uint16(FILE *f)
 {
     uint32 r = fgetc(f);
-    return r | fgetc(f) << 8;
+    return (uint16) (r | (fgetc(f) << 8));
 }
 
 static void write_uint16(FILE *f, uint16 i)
@@ -240,6 +240,7 @@ static void invert_row(unsigned char *row, int32 bytes_per_row, int32 w)
         return NULL; \
     } \
 }
+#define FFs 0xFFFFFF
 MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_file_load_bmp(mdjvu_file_t file, mdjvu_error_t *perr)
 {
     FILE *f = (FILE *) file;
@@ -257,11 +258,10 @@ MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_file_load_bmp(mdjvu_file_t file, mdjvu_erro
     CHECK(header.compression == 0);
     CHECK(header.planes == 1);
     CHECK(header.bits == 1);
-    CHECK(header.ncolors == 2);
-    CHECK((header.color_0 == 0 && header.color_1 == 0xFFFFFF) ||
-          (header.color_1 == 0 && header.color_0 == 0xFFFFFF));
+    CHECK(((header.color_0 & FFs) == 0 && (header.color_1 & FFs) == FFs) ||
+          ((header.color_1 & FFs) == 0 && (header.color_0 & FFs) == FFs ));
 
-    invert = header.color_0 == 0;
+    invert = (header.color_0 & FFs) == 0;
     w = header.width;
     h = header.height;
     result = mdjvu_bitmap_create(w, h);

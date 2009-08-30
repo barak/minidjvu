@@ -1,13 +1,10 @@
-# This is a Makefile that works on my machine.
-# It uses libtool, and installs to /usr/local/lib and /usr/local/bin.
-
 CFLAGS:=-pipe -g -I. \
         -Wall -Werror -Wshadow -pedantic-errors \
         -Wpointer-arith -Waggregate-return \
         -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations \
         -Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align \
-        -D__STRICT_ANSI__ # -fPIC
-LDFLAGS:=-rpath /usr/local/lib -version-info 1:0:0 #-shared
+        -D__STRICT_ANSI__  -fPIC  -DHAVE_TIFF
+LDFLAGS:=-shared -ltiff # -version-info 1:0:0 #-rpath /usr/local/lib
 OBJDIR:=obj
 SUBDIRS:=minidjvu \
          minidjvu/base/0porting \
@@ -18,40 +15,47 @@ SUBDIRS:=minidjvu \
          minidjvu/base/5image \
          minidjvu/alg/smooth \
          minidjvu/alg/split \
+         minidjvu/alg/clean \
+         minidjvu/alg/nosubst \
          minidjvu/alg/blitsort \
+         minidjvu/alg/patterns \
+         minidjvu/alg/classify \
+         minidjvu/alg/adjust \
+         minidjvu/alg/erosion \
          minidjvu/alg/jb2 \
          minidjvu/formats/pbm \
          minidjvu/formats/bmp \
+         minidjvu/formats/tiff \
          minidjvu/formats/djvu
 THISFILE:=Makefile
 
 CSOURCES:=$(wildcard $(addsuffix /*.c,$(SUBDIRS)))
 CPPSOURCES:=$(wildcard $(addsuffix /*.cpp,$(SUBDIRS)))
 HEADERS:=$(wildcard $(addsuffix /*.h,$(SUBDIRS)))
-COBJECTS:=$(addprefix $(OBJDIR)/,$(CSOURCES:.c=_c.o))
-CPPOBJECTS:=$(addprefix $(OBJDIR)/,$(CPPSOURCES:.cpp=_cpp.o))
+COBJECTS:=$(addprefix $(OBJDIR)/,$(CSOURCES:.c=.o))
+CPPOBJECTS:=$(addprefix $(OBJDIR)/,$(CPPSOURCES:.cpp=.o))
 OBJECTS:=$(COBJECTS) $(CPPOBJECTS)
-CC:=libtool gcc
-CXX:=libtool g++
+CC:=gcc
+CXX:=g++
 
 .PHONY: all program install
 
-all: bin/libminidjvu.la program
+all: bin/libminidjvu.so program
 
 program:
-	cd src && make
+	@cd src && make
 
 install: all
 	libtool install -c bin/libminidjvu.la /usr/local/lib/libminidjvu.la
 	libtool install -c bin/minidjvu /usr/local/bin/minidjvu
         
-bin/libminidjvu.la: $(OBJECTS)
+bin/libminidjvu.so: $(OBJECTS)
 	mkdir -p $(dir $@)        
 	$(CXX) $(LDFLAGS) $^ -o $@
 
-$(OBJDIR)/%_c.o: %.c $(HEADERS) $(THISFILE)
+$(OBJDIR)/%.o: %.c $(HEADERS) $(THISFILE)
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
-$(OBJDIR)/%_cpp.o: %.cpp $(HEADERS) $(THISFILE)
+$(OBJDIR)/%.o: %.cpp $(HEADERS) $(THISFILE)
 	mkdir -p $(dir $@)
 	$(CXX) $(CFLAGS) -c $< -o $@

@@ -84,9 +84,13 @@ class ZPBitContext
         ZPBitContext();
     private:
         unsigned char value;
+
     friend class ZPNumContext;
     friend class ZPEncoder;
     friend class ZPDecoder;
+
+    public:
+        inline Bit get_more_probable_bit() {return value & 1;}
 };
 
 inline ZPBitContext::ZPBitContext(): value(0) {}

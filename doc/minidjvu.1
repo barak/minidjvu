@@ -1,0 +1,163 @@
+.\" Copyright (c) 2005  Ilya Mezhirov
+.\" 
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\" 
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\" 
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\" 
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual. Otherwise check the web site
+.\" of the Free Software Foundation at http://www.fsf.org.
+.\" 
+.TH "MINIDJVU" "1" "March 2005" "minidjvu-0.3" "minidjvu-0.3"
+.SH "NAME"
+minidjvu - encode/decode black-and-white DjVu pages
+
+.SH "SYNOPSIS"
+.BI "minidjvu  [" "options" "] " "inputfile" " " "outputfile"
+
+.SH "DESCRIPTION"
+minidjvu encodes and decodes single-page black-and-white DjVu files.
+
+minidjvu is derived from DjVuLibre, which is the primary support library
+for DjVu.
+
+Besides bitonal DjVu, minidjvu understands Windows BMP, PBM and TIFF (through
+libtiff) formats.
+Both
+.I inputfile
+and
+.I outputfile
+may be BMP, PBM, TIFF or DjVu. The file type is determined by extension.
+Input and output may coincide.
+
+When given a DjVu-to-DjVu job, minidjvu decodes, then re-encodes the image.
+DjVu layers other than bitonal picture are lost.
+
+Specifying a bitmap-to-bitmap job is possible, but relatively useful only with
+.BR --smooth
+option.
+
+Note: 0.3 is an early release, the command-line interface may still change.
+That mostly applies to DjVu-to-DjVu and bitmap-to-bitmap behaviors.
+
+All options preceded by two hyphens can be used with one hyphen.
+This is done to make minidjvu interface more familiar for DjVuLibre users.
+
+.SH "OPTIONS"
+.TP
+.BI "-a " "n"
+.TP 
+.BI "--aggression " "n"
+Sets aggression for pattern matching. The more the aggression, the less the
+file size, but the more likely substitution errors will occur. The default is
+100. Usually you can raise it to about 110 more or less safely. Probably even
+200 will work fine, but don't rely on that.
+
+Consistent aggression levels between versions is not guaranteed.
+The default, however, will always be 100.
+
+This option turns on
+.BR --match
+automatically.
+
+.TP
+.B "-c"
+.TP 
+.B "--clean"
+Remove small black marks that are probably noise.
+This algorithm can really devastate halftone patterns, so use with caution.
+
+This option is turned on by
+.BR "--lossy".
+
+.TP 
+.BI "-d " "n"
+.TP 
+.BI "--dpi " "n"
+Specify the resolution of an image, measured in dots per inch.
+The resolution affects some algorithms and it's recorded in DjVu
+and BMP files (TIFF should join someday).
+
+.TP
+.B "-e"
+.TP 
+.B "--erosion"
+Sacrifice image quality to gain about 5-10% in file size.
+One erosion is almost invisible, but 10 erosions in a row spoil an image badly
+(and they won't give you 50-100% of file size, alas).
+Erosion bonus stacks with pattern matching.
+
+This option is turned on by
+.BR "--lossy".
+
+.TP 
+.B "-s"
+.TP 
+.B "--smooth"
+Flip some pixels that appear to be noise. The gain in file size is about 5%.
+Visually the image is slightly improved, but it's hardly noticeable.
+
+Current filter is dumb and only removes black pixels with
+at least 3 white neighbors (of 4). You probably won't notice the effects.
+
+This option is turned on by
+.BR "--lossy".
+
+
+.TP 
+.B "-l"
+.TP 
+.B "--lossy"
+Turn on all lossy options. Is equivalent to
+.BR --smooth
+.BR --clean
+.BR --erosion
+.BR "--match".
+
+
+.TP
+.B "-m"
+.TP 
+.B "--match"
+Run pattern matching. This is the main method of shrinking the file size,
+but it can also bring trouble with substitution errors. Use
+.BR --aggression
+option to maintain balance between file size and error probability.
+
+This option is turned on by
+.BR "--lossy"
+or 
+.BR "--aggression".
+
+.TP 
+.B "-v"
+.TP 
+.B "--verbose"
+Print messages about various stages of the process.
+It's not very useful, but interesting to examine.
+
+.TP 
+.B "-w"
+.TP 
+.B "--warnings"
+Do not disable libtiff warnings. By default, TIFF warnings are supressed.
+Under Windows default TIFF warning handler creates a message box.
+This is unacceptable in a batch processing script, for instance.
+So the minidjvu default behavior is a workaround for libtiff default behavior.
+
+
+.SH BUGS
+Without
+.BR --dpi
+specified, resolution of re-encoded DjVu images is reset to 300 dpi.

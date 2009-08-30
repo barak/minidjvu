@@ -56,7 +56,7 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
+#include "mdjvucfg.h"
 #include "jb2coder.h"
 
 // JB2Coder implementation {{{
@@ -109,7 +109,7 @@ JB2Encoder::JB2Encoder(FILE *f)
 
 // Coding character positions {{{
 
-void JB2Decoder::decode_character_position(int &x, int &y, int w, int h)/*{{{*/
+void JB2Decoder::decode_character_position(int32 &x, int32 &y, int32 w, int32 h)/*{{{*/
 {
     // implements section 8.5.8 (page 31) of DjVu 2 specs
     // FIXME: too much code is duplicated with encode_character_position()
@@ -245,13 +245,10 @@ int32 JB2Decoder::decode_blit(mdjvu_image_t img, int32 shape_index)
     return mdjvu_image_add_blit(img, x, y, shape);
 }
 
-void JB2Encoder::encode_blit(mdjvu_image_t img, int32 blit)
+void JB2Encoder::encode_blit(mdjvu_image_t img, int32 blit, int32 w, int32 h)
 {
     int32 x = mdjvu_image_get_blit_x(img, blit);
     int32 y = mdjvu_image_get_blit_y(img, blit);
-    mdjvu_bitmap_t shape = mdjvu_image_get_blit_bitmap(img, blit);
-    int32 w = mdjvu_bitmap_get_width(shape);
-    int32 h = mdjvu_bitmap_get_height(shape);
     encode_character_position(x, y, w, h);
 }
 

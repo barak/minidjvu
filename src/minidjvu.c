@@ -64,19 +64,17 @@
 
 /* TODO: remove duplicated code */
 
-#define BMP_RESOLUTION 72 /* Resolution (in dpi) to put in BMP files */
 
 /* options */
-int32 dpi;
-int verbose;
-int smooth;
-
-static void set_default_options(void)
-{
-    dpi = 300;
-    verbose = 0;
-    smooth = 0;
-}
+int32 dpi = 300;
+int dpi_specified = 0;
+int verbose = 0;
+int smooth = 0;
+int match = 0;
+int aggression = 100;
+int erosion = 0;
+int clean = 0;
+int warnings = 0;
 
 /* Under Windows, there is usually no strcasecmp.
  * So here's the rewrite.
@@ -94,6 +92,14 @@ static int my_strcasecmp(const char *s1, const char *s2)
     return *s2;
 }
 
+static int ends_with_ignore_case(const char *s, const char *prefix)
+{
+    size_t sl = strlen(s);
+    size_t pl = strlen(prefix);
+    if (sl < pl) return 0;
+    return !my_strcasecmp(s + sl - pl, prefix);
+}
+
 static void show_usage_and_exit(void)
 {
     printf("minidjvu - encoding/decoding single-page bitonal DjVu files\n");
@@ -101,45 +107,64 @@ static void show_usage_and_exit(void)
     printf("Usage:\n");
     printf("    minidjvu [options] <input file> <output file>\n");
     printf("Formats supported:\n");
-    printf("    DjVu (single-page bitonal), PBM, Windows BMP.\n");
+
+    if (mdjvu_have_tiff_support())
+        printf("    DjVu (single-page bitonal), PBM, Windows BMP, TIFF.\n");
+    else
+        printf("    DjVu (single-page bitonal), PBM, Windows BMP; TIFF support is OFF.\n");
+
     printf("Options:\n");
-    printf("    -d <value>, --dpi <value>: set resolution in dots per inch\n");
+    printf("    -a <n>, --aggression <n>:  set aggression level (default 100)\n");
+    printf("    -c, --clean                remove small black pieces\n");
+    printf("    -d <n> --dpi <n>:          set resolution in dots per inch\n");
+    printf("    -e, --erosion              sacrifice quality to get smaller files\n");
+    printf("    -l, --lossy:               apply all lossy options (-s -c -m -e)\n");
+    printf("    -m, --match:               match and substitute patterns\n");
+    printf("    -s, --smooth:              remove some badly looking pixels\n");
     printf("    -v, --verbose:             print messages about everything\n");
-    printf("    -s, --smooth:              smooth the image (flips \"bad\" pixels)\n");
+    printf("    -w, --warnings:            do not suppress TIFF warnings\n");
     exit(2);
 }
 
 static int decide_if_bmp(const char *path)
 {
-    const char bmp_extension[] = ".bmp";
-    size_t len = strlen(path);
-    const char *tail = path + len - sizeof(bmp_extension) + 1;
-    return !my_strcasecmp(tail, bmp_extension);
+    return ends_with_ignore_case(path, ".bmp");
 }
 
 static int decide_if_djvu(const char *path)
 {
-    const char djvu_extension1[] = ".djvu";
-    const char djvu_extension2[] = ".djv";
-    size_t len = strlen(path);
-    const char *tail1 = path + len - sizeof(djvu_extension1) + 1;
-    const char *tail2 = path + len - sizeof(djvu_extension2) + 1;
-    return !my_strcasecmp(tail1, djvu_extension1)
-        || !my_strcasecmp(tail2, djvu_extension2);
+    return ends_with_ignore_case(path, ".djvu")
+        || ends_with_ignore_case(path, ".djv");
+}
+
+static int decide_if_tiff(const char *path)
+{
+    return ends_with_ignore_case(path, ".tiff")
+        || ends_with_ignore_case(path, ".tif");
 }
 
 /* ========================================================================= */
 
 static mdjvu_bitmap_t load_bitmap(const char *path)
 {
-    int is_bmp = decide_if_bmp(path);
     mdjvu_error_t error;
     mdjvu_bitmap_t bitmap;
 
-    if (is_bmp)
+    if (decide_if_bmp(path))
     {
         if (verbose) printf("loading from Windows BMP file `%s'\n", path);
         bitmap = mdjvu_load_bmp(path, &error);
+    }
+    else if (decide_if_tiff(path))
+    {
+        if (verbose) printf("loading from TIFF file `%s'\n", path);
+        if (!warnings)
+            mdjvu_disable_tiff_warnings();
+        if (dpi_specified)
+            bitmap = mdjvu_load_tiff(path, NULL, &error);
+        else
+            bitmap = mdjvu_load_tiff(path, &dpi, &error);
+        if (verbose) printf("resolution is "MDJVU_INT32_FORMAT" dpi\n", dpi);
     }
     else
     {
@@ -164,21 +189,28 @@ static mdjvu_bitmap_t load_bitmap(const char *path)
 
 static void save_bitmap(mdjvu_bitmap_t bitmap, const char *path)
 {
-    int is_bmp = decide_if_bmp(path);
     mdjvu_error_t error;
+    int result;
 
-    if (is_bmp)
+    if (decide_if_bmp(path))
     {
         if (verbose) printf("saving to Windows BMP file `%s'\n", path);
-        mdjvu_save_bmp(bitmap, path, BMP_RESOLUTION, &error);
+        result = mdjvu_save_bmp(bitmap, path, dpi, &error);
+    }
+    else if (decide_if_tiff(path))
+    {
+        if (verbose) printf("saving to TIFF file `%s'\n", path);
+        if (!warnings)
+            mdjvu_disable_tiff_warnings();
+        result = mdjvu_save_tiff(bitmap, path, &error);
     }
     else
     {
         if (verbose) printf("saving to PBM file `%s'\n", path);
-        mdjvu_save_pbm(bitmap, path, &error);
+        result = mdjvu_save_pbm(bitmap, path, &error);
     }
 
-    if (error)
+    if (!result)
     {
         fprintf(stderr, "%s: %s\n", path, mdjvu_get_error_message(error));
         exit(1);
@@ -199,7 +231,8 @@ static mdjvu_image_t load_image(const char *path)
     }
     if (verbose)
     {
-        printf("loaded; the page has %d bitmaps and %d blits\n",
+        printf("loaded; the page has "MDJVU_INT32_FORMAT" bitmaps and "
+               MDJVU_INT32_FORMAT" blits\n",
                mdjvu_image_get_bitmap_count(image),
                mdjvu_image_get_blit_count(image));
     }
@@ -210,19 +243,23 @@ static void sort_and_save_image(mdjvu_image_t image, const char *path)
 {
     mdjvu_error_t error;
 
-    if (verbose) printf("sorting letters\n");
-    mdjvu_sort_blits_and_bitmaps(image);
+    mdjvu_compression_options_t options = mdjvu_compression_options_create();
+    mdjvu_matcher_options_t m_options = NULL;
+    if (match)
+    {
+        m_options = mdjvu_matcher_options_create();
+        mdjvu_set_aggression(m_options, aggression);
+        mdjvu_set_matcher_options(options, m_options);
+    }
 
-    /* this step is not listed in the documentation
-     * because it's automatically done by mdjvu_save_djvu_page().
-     * The only reason it's invoked here is for printing verbose messages.
-     */
-    if (verbose) printf("finding prototypes\n");
-    mdjvu_find_prototypes(image);
+    mdjvu_set_clean(options, clean);
+    mdjvu_set_verbose(options, verbose);
+    mdjvu_compress_image(image, options);
+    mdjvu_compression_options_destroy(options);
 
     if (verbose) printf("encoding to `%s'\n", path);
 
-    if (!mdjvu_save_djvu_page(image, path, &error))
+    if (!mdjvu_save_djvu_page(image, path, &error, erosion))
     {
         fprintf(stderr, "%s: %s\n", path, mdjvu_get_error_message(error));
         exit(1);
@@ -245,7 +282,7 @@ static void decode(int argc, char **argv)
 
     if (verbose)
     {
-        printf("bitmap %d x %d rendered\n",
+        printf("bitmap "MDJVU_INT32_FORMAT" x "MDJVU_INT32_FORMAT" rendered\n",
                mdjvu_bitmap_get_width(bitmap),
                mdjvu_bitmap_get_height(bitmap));
     }
@@ -260,6 +297,30 @@ static void decode(int argc, char **argv)
     mdjvu_bitmap_destroy(bitmap);
 }
 
+static mdjvu_image_t split_and_destroy(mdjvu_bitmap_t bitmap)
+{
+    mdjvu_image_t image;
+    if (verbose) printf("splitting the bitmap into pieces\n");
+    image = mdjvu_split(bitmap, dpi, /* options:*/ NULL);
+    mdjvu_bitmap_destroy(bitmap);
+    if (verbose)
+    {
+        printf("the splitted image has "MDJVU_INT32_FORMAT" pieces\n",
+                mdjvu_image_get_blit_count(image));
+    }
+    if (clean)
+    {
+        if (verbose) printf("cleaning\n");
+        mdjvu_clean(image);
+        if (verbose)
+        {
+            printf("the cleaned image has "MDJVU_INT32_FORMAT" pieces\n",
+                    mdjvu_image_get_blit_count(image));
+        }
+    }
+    return image;
+}
+
 static void encode(int argc, char **argv)
 {
     mdjvu_bitmap_t bitmap;
@@ -270,14 +331,7 @@ static void encode(int argc, char **argv)
 
     bitmap = load_bitmap(argv[1]);
 
-    if (verbose) printf("splitting the bitmap into letters\n");
-    image = mdjvu_split(bitmap, dpi, /* options:*/ NULL);
-    mdjvu_bitmap_destroy(bitmap);
-    if (verbose)
-    {
-        printf("the splitted image has %d pieces\n",
-                mdjvu_image_get_blit_count(image));
-    }
+    image = split_and_destroy(bitmap);
     sort_and_save_image(image, argv[2]);
     mdjvu_image_destroy(image);
 }
@@ -295,7 +349,7 @@ static void recode(int argc, char **argv)
     mdjvu_image_destroy(image);
     if (verbose)
     {
-        printf("bitmap %d x %d rendered\n",
+        printf("bitmap "MDJVU_INT32_FORMAT" x "MDJVU_INT32_FORMAT" rendered\n",
                mdjvu_bitmap_get_width(bitmap),
                mdjvu_bitmap_get_height(bitmap));
     }
@@ -306,14 +360,7 @@ static void recode(int argc, char **argv)
         mdjvu_smooth(bitmap);
     }
 
-    if (verbose) printf("splitting the bitmap into letters\n");
-    image = mdjvu_split(bitmap, dpi, /* options:*/ NULL);
-    mdjvu_bitmap_destroy(bitmap);
-    if (verbose)
-    {
-        printf("the splitted image has %d pieces\n",
-                mdjvu_image_get_blit_count(image));
-    }
+    image = split_and_destroy(bitmap);
     sort_and_save_image(image, argv[2]);
     mdjvu_image_destroy(image);
 }
@@ -349,7 +396,6 @@ static int same_option(const char *option, const char *s)
 static int process_options(int argc, char **argv)
 {
     int i;
-    set_default_options();
     for (i = 1; i < argc && argv[i][0] == '-'; i++)
     {
         char *option = argv[i] + 1;
@@ -357,16 +403,39 @@ static int process_options(int argc, char **argv)
             verbose = 1;
         else if (same_option(option, "smooth"))
             smooth = 1;
+        else if (same_option(option, "match"))
+            match = 1;
+        else if (same_option(option, "erosion"))
+            erosion = 1;
+        else if (same_option(option, "clean"))
+            clean = 1;
+        else if (same_option(option, "warnings"))
+            warnings = 1;
+        else if (same_option(option, "lossy"))
+        {
+            smooth = 1;
+            match = 1;
+            erosion = 1;
+            clean = 1;
+        }
         else if (same_option(option, "dpi"))
         {
             i++;
             if (i == argc) show_usage_and_exit();
             dpi = atoi(argv[i]);
+            dpi_specified = 1;
             if (dpi < 20 || dpi > 2000)
             {
                 fprintf(stderr, "bad resolution\n");
                 exit(2);
             }
+        }
+        else if (same_option(option, "aggression"))
+        {
+            i++;
+            if (i == argc) show_usage_and_exit();
+            aggression = atoi(argv[i]);
+            match = 1;
         }
         else
         {
@@ -380,8 +449,15 @@ static int process_options(int argc, char **argv)
 int main(int argc, char **argv)
 {
     int arg_start;
+    const char *sanity_error_message;
 
-    mdjvu_check_sanity(); /* checks sizeof(int32) == 4 and such gibberish */
+    /* check sizeof(int32) == 4 and such gibberish */
+    sanity_error_message = mdjvu_check_sanity();
+    if (sanity_error_message)
+    {
+        fprintf(stderr, "%s\n", sanity_error_message);
+        exit(1);
+    }
 
     arg_start = process_options(argc, argv);
 

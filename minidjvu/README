@@ -1,0 +1,16 @@
+This is the source directory for the minidjvu library.
+
+It contains the following subdirectories:
+
+    base    - basic things like bitmaps; all the other code uses the base.
+    alg     - various image processing algoritms, including JB2 compression
+    formats - support for various bitmap file formats
+
+Sources from `alg' and `formats' do not use each other.
+
+
+This directory also contains files that couldn't be easily classified to
+one of subdirectories:
+
+    version.*  - keeping and returning version information
+    compress.* - calling algorithms in the right order to compress

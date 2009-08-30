@@ -88,15 +88,21 @@ class JB2BitmapCoder
 
         void code_row_directly(int32 n, unsigned char *up2,
                                         unsigned char *up1,
-                                        unsigned char *target);
-        void code_row_by_refinement (int32 n, unsigned char *up1, unsigned char *target,
-                                     unsigned char *p_up, unsigned char *p_sm, unsigned char *p_dn);
-        void code_image_directly(mdjvu_bitmap_t);
-        void code_image_by_refinement(mdjvu_bitmap_t, mdjvu_bitmap_t prototype);
+                                        unsigned char *target,
+                                        unsigned char *erosion);
+        void code_row_by_refinement(int32 n,
+                                    unsigned char *up1,
+                                    unsigned char *target,
+                                    unsigned char *p_up,
+                                    unsigned char *p_sm,
+                                    unsigned char *p_dn,
+                                    unsigned char *erosion);
+        void code_image_directly(mdjvu_bitmap_t, mdjvu_bitmap_t erosion_mask);
+        void code_image_by_refinement(mdjvu_bitmap_t, mdjvu_bitmap_t prototype, mdjvu_bitmap_t erosion_mask);
 
-        virtual int code_pixel(ZPBitContext &, unsigned char *pixel) = 0;
+        virtual int code_pixel(ZPBitContext &, unsigned char *pixel, int erosion) = 0;
         virtual void load_row(mdjvu_bitmap_t, int32 y, unsigned char *row) = 0;
-        virtual void save_row(mdjvu_bitmap_t, int32 y, unsigned char *row) = 0;
+        virtual void save_row(mdjvu_bitmap_t, int32 y, unsigned char *row, int erosion) = 0;
 };
 
 class JB2BitmapDecoder : public JB2BitmapCoder
@@ -107,21 +113,21 @@ class JB2BitmapDecoder : public JB2BitmapCoder
         JB2BitmapDecoder(ZPDecoder &, ZPMemoryWatcher *w = NULL);
     private:
         ZPDecoder &zp;
-        virtual int code_pixel(ZPBitContext &, unsigned char *pixel);
+        virtual int code_pixel(ZPBitContext &, unsigned char *pixel, int erosion);
         virtual void load_row(mdjvu_bitmap_t, int32 y, unsigned char *row);
-        virtual void save_row(mdjvu_bitmap_t, int32 y, unsigned char *row);
+        virtual void save_row(mdjvu_bitmap_t, int32 y, unsigned char *row, int erosion);
 };
 
 class JB2BitmapEncoder : public JB2BitmapCoder
 {
     public:
-        void encode(mdjvu_bitmap_t, mdjvu_bitmap_t prototype = NULL);
+        void encode(mdjvu_bitmap_t, mdjvu_bitmap_t prototype = NULL, mdjvu_bitmap_t erosion_mask = NULL);
         JB2BitmapEncoder(ZPEncoder &, ZPMemoryWatcher *w = NULL);
     private:
         ZPEncoder &zp;
-        virtual int code_pixel(ZPBitContext &, unsigned char *pixel);
-        virtual void load_row(mdjvu_bitmap_t, int y, unsigned char *row);
-        virtual void save_row(mdjvu_bitmap_t, int y, unsigned char *row);
+        virtual int code_pixel(ZPBitContext &, unsigned char *pixel, int erosion);
+        virtual void load_row(mdjvu_bitmap_t, int32 y, unsigned char *row);
+        virtual void save_row(mdjvu_bitmap_t, int32 y, unsigned char *row, int erosion);
 };
 
 #endif

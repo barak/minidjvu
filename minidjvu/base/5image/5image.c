@@ -56,8 +56,8 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -76,12 +76,15 @@ enum
     a_prototype,
     a_substitution,
     a_mass,
+    a_big,
+    a_nosubst,
     artefacts_count
 };
 
 const int32 artefact_sizes[] = {sizeof(mdjvu_bitmap_t),
                                 sizeof(mdjvu_bitmap_t),
-                                sizeof(int32)};
+                                sizeof(int32),
+                                1, 1};
 
 #define MAX_ARTEFACT_SIZE 16  /* supposing that pointers can't have size > 16 */
 
@@ -99,6 +102,12 @@ static void initialize_artefact(void **artefacts, mdjvu_bitmap_t bitmap, int a)
         case a_mass:
             ((int32 *) artefacts[a_mass])[index] =
                 mdjvu_bitmap_get_mass(bitmap);
+        break;
+        case a_nosubst:
+            ((unsigned char *) artefacts[a_nosubst])[index] = 0;
+        break;
+        case a_big:
+            ((unsigned char *) artefacts[a_big])[index] = 0;
         break;
     }
 }
@@ -243,6 +252,8 @@ MDJVU_IMPLEMENT void mdjvu_image_exchange_bitmaps
 {
     int a;
     mdjvu_bitmap_t b1 = IMG->bitmaps[i1], b2 = IMG->bitmaps[i2];
+    if (i1 == i2) return;
+
     IMG->bitmaps[i1] = b2;
     IMG->bitmaps[i2] = b1;
     mdjvu_bitmap_set_index(b1, i2);
@@ -266,7 +277,7 @@ MDJVU_IMPLEMENT void mdjvu_image_exchange_bitmaps
     }
 }
 
-MDJVU_FUNCTION int mdjvu_image_check_indices(mdjvu_image_t image)
+MDJVU_IMPLEMENT int mdjvu_image_check_indices(mdjvu_image_t image)
 {
     int32 n = IMG->bitmaps_count;
     int32 i;
@@ -278,6 +289,78 @@ MDJVU_FUNCTION int mdjvu_image_check_indices(mdjvu_image_t image)
     return 1;
 }
 
+MDJVU_IMPLEMENT void mdjvu_image_remove_unused_bitmaps(mdjvu_image_t image)
+{
+    int32 b = IMG->blits_count;
+    int32 n = IMG->bitmaps_count;
+    int32 i, filled;
+    int32 *use_count = (int32 *) calloc(n, sizeof(int32));
+    mdjvu_bitmap_t *new_bitmaps;
+    int32 new_bitmaps_count, a;
+    void *new_artefacts[artefacts_count];
+
+    for (i = 0; i < b; i++)
+    {
+        mdjvu_bitmap_t bmp = IMG->blits[i];
+        int32 index = mdjvu_bitmap_get_index(bmp);
+        use_count[index]++;
+    }
+
+    new_bitmaps_count = 0;
+    for (i = 0; i < n; i++)
+    {
+        if (use_count[i])
+            new_bitmaps_count++;
+    }
+
+    /* create new bitmap and artefact placeholders */
+    new_bitmaps = (mdjvu_bitmap_t *)
+        malloc(new_bitmaps_count * sizeof(mdjvu_bitmap_t));
+    for (a = 0; a < artefacts_count; a++)
+    {
+        if (IMG->artefacts[a])
+            new_artefacts[a] = malloc(new_bitmaps_count * artefact_sizes[a]);
+        else
+            new_artefacts[a] = NULL;
+    }
+
+    filled = 0;
+    for (i = 0; i < n; i++)
+    {
+        if (use_count[i])
+        {
+            mdjvu_bitmap_set_index(IMG->bitmaps[i], filled);
+            new_bitmaps[filled] = IMG->bitmaps[i];
+            for (a = 0; a < artefacts_count; a++)
+            {
+                if (IMG->artefacts[a])
+                {
+                    memcpy((char *) new_artefacts[a] + filled * artefact_sizes[a],
+                           (char *) IMG->artefacts[a] + i * artefact_sizes[a],
+                           artefact_sizes[a]);
+                }
+            }
+            filled++;
+        }
+        else
+            mdjvu_bitmap_destroy(IMG->bitmaps[i]);
+    }
+
+    free(use_count);
+    free(IMG->bitmaps);
+    IMG->bitmaps = new_bitmaps;
+    IMG->bitmaps_count = IMG->bitmaps_allocated = new_bitmaps_count;
+
+    for (a = 0; a < artefacts_count; a++)
+    {
+        if (IMG->artefacts[a])
+        {
+            free(IMG->artefacts[a]);
+            IMG->artefacts[a] = new_artefacts[a];
+            /* another place to delete artefacts that need deleting... */
+        }
+    }
+}
 
 
 /* _______________________________   blits   _______________________________ */
@@ -301,6 +384,36 @@ MDJVU_IMPLEMENT int32 mdjvu_image_add_blit(mdjvu_image_t image,
     IMG->blits[IMG->blits_count] = bitmap;
     return IMG->blits_count++;
 }
+
+MDJVU_IMPLEMENT void mdjvu_image_remove_NULL_blits(mdjvu_image_t image)
+{
+    int32 *new_x = (int32 *) malloc(IMG->blits_count * sizeof(int32));
+    int32 *new_y = (int32 *) malloc(IMG->blits_count * sizeof(int32));
+    mdjvu_bitmap_t *new_blits = (mdjvu_bitmap_t *)
+        malloc(IMG->blits_count * sizeof(mdjvu_bitmap_t));
+    int32 filled = 0, i;
+
+    for (i = 0; i < IMG->blits_count; i++)
+    {
+        if (IMG->blits[i])
+        {
+            new_x[filled] = IMG->x[i];
+            new_y[filled] = IMG->y[i];
+            new_blits[filled] = IMG->blits[i];
+            filled++;
+        }
+    }
+
+    free(IMG->x);
+    free(IMG->y);
+    free(IMG->blits);
+    IMG->x = new_x;
+    IMG->y = new_y;
+    IMG->blits = new_blits;
+    IMG->blits_allocated = IMG->blits_count;
+    IMG->blits_count = filled;
+}
+
 
 MDJVU_IMPLEMENT int32 mdjvu_image_get_blit_x(mdjvu_image_t image, int32 i)
 {
@@ -397,6 +510,13 @@ MDJVU_IMPLEMENT void mdjvu_image_enable_substitutions(mdjvu_image_t image)
 MDJVU_IMPLEMENT void mdjvu_image_enable_masses(mdjvu_image_t image)
     { enable_artefact(image, a_mass); }
 
+MDJVU_IMPLEMENT void mdjvu_image_enable_suspiciously_big_flag(mdjvu_image_t image)
+    { enable_artefact(image, a_big); }
+
+MDJVU_IMPLEMENT void mdjvu_image_enable_no_substitution_flag(mdjvu_image_t image)
+    { enable_artefact(image, a_nosubst); }
+
+
 MDJVU_IMPLEMENT void mdjvu_image_disable_prototypes(mdjvu_image_t image)
     { disable_artefact(image, a_prototype); }
 
@@ -406,6 +526,13 @@ MDJVU_IMPLEMENT void mdjvu_image_disable_substitutions(mdjvu_image_t image)
 MDJVU_IMPLEMENT void mdjvu_image_disable_masses(mdjvu_image_t image)
     { disable_artefact(image, a_mass); }
 
+MDJVU_IMPLEMENT void mdjvu_image_disable_suspiciously_big_flag(mdjvu_image_t image)
+    { enable_artefact(image, a_big); }
+
+MDJVU_IMPLEMENT void mdjvu_image_disable_no_substitution_flag(mdjvu_image_t image)
+    { enable_artefact(image, a_nosubst); }
+
+
 MDJVU_IMPLEMENT int mdjvu_image_has_prototypes(mdjvu_image_t image)
     { return IMG->artefacts[a_prototype] != NULL; }
 
@@ -414,6 +541,36 @@ MDJVU_IMPLEMENT int mdjvu_image_has_substitutions(mdjvu_image_t image)
 
 MDJVU_IMPLEMENT int mdjvu_image_has_masses(mdjvu_image_t image)
     { return IMG->artefacts[a_mass] != NULL; }
+
+MDJVU_IMPLEMENT int mdjvu_image_has_suspiciously_big_flag(mdjvu_image_t image)
+    { return IMG->artefacts[a_big] != NULL; }
+
+MDJVU_IMPLEMENT int mdjvu_image_has_no_substitution_flag(mdjvu_image_t image)
+    { return IMG->artefacts[a_nosubst] != NULL; }
+
+MDJVU_IMPLEMENT int mdjvu_image_get_no_substitution_flag(mdjvu_image_t image, mdjvu_bitmap_t b)
+{
+    return ((unsigned char *) IMG->artefacts[a_nosubst])
+        [mdjvu_bitmap_get_index(b)];
+}
+
+MDJVU_IMPLEMENT void mdjvu_image_set_no_substitution_flag(mdjvu_image_t image, mdjvu_bitmap_t b, int v)
+{
+    ((unsigned char *) IMG->artefacts[a_nosubst])
+        [mdjvu_bitmap_get_index(b)] = v ? 1 : 0; /* not to fail on 256... */
+}
+
+MDJVU_IMPLEMENT int mdjvu_image_get_suspiciously_big_flag(mdjvu_image_t image, mdjvu_bitmap_t b)
+{
+    return ((unsigned char *) IMG->artefacts[a_big])
+        [mdjvu_bitmap_get_index(b)];
+}
+
+MDJVU_IMPLEMENT void mdjvu_image_set_suspiciously_big_flag(mdjvu_image_t image, mdjvu_bitmap_t b, int v)
+{
+    ((unsigned char *) IMG->artefacts[a_big])
+        [mdjvu_bitmap_get_index(b)] = v ? 1 : 0; /* not to fail on 256... */
+}
 
 MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_image_get_prototype(mdjvu_image_t image, mdjvu_bitmap_t b)
 {
@@ -431,6 +588,7 @@ MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_image_get_substitution(mdjvu_image_t image,
 {
     mdjvu_bitmap_t subst;
     if (!IMG->artefacts[a_substitution]) return b;
+    if (!b) return b; /* special handy case */
     assert(IMG->bitmaps[mdjvu_bitmap_get_index(b)] == b);
     subst =
         ((mdjvu_bitmap_t *) IMG->artefacts[a_substitution])
@@ -450,12 +608,6 @@ MDJVU_IMPLEMENT void mdjvu_image_set_substitution(mdjvu_image_t image, mdjvu_bit
 
     ((mdjvu_bitmap_t *) IMG->artefacts[a_substitution])
         [mdjvu_bitmap_get_index(b)] = s;
-}
-
-MDJVU_IMPLEMENT int mdjvu_image_bitmap_is_a_letter(mdjvu_image_t image, mdjvu_bitmap_t bitmap)
-{
-    return image == image && bitmap == bitmap; /* fancy way to return 1 */
-                                               /* and use all arguments */
 }
 
 /* __________________________   removing margins   _________________________ */

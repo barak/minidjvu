@@ -1,4 +1,13 @@
 ---
+0.3
+---
+    Lossy compression
+    New "erosion" algorithm (gains about 10% in file size)
+    TIFF support (through libtiff)
+    Command-line interface improved
+    man page added
+
+---
 0.2
 ---
     Added lossless compression (runs slow)

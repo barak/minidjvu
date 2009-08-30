@@ -56,8 +56,8 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,19 +93,22 @@ static void write_uint16_least_significant_byte_first(uint16 i, FILE *f)
     fputc(i >> 8, f);
 }
 
-MDJVU_IMPLEMENT int mdjvu_file_save_djvu_page(mdjvu_image_t image, mdjvu_file_t file, mdjvu_error_t *perr)
+MDJVU_IMPLEMENT int mdjvu_file_save_djvu_page(mdjvu_image_t image, mdjvu_file_t file, mdjvu_error_t *perr, int erosion)
 {
     FILE *f = (FILE *) file;
     long total_length;
     char buffer[42];
     int32 w, h, dpi;
+    int saving_result;
 
     if (perr) *perr = NULL;
 
     memset(buffer, 0, sizeof(buffer));
     fwrite(buffer, 1, 42, f);
 
-    if (!mdjvu_file_save_jb2(image, file, perr))
+    saving_result = mdjvu_file_save_jb2(image, file, perr, erosion);
+
+    if (!saving_result)
         return 0;
 
     total_length = ftell(f);
@@ -123,10 +126,10 @@ MDJVU_IMPLEMENT int mdjvu_file_save_djvu_page(mdjvu_image_t image, mdjvu_file_t 
     write_uint32_most_significant_byte_first(ID_DJVU, f);
     write_uint32_most_significant_byte_first(CHUNK_ID_INFO, f);
     write_uint32_most_significant_byte_first(10, f);
-    write_uint16_most_significant_byte_first(w, f);
-    write_uint16_most_significant_byte_first(h, f);
+    write_uint16_most_significant_byte_first((uint16) w, f);
+    write_uint16_most_significant_byte_first((uint16) h, f);
     write_uint16_least_significant_byte_first(VERSION_STAMP, f);
-    write_uint16_least_significant_byte_first(dpi, f);
+    write_uint16_least_significant_byte_first((uint16) dpi, f);
     write_uint16_least_significant_byte_first(GAMMA, f);
     write_uint32_most_significant_byte_first(CHUNK_ID_Sjbz, f);
     write_uint32_most_significant_byte_first(total_length - 42, f);
@@ -134,7 +137,7 @@ MDJVU_IMPLEMENT int mdjvu_file_save_djvu_page(mdjvu_image_t image, mdjvu_file_t 
     return 1;
 }
 
-MDJVU_IMPLEMENT int mdjvu_save_djvu_page(mdjvu_image_t image, const char *path, mdjvu_error_t *perr)
+MDJVU_IMPLEMENT int mdjvu_save_djvu_page(mdjvu_image_t image, const char *path, mdjvu_error_t *perr, int erosion)
 {
     int result;
     FILE *f = fopen(path, "wb");
@@ -144,7 +147,7 @@ MDJVU_IMPLEMENT int mdjvu_save_djvu_page(mdjvu_image_t image, const char *path, 
         if (perr) *perr = mdjvu_get_error(mdjvu_error_fopen_write);
         return 0;
     }
-    result = mdjvu_file_save_djvu_page(image, (mdjvu_file_t) f, perr);
+    result = mdjvu_file_save_djvu_page(image, (mdjvu_file_t) f, perr, erosion);
     fclose(f);
     return result;
 }

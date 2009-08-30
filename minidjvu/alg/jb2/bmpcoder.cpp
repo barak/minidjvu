@@ -56,7 +56,7 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
+#include "mdjvucfg.h"
 #include "bmpcoder.h"
 #include <stdlib.h>
 #include <string.h>
@@ -72,7 +72,8 @@ void JB2BitmapCoder::reset_numcontexts()
 }
 
 void JB2BitmapCoder::code_row_directly
-    (int32 n, unsigned char *up2, unsigned char *up1, unsigned char *target)
+    (int32 n, unsigned char *up2, unsigned char *up1, unsigned char *target,
+     unsigned char *erosion)
 {
     // demands right margin 2 from up2 and 3 from up1
 
@@ -96,7 +97,7 @@ void JB2BitmapCoder::code_row_directly
 
     for (int32 i = n; i--;)
     {
-        int pixel = code_pixel(bitmap_direct[context], target++);
+        int pixel = code_pixel(bitmap_direct[context], target++, *erosion++);
         context >>= 1;
         context &= 0x17B; // clear H, C and J
 
@@ -110,7 +111,8 @@ void JB2BitmapCoder::code_row_directly
 
 // TODO: optimize it by unpacking "0 or 1" and ||ing with shifts
 void JB2BitmapCoder::code_row_by_refinement
-    (int32 n, unsigned char *up1, unsigned char *target, unsigned char *p_up, unsigned char *p_sm, unsigned char *p_dn)
+    (int32 n, unsigned char *up1, unsigned char *target, unsigned char *p_up, unsigned char *p_sm, unsigned char *p_dn,
+     unsigned char *erosion)
 {
     // demands right margin 2 from all but target and left margin 1 from p_
 
@@ -141,7 +143,7 @@ void JB2BitmapCoder::code_row_by_refinement
     int32 x = n;
     while (x--)
     {
-        int pixel = code_pixel(bitmap_refine[context], target++);
+        int pixel = code_pixel(bitmap_refine[context], target++, *erosion++);
         context >>= 1;
         context &= 0x363; // clear C, D, E, H and K
 
@@ -155,20 +157,24 @@ void JB2BitmapCoder::code_row_by_refinement
     }
 }
 
-void JB2BitmapCoder::code_image_directly(mdjvu_bitmap_t shape)
+void JB2BitmapCoder::code_image_directly(mdjvu_bitmap_t shape, mdjvu_bitmap_t erosion_mask)
 {
     int32 w = mdjvu_bitmap_get_width(shape);
     int32 h = mdjvu_bitmap_get_height(shape);
     unsigned char *up2 = (unsigned char *) calloc(w + 3, 1); // 3 bytes are right margin
     unsigned char *up1 = (unsigned char *) calloc(w + 3, 1);
     unsigned char *target = (unsigned char *) malloc(w + 3);
+    unsigned char *erosion = (unsigned char *) calloc(w, 1);
+    assert(!erosion_mask || mdjvu_bitmap_get_width(erosion_mask) == w);
     target[w] = target[w + 1] = target[w + 2] = 0;
 
     for (int32 y = 0; y < h; y++)
     {
         load_row(shape, y, target);
-        code_row_directly(w, up2, up1, target);
-        save_row(shape, y, target);
+        if (erosion_mask)
+            mdjvu_bitmap_unpack_row(erosion_mask, erosion, y);
+        code_row_directly(w, up2, up1, target, erosion);
+        save_row(shape, y, target, erosion_mask != NULL);
 
         unsigned char *t = up2;
         up2 = up1;
@@ -179,10 +185,11 @@ void JB2BitmapCoder::code_image_directly(mdjvu_bitmap_t shape)
     free(up2);
     free(up1);
     free(target);
+    free(erosion);
 }
 
 void JB2BitmapCoder::code_image_by_refinement/*{{{*/
-    (mdjvu_bitmap_t shape, mdjvu_bitmap_t prototype)
+    (mdjvu_bitmap_t shape, mdjvu_bitmap_t prototype, mdjvu_bitmap_t erosion_mask)
 {
     int32 w = mdjvu_bitmap_get_width(shape);
     int32 h = mdjvu_bitmap_get_height(shape);
@@ -192,6 +199,7 @@ void JB2BitmapCoder::code_image_by_refinement/*{{{*/
     int32 max_width = w > pw ? w : pw;
     unsigned char *up1    = (unsigned char *) calloc(max_width + 2, 1);
     unsigned char *target = (unsigned char *) calloc(max_width + 2, 1);
+    unsigned char *erosion  = (unsigned char *) calloc(max_width, 1);
     unsigned char *buf_prototype_up = (unsigned char *) calloc(max_width + 3, 1);
     unsigned char *buf_prototype_sm = (unsigned char *) calloc(max_width + 3, 1);
     unsigned char *buf_prototype_dn = (unsigned char *) calloc(max_width + 3, 1);
@@ -255,13 +263,15 @@ void JB2BitmapCoder::code_image_by_refinement/*{{{*/
             // else all three prototype rows are and will be empty - do nothing
         }
 
-        // code i-th row
+        // code y-th row
         load_row(shape, y, target);
+        if (erosion_mask)
+            mdjvu_bitmap_unpack_row(erosion_mask, erosion, y);
         code_row_by_refinement(w, up1, target,
                                prototype_up + code_shift,
                                prototype_sm + code_shift,
-                               prototype_dn + code_shift);
-        save_row(shape, y, target);
+                               prototype_dn + code_shift, erosion);
+        save_row(shape, y, target, erosion_mask != NULL);
 
         unsigned char *t = up1;
         up1 = target;
@@ -270,6 +280,7 @@ void JB2BitmapCoder::code_image_by_refinement/*{{{*/
 
     free(up1);
     free(target);
+    free(erosion);
     free(buf_prototype_up);
     free(buf_prototype_sm);
     free(buf_prototype_dn);
@@ -282,7 +293,7 @@ void JB2BitmapCoder::code_image_by_refinement/*{{{*/
 JB2BitmapDecoder::JB2BitmapDecoder(ZPDecoder &z, ZPMemoryWatcher *w)
     : JB2BitmapCoder(w), zp(z) {}
 
-int JB2BitmapDecoder::code_pixel(ZPBitContext &context, unsigned char *pixel)
+int JB2BitmapDecoder::code_pixel(ZPBitContext &context, unsigned char *pixel, int erosion)
 {
     return *pixel = zp.decode(context);
 }
@@ -296,7 +307,7 @@ mdjvu_bitmap_t JB2BitmapDecoder::decode(mdjvu_image_t img, mdjvu_bitmap_t proto)
         int32 w = pw + zp.decode(symbol_width_difference);
         int32 h = ph + zp.decode(symbol_height_difference);
         mdjvu_bitmap_t shape = mdjvu_image_new_bitmap(img, w, h);
-        code_image_by_refinement(shape, proto);
+        code_image_by_refinement(shape, proto, NULL);
 
         return shape;
     }
@@ -306,15 +317,15 @@ mdjvu_bitmap_t JB2BitmapDecoder::decode(mdjvu_image_t img, mdjvu_bitmap_t proto)
         int32 h = zp.decode(symbol_height);
         mdjvu_bitmap_t shape = mdjvu_image_new_bitmap(img, w, h);
 
-        code_image_directly(shape);
+        code_image_directly(shape, NULL);
 
         return shape;
     }
 }
 
-void JB2BitmapDecoder::load_row(mdjvu_bitmap_t sh, int y, unsigned char *row){}
+void JB2BitmapDecoder::load_row(mdjvu_bitmap_t sh, int32 y, unsigned char *row){}
 
-void JB2BitmapDecoder::save_row(mdjvu_bitmap_t sh, int y, unsigned char *row)
+void JB2BitmapDecoder::save_row(mdjvu_bitmap_t sh, int32 y, unsigned char *row, int erosion)
 {
     mdjvu_bitmap_pack_row(sh, row, y);
 }
@@ -326,13 +337,15 @@ void JB2BitmapDecoder::save_row(mdjvu_bitmap_t sh, int y, unsigned char *row)
 JB2BitmapEncoder::JB2BitmapEncoder(ZPEncoder &z, ZPMemoryWatcher *w):
     JB2BitmapCoder(w), zp(z) {}
 
-int JB2BitmapEncoder::code_pixel(ZPBitContext &context, unsigned char *pixel)
+int JB2BitmapEncoder::code_pixel(ZPBitContext &context, unsigned char *pixel, int erosion)
 {
+    if (erosion)
+        *pixel = context.get_more_probable_bit();
     zp.encode(*pixel, context);
     return *pixel;
 }
 
-void JB2BitmapEncoder::encode(mdjvu_bitmap_t sh, mdjvu_bitmap_t proto)
+void JB2BitmapEncoder::encode(mdjvu_bitmap_t sh, mdjvu_bitmap_t proto, mdjvu_bitmap_t erosion_mask)
 {
     if (proto)
     {
@@ -343,7 +356,7 @@ void JB2BitmapEncoder::encode(mdjvu_bitmap_t sh, mdjvu_bitmap_t proto)
         zp.encode(w - pw, symbol_width_difference);
         zp.encode(h - ph, symbol_height_difference);
 
-        code_image_by_refinement(sh, proto);
+        code_image_by_refinement(sh, proto, erosion_mask);
     }
     else
     {
@@ -352,13 +365,17 @@ void JB2BitmapEncoder::encode(mdjvu_bitmap_t sh, mdjvu_bitmap_t proto)
         zp.encode(w, symbol_width);
         zp.encode(h, symbol_height);
 
-        code_image_directly(sh);
+        code_image_directly(sh, erosion_mask);
     }
 }
 
-void JB2BitmapEncoder::save_row(mdjvu_bitmap_t sh, int y, unsigned char *row){}
+void JB2BitmapEncoder::save_row(mdjvu_bitmap_t sh, int32 y, unsigned char *row, int erosion)
+{
+    if (erosion)
+        mdjvu_bitmap_pack_row(sh, row, y);
+}
 
-void JB2BitmapEncoder::load_row(mdjvu_bitmap_t sh, int y, unsigned char *row)
+void JB2BitmapEncoder::load_row(mdjvu_bitmap_t sh, int32 y, unsigned char *row)
 {
     mdjvu_bitmap_unpack_row_0_or_1(sh, row, y);
 }

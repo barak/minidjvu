@@ -1,5 +1,4 @@
 JB2 is the bitonal compression algorithm of DjVu.
-This is the implementation of it.
 
 
 With DjVuLibre, you can extract a raw JB2 chunk from a DjVu file by

@@ -60,8 +60,8 @@
  * Z-coder was stripped.
  */
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 #include <stdlib.h>
 #include "zp.h"
 
@@ -377,10 +377,10 @@ void ZPEncoder::encode_lps(ZPBitContext &context, uint32 z)/*{{{*/
 
     while (a >= 0x8000) export_bits();
 }/*}}}*/
-void ZPEncoder::encode(int n, ZPNumContext &context)/*{{{*/
+void ZPEncoder::encode(int32 n, ZPNumContext &context)/*{{{*/
 {
     bool negative =false;
-    int cutoff = 0;
+    int32 cutoff = 0;
     uint32 range = 0xFFFFFFFF;
     uint16 current_node = 0;
     int phase = 1;
@@ -455,7 +455,7 @@ void ZPEncoder::encode_without_context(Bit bit)/*{{{*/
 {
     assert(bit == 0 || bit == 1);
     ZPBitContext dummy;
-    unsigned int z = 0x8000 + (a >> 1);
+    uint32 z = 0x8000 + (a >> 1);
     if (bit)
         encode_lps(dummy, z);
     else
@@ -463,20 +463,20 @@ void ZPEncoder::encode_without_context(Bit bit)/*{{{*/
 }/*}}}*/
 void ZPEncoder::encode(Bit bit, ZPBitContext &context) /*{{{*/
 {
-    unsigned int z = a + ZP_p_table[context.value];
+    uint32 z = a + ZP_p_table[context.value];
 
     assert(bit == 0 || bit == 1);
     if (bit != (context.value & 1))
     {
         /* Avoid interval reversion */
-        unsigned int d = 0x6000 + ((z + a) >> 2);
+        uint32 d = 0x6000 + ((z + a) >> 2);
         if (z > d) z = d;
         encode_lps(context, z);
     }
     else if (z >= 0x8000)
     {
         /* Avoid interval reversion */
-        unsigned int d = 0x6000 + ((z + a) >> 2);
+        uint32 d = 0x6000 + ((z + a) >> 2);
         if (z > d) z = d;
         encode_mps(context, z);
     }
@@ -589,7 +589,7 @@ Bit ZPDecoder::decode_sub(ZPBitContext &context, uint32 z)/*{{{*/
         return bit;
     }
 }/*}}}*/
-int ZPDecoder::decode(ZPNumContext &context)/*{{{*/
+int32 ZPDecoder::decode(ZPNumContext &context)/*{{{*/
 {
     bool negative=false;
     int32 cutoff = 0;

@@ -66,9 +66,10 @@ MDJVU_FUNCTION mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t, mdjvu_error_t *);
 /*
  * 1 - success, 0 - error
  * As for now, cannot save images that use shared dictionary.
+ * With erosion turned on, this changes the image.
  */
-MDJVU_FUNCTION int mdjvu_save_jb2(mdjvu_image_t, const char *path, mdjvu_error_t *);
-MDJVU_FUNCTION int mdjvu_file_save_jb2(mdjvu_image_t, mdjvu_file_t, mdjvu_error_t *);
+MDJVU_FUNCTION int mdjvu_save_jb2(mdjvu_image_t, const char *path, mdjvu_error_t *, int erosion);
+MDJVU_FUNCTION int mdjvu_file_save_jb2(mdjvu_image_t, mdjvu_file_t, mdjvu_error_t *, int erosion);
 
 /*
  * This is called automatically by xxx_save_jb2() functions.

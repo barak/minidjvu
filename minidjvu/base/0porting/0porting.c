@@ -56,39 +56,21 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-static void panic(void)
-{
-    fprintf(stderr, "minidjvu cannot continue and will exit.\n");
-    fprintf(stderr, "Check typedefs in \"0porting.h\"\n");
-    exit(1);
-}
-
-MDJVU_IMPLEMENT void mdjvu_check_sanity(void)
+MDJVU_IMPLEMENT const char *mdjvu_check_sanity(void)
 {
     if (sizeof(int32) != 4)
-    {
-        fprintf(stderr,
-                "mdjvu_check_sanity(): sizeof(int32) == %d != 4\n",
-                sizeof(int32));
-        panic();
-    }
+        return "mdjvu_check_sanity(): sizeof(int32) != 4";
+
     if (sizeof(uint32) != 4)
-    {
-        fprintf(stderr,
-                "mdjvu_check_sanity(): sizeof(uint32) == %d != 4\n",
-                sizeof(uint32));
-        panic();
-    }
+        return "mdjvu_check_sanity(): sizeof(uint32) != 4";
+
     if (sizeof(uint16) != 2)
-    {
-        fprintf(stderr,
-                "mdjvu_check_sanity(): sizeof(uint32) == %d != 2\n",
-                sizeof(uint16));
-        panic();
-    }
+        return "mdjvu_check_sanity(): sizeof(uint16) != 2";
+
+    return NULL;
 }

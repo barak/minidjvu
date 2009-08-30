@@ -135,7 +135,7 @@ struct JB2Decoder : JB2Coder, JB2BitmapDecoder
     void reset(); // resets numcontexts as required by "reset" record
 
     private:
-        void decode_character_position(int &x, int &y, int w, int h);
+        void decode_character_position(int32 &x, int32 &y, int32 w, int32 h);
 };
 
 // JB2Decoder interface }}}
@@ -148,7 +148,8 @@ struct JB2Encoder : JB2Coder, JB2BitmapEncoder
     JB2Encoder(FILE *f);
 
     // encodes blit position
-    void encode_blit(mdjvu_image_t, int32);
+    // w and h are passed here in case of substitution
+    void encode_blit(mdjvu_image_t img, int32 blit, int32 w, int32 h);
 
     void open_record(JB2RecordType);
     void close_record(); // takes care of the DjVu 3 numcontext reset

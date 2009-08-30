@@ -5,7 +5,14 @@ Should work as usual:
 
     ./configure
     make
+
+The executable (`minidjvu') should appear in src/ subdirectory.
+
     make install
+
+That will install the executable, the library and the man page.
+Installing headers is not yet supported (they are too unstable).
+
 
 
 CUSTOM COMPILATION
@@ -19,9 +26,35 @@ The release directory should be treated as an include directory
 The library is built from sources in `minidjvu' subdirectory.
 The program is built from sources in `src' subdirectory.
 
-To compile a static library under Windows, you have to disable
+To enable TIFF support, define HAVE_TIFF to 1, then link against libtiff.
+Don't forget to add libtiff include directory to the include search path.
+
+Libtiff for Windows may be found here:
+
+    http://gnuwin32.sourceforge.net/packages/tiff.htm
+
+Funnily, libtiff with its zlib and jpeg coders is much bigger than minidjvu.
+
+
+
+STATIC COMPILATION
+__________________
+
+Under Linux, you can always try something like
+
+    g++ -I. `find -name "*.c*"` -O2 -o src/minidjvu
+    
+or, if you want TIFF support,
+
+    g++ -DHAVE_TIFF=1 -I. `find -name "*.c*"` -O2 -ltiff -o src/minidjvu
+
+To compile it statically under Windows, you have to disable
 __declspec directives in `minidjvu/base/0porting/0porting.h'.
 
-If you want to compile it under some strange platform (like DOS),
-browse through `minidjvu/base/0porting/0porting.h' to see what
-changes should be made.
+
+
+PORTING
+_______
+
+Browse through `minidjvu/base/0porting/0porting.h' to see if it needs changing.
+What next, I don't know :)

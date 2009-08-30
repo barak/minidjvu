@@ -56,7 +56,15 @@
  * +------------------------------------------------------------------
  */
 
+/* algorithms are listed in the approximate order they're applied */
+
 #include <minidjvu/alg/smooth/smooth.h>
 #include <minidjvu/alg/split/split.h>
+#include <minidjvu/alg/clean/clean.h>
+#include <minidjvu/alg/nosubst/nosubst.h>
 #include <minidjvu/alg/blitsort/blitsort.h>
+#include <minidjvu/alg/patterns/patterns.h>
+#include <minidjvu/alg/classify/classify.h>
+#include <minidjvu/alg/adjust/adjust.h>
+#include <minidjvu/alg/erosion/erosion.h>
 #include <minidjvu/alg/jb2/jb2.h>

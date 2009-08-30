@@ -56,8 +56,8 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 #include <stdio.h>
 
 MDJVU_IMPLEMENT mdjvu_file_t mdjvu_fopen(const char *path, const char *mode)

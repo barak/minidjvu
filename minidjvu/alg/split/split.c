@@ -56,8 +56,8 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -271,7 +271,8 @@ static void add_to_image(mdjvu_image_t image,
                          int32 dpi,
                          mdjvu_split_options_t opt,
                          int32 blit_shift_x,
-                         int32 blit_shift_y);
+                         int32 blit_shift_y,
+                         int big);
 
 
 /* This function scans the y-th row for contours. */
@@ -281,7 +282,8 @@ static void process_row(unsigned char **pixels, unsigned char **map,
                         mdjvu_image_t image, int32 shift_x, int32 shift_y,
                         int32 max_shape_width,
                         int32 blit_shift_x, int32 blit_shift_y,
-                        int32 dpi, mdjvu_split_options_t opt)
+                        int32 dpi, mdjvu_split_options_t opt,
+                        int big)
 {
     unsigned char *row = pixels[y];
     int32 i;
@@ -306,6 +308,7 @@ static void process_row(unsigned char **pixels, unsigned char **map,
                 mdjvu_image_add_bitmap(image, bitmap);
                 mdjvu_image_add_blit(image, shift_x + min_x + blit_shift_x,
                                             y + shift_y + blit_shift_y, bitmap);
+                mdjvu_image_set_suspiciously_big_flag(image, bitmap, big);
             }
             else
             {
@@ -329,7 +332,7 @@ static void process_row(unsigned char **pixels, unsigned char **map,
                      */
                     add_to_image(image, chunk, dpi, opt,
                                  shift_x + chunk_x + min_x + blit_shift_x,
-                                 y + shift_y + blit_shift_y);
+                                 y + shift_y + blit_shift_y, /* big: */ 1);
                 }
                 mdjvu_bitmap_destroy(bitmap);
             } /* if (shape_width <= max_shape_width) */
@@ -346,7 +349,8 @@ static void add_to_image(mdjvu_image_t image,
                          int32 dpi,
                          mdjvu_split_options_t opt,
                          int32 blit_shift_x,
-                         int32 blit_shift_y)
+                         int32 blit_shift_y,
+                         int big)
 {
     int32 max_shape_size = opt ? * (int32 *) opt : 0;
     int32 width = mdjvu_bitmap_get_width(bitmap);
@@ -412,7 +416,7 @@ static void add_to_image(mdjvu_image_t image,
         process_row(window_base + window_shift, map,
                     /* index of a row to process: */ 0,
                     width, max_shape_size, image, 0, y, max_shape_size,
-                    blit_shift_x, blit_shift_y, dpi, opt);
+                    blit_shift_x, blit_shift_y, dpi, opt, big);
 
         window_base[window_shift - 1] = top_margin_save; /* restore margins */
         window_base[window_shift + max_shape_size] = bot_margin_save;
@@ -435,7 +439,7 @@ static void add_to_image(mdjvu_image_t image,
         process_row(window_base + window_shift, map,
                     /* index of a row to process: */ i,
                     width, max_shape_size, image, 0, y, max_shape_size,
-                    blit_shift_x, blit_shift_y, dpi, opt);
+                    blit_shift_x, blit_shift_y, dpi, opt, big);
     }
 
     /* Clean up */
@@ -450,7 +454,8 @@ mdjvu_split(mdjvu_bitmap_t bitmap, int32 dpi, mdjvu_split_options_t opt)
     int32 width = mdjvu_bitmap_get_width(bitmap);
     int32 height = mdjvu_bitmap_get_height(bitmap);
     mdjvu_image_t result = mdjvu_image_create(width, height);
+    mdjvu_image_enable_suspiciously_big_flag(result);
     mdjvu_image_set_resolution(result, dpi);
-    add_to_image(result, bitmap, dpi, opt, 0, 0);
+    add_to_image(result, bitmap, dpi, opt, 0, 0, /* big: */ 0);
     return result;
 }

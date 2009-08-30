@@ -103,6 +103,11 @@ MDJVU_FUNCTION int32 mdjvu_image_add_blit(mdjvu_image_t, int32 x, int32 y, mdjvu
 MDJVU_FUNCTION void mdjvu_image_exchange_blits
     (mdjvu_image_t, int32, int32);
 
+/* It's a good idea to remove NULL blits as soon as possible
+ * because such a joke is poorly understood by most algorithms.
+ */
+MDJVU_FUNCTION void mdjvu_image_remove_NULL_blits(mdjvu_image_t);
+
 /* _________________________   bitmaps in an image   _______________________ */
 
 /* Get the number of bitmaps in a split image. */
@@ -131,14 +136,19 @@ MDJVU_FUNCTION void mdjvu_image_delete_bitmap(mdjvu_image_t, mdjvu_bitmap_t);
  */
 MDJVU_FUNCTION int mdjvu_image_check_indices(mdjvu_image_t);
 
+/*
+ * Don't run this on dictionaries.
+ * Also, this doesn't detect usage by substitutions,
+ * so be sure to run mdjvu_adjust() before.
+ */
+MDJVU_FUNCTION void mdjvu_image_remove_unused_bitmaps(mdjvu_image_t);
+
 /* ______________________   additional info for images   ___________________ */
 
 MDJVU_FUNCTION int32 mdjvu_image_get_resolution(mdjvu_image_t);
 MDJVU_FUNCTION void mdjvu_image_set_resolution(mdjvu_image_t, int32 dpi);
 MDJVU_FUNCTION void mdjvu_image_set_dictionary(mdjvu_image_t, mdjvu_image_t);
 MDJVU_FUNCTION mdjvu_image_t mdjvu_image_get_dictionary(mdjvu_image_t);
-
-/* _______________________   additional info for blits   ___________________ */
 
 /* ______________________   additional info for bitmaps   __________________ */
 
@@ -164,9 +174,28 @@ MDJVU_FUNCTION mdjvu_bitmap_t
 MDJVU_FUNCTION void
     mdjvu_image_set_substitution(mdjvu_image_t, mdjvu_bitmap_t, mdjvu_bitmap_t);
 
-/* is-a-letter flag (right now - always ON) */
+/* no-substitution flag
+ * bitmaps having this flag can't have a substitution
+ * and can't serve as substitution to others.
+ * This is for small pieces of large picture, which are not to be displaced.
+ */
+MDJVU_FUNCTION int mdjvu_image_has_no_substitution_flag(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_enable_no_substitution_flag(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_disable_no_substitution_flag(mdjvu_image_t);
+MDJVU_FUNCTION int mdjvu_image_get_no_substitution_flag
+    (mdjvu_image_t, mdjvu_bitmap_t);
+MDJVU_FUNCTION void mdjvu_image_set_no_substitution_flag
+    (mdjvu_image_t, mdjvu_bitmap_t, int new_val);
 
-MDJVU_FUNCTION int mdjvu_image_bitmap_is_a_letter(mdjvu_image_t, mdjvu_bitmap_t);
+/* suspiciously big flag */
+MDJVU_FUNCTION int mdjvu_image_has_suspiciously_big_flag(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_enable_suspiciously_big_flag(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_disable_suspiciously_big_flag(mdjvu_image_t);
+MDJVU_FUNCTION int mdjvu_image_get_suspiciously_big_flag
+    (mdjvu_image_t, mdjvu_bitmap_t);
+MDJVU_FUNCTION void mdjvu_image_set_suspiciously_big_flag
+    (mdjvu_image_t, mdjvu_bitmap_t, int new_val);
+
 
 /* masses */
 

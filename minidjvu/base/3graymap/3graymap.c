@@ -56,8 +56,8 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
+#include "mdjvucfg.h"
+#include "minidjvu.h"
 #include <stdlib.h>
 
 MDJVU_IMPLEMENT unsigned char **mdjvu_create_2d_array(int32 w, int32 h)
