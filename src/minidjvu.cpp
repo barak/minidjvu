@@ -73,6 +73,7 @@ int dpi_specified = 0;
 int verbose = 0;
 int smooth = 0;
 int match = 0;
+int Match = 0;
 int aggression = 100;
 int erosion = 0;
 int clean = 0;
@@ -174,7 +175,7 @@ static void show_usage_and_exit(void)           /* {{{ */
     printf("multiple pages encoding (experimental):\n");
     printf("    minidjvu [options] <input file>... <djvu name template>\n");
     printf("    (the djvu name template looks like smth0000.djvu;\n");
-    printf("     pages produced will start with smth0001.djvu)\n");
+    printf("     pages produced will start with smth0001.djvu)\n\n");
     printf("Formats supported:\n");
 
     printf("    DjVu (single-page bitonal), PBM, Windows BMP");
@@ -247,9 +248,12 @@ static void sort_and_save_image(mdjvu_image_t image, const char *path)
 
     mdjvu_compression_options_t options = mdjvu_compression_options_create();
     mdjvu_matcher_options_t m_options = NULL;
-    if (match)
+    if (match || Match)
     {
         m_options = mdjvu_matcher_options_create();
+        mdjvu_use_matcher_method(m_options, MDJVU_MATCHER_PITH_2);
+        if (Match)
+            mdjvu_use_matcher_method(m_options, MDJVU_MATCHER_RAMPAGE);
         mdjvu_set_aggression(m_options, aggression);
         mdjvu_set_matcher_options(options, m_options);
     }
@@ -572,6 +576,8 @@ static int process_options(int argc, char **argv)
             smooth = 1;
         else if (same_option(option, "match"))
             match = 1;
+        else if (same_option(option, "Match"))
+            Match = 1;
         else if (same_option(option, "no-prototypes"))
             no_prototypes = 1;
         else if (same_option(option, "erosion"))
@@ -586,6 +592,13 @@ static int process_options(int argc, char **argv)
         {
             smooth = 1;
             match = 1;
+            erosion = 1;
+            clean = 1;
+        }
+        else if (same_option(option, "Lossy"))
+        {
+            smooth = 1;
+            Match = match = 1;
             erosion = 1;
             clean = 1;
         }

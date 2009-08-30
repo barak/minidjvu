@@ -10,6 +10,7 @@ Here is the quick list of them;
     blitsort - sorting letters in approximate reading order
     patterns - compare letters (to find if one may be substituted for another)
     classify - classify letters; uses the pattern matcher (`patterns')
+    average  - producing an "average" bitmap to use as a representative
     delegate - pick up a representative from each class of equivalent letters
     adjust_y - adjust substitution positions (otherwise the text looks bumpy)
     erosion  - determine what pixels may be eroded

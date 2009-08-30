@@ -114,6 +114,7 @@ static Class *new_class(Classification *cl)
     c->first = c->last = NULL;
     c->prev_class = NULL;
     c->next_class = cl->first_class;
+    c->last_page = 0;
     if (cl->first_class) cl->first_class->prev_class = c;
     cl->first_class = c;
     return c;
@@ -300,7 +301,7 @@ MDJVU_IMPLEMENT int32 mdjvu_classify_bitmaps
         if (mdjvu_image_get_not_a_letter_flag(image, bitmap))
             patterns[i] = NULL;
         else
-            patterns[i] = mdjvu_pattern_create(bitmap);
+            patterns[i] = mdjvu_pattern_create(options, bitmap);
     }
 
     max_tag = mdjvu_classify_patterns(patterns, result, n, dpi, options);
@@ -380,6 +381,7 @@ MDJVU_IMPLEMENT int32 mdjvu_multipage_classify_bitmaps
         for (i = 0; i < c; i++)
         {
             patterns[patterns_created++] = mdjvu_pattern_create(
+                options,
                 mdjvu_image_get_bitmap(current_image, i)
             );
         }

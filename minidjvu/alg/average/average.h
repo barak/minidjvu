@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * alg.h - and intermediate header to include all algorithms' headers
+ * average.h - computing average bitmap (NOT WORKING YET)
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,17 +56,11 @@
  * +------------------------------------------------------------------
  */
 
-/* algorithms are listed in the approximate order they're applied */
 
-#include <minidjvu/alg/smooth/smooth.h>
-#include <minidjvu/alg/split/split.h>
-#include <minidjvu/alg/clean/clean.h>
-#include <minidjvu/alg/nosubst/nosubst.h>
-#include <minidjvu/alg/blitsort/blitsort.h>
-#include <minidjvu/alg/patterns/patterns.h>
-#include <minidjvu/alg/classify/classify.h>
-#include <minidjvu/alg/average/average.h>
-#include <minidjvu/alg/adjust_y/adjust_y.h>
-#include <minidjvu/alg/erosion/erosion.h>
-#include <minidjvu/alg/jb2/jb2.h>
-#include <minidjvu/alg/delegate/delegate.h>
+/* Compute an "average" bitmap and return it.
+ * The result is to be destroyed with mdjvu_bitmap_destroy().
+ * The image is needed only to obtain masses.
+ */
+MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_average(mdjvu_image_t image,
+                                            mdjvu_bitmap_t *bitmaps,
+                                            int32 n);

@@ -127,27 +127,27 @@ const int32 artifact_sizes[] = MDJVU_ARTIFACT_SIZES;
 
 static void initialize_artifact(void **artifacts, mdjvu_bitmap_t bitmap, mdjvu_artifact_type_enum a)
 {
-    int32 index = mdjvu_bitmap_get_index(bitmap);
+    int32 i = mdjvu_bitmap_get_index(bitmap);
     switch(a)
     {
         case mdjvu_artifact_prototype:
-            ((mdjvu_bitmap_t *) artifacts[mdjvu_artifact_prototype])[index] = NULL;
+            ((mdjvu_bitmap_t *) artifacts[mdjvu_artifact_prototype])[i] = NULL;
         break;
         case mdjvu_artifact_substitution:
-            ((mdjvu_bitmap_t *) artifacts[mdjvu_artifact_substitution])[index] = NULL;
+            ((mdjvu_bitmap_t *) artifacts[mdjvu_artifact_substitution])[i] = NULL;
         break;
         case mdjvu_artifact_mass:
-            ((int32 *) artifacts[mdjvu_artifact_mass])[index] =
+            ((int32 *) artifacts[mdjvu_artifact_mass])[i] =
                 mdjvu_bitmap_get_mass(bitmap);
         break;
         case mdjvu_artifact_dictionary_index:
-            ((int32 *) artifacts[mdjvu_artifact_dictionary_index])[index] = -1;
+            ((int32 *) artifacts[mdjvu_artifact_dictionary_index])[i] = -1;
         break;
         case mdjvu_artifact_not_a_letter_flag:
-            ((unsigned char *) artifacts[mdjvu_artifact_not_a_letter_flag])[index] = 0;
+            ((unsigned char *) artifacts[mdjvu_artifact_not_a_letter_flag])[i] = 0;
         break;
         case mdjvu_artifact_suspiciously_big_flag:
-            ((unsigned char *) artifacts[mdjvu_artifact_suspiciously_big_flag])[index] = 0;
+            ((unsigned char *) artifacts[mdjvu_artifact_suspiciously_big_flag])[i] = 0;
         break;
         case mdjvu_artifacts_count:; /* just to complete switch */
     }
@@ -292,9 +292,9 @@ MDJVU_IMPLEMENT int32 mdjvu_image_add_bitmap(mdjvu_image_t image, mdjvu_bitmap_t
 
 MDJVU_IMPLEMENT int mdjvu_image_has_bitmap(mdjvu_image_t image, mdjvu_bitmap_t bitmap)
 {
-    int32 index = mdjvu_bitmap_get_index(bitmap);
-    if (index >= IMG->bitmaps_count) return 0;
-    return bitmap == IMG->bitmaps[index];
+    int32 i = mdjvu_bitmap_get_index(bitmap);
+    if (i >= IMG->bitmaps_count) return 0;
+    return bitmap == IMG->bitmaps[i];
 }
 
 MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_image_get_bitmap(mdjvu_image_t image, int32 i)

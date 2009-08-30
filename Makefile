@@ -2,14 +2,16 @@ CFLAGS:=-pipe -g -I. \
         -Wall -Wshadow -pedantic-errors \
         -Wpointer-arith -Waggregate-return \
         -Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align \
-        -D__STRICT_ANSI__  -fPIC  -DHAVE_TIFF
+        -D__STRICT_ANSI__  -DHAVE_TIFF
 
+LDFLAGS:=-ltiff
 
 C_OPTS:=-Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
 
-LDFLAGS:=-shared -ltiff # -version-info 1:0:0 #-rpath /usr/local/lib
+
 OBJDIR:=obj
-SUBDIRS:=minidjvu \
+SUBDIRS:=src \
+         minidjvu \
          minidjvu/base/0porting \
          minidjvu/base/1error \
          minidjvu/base/2io \
@@ -23,6 +25,7 @@ SUBDIRS:=minidjvu \
          minidjvu/alg/blitsort \
          minidjvu/alg/patterns \
          minidjvu/alg/classify \
+         minidjvu/alg/average \
          minidjvu/alg/adjust_y \
          minidjvu/alg/erosion \
          minidjvu/alg/jb2 \
@@ -43,28 +46,19 @@ OBJECTS:=$(COBJECTS) $(CPPOBJECTS)
 CC:=gcc
 CXX:=g++
 
-.PHONY: all program install
-
-all: bin/libminidjvu.so program
-
-program:
-	@cd src && make
-#	$(CXX) $(LDFLAGS) $(CFLAGS) $(OBJECTS) src/minidjvu.c -o bin/minidjvu
-
-install: all
-	libtool install -c bin/libminidjvu.la /usr/local/lib/libminidjvu.la
-	libtool install -c bin/minidjvu /usr/local/bin/minidjvu
+bin/minidjvu: $(OBJECTS)
+	@mkdir -p $(dir $@)        
+	$(CXX) $(LDFLAGS) $^ -o $@
 
 clean:
 	rm -f $(OBJECTS)
-        
-bin/libminidjvu.so: $(OBJECTS)
-	mkdir -p $(dir $@)        
-	$(CXX) $(LDFLAGS) $^ -o $@
 
+rebuild: clean bin/minidjvu
+        
 $(OBJDIR)/%.o: %.c $(HEADERS) $(THISFILE)
 	mkdir -p $(dir $@)
 	$(CC) $(C_OPTS) $(CFLAGS) -c $< -o $@
+
 $(OBJDIR)/%.o: %.cpp $(HEADERS) $(THISFILE)
 	mkdir -p $(dir $@)
 	$(CXX) $(CFLAGS) -c $< -o $@

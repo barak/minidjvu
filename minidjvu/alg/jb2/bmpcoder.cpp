@@ -63,6 +63,16 @@
 
 // JB2BitmapCoder implementation {{{
 
+JB2BitmapCoder::JB2BitmapCoder(ZPMemoryWatcher *w) :
+    symbol_width(0, jb2_big_positive_number, w),
+    symbol_height(0, jb2_big_positive_number, w),
+    symbol_width_difference
+        (jb2_big_negative_number, jb2_big_positive_number, w),
+    symbol_height_difference
+        (jb2_big_negative_number, jb2_big_positive_number, w)
+{
+}
+
 void JB2BitmapCoder::reset_numcontexts()
 {
     symbol_width.reset();

@@ -106,7 +106,7 @@ class ZPMemoryWatcher
 {
     public:
         virtual void handle_allocation() = 0;
-    inline virtual ~ZPMemoryWatcher(){}
+    virtual ~ZPMemoryWatcher();
 };
 
 

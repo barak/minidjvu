@@ -1,4 +1,4 @@
-AC_INIT(minidjvu, 0.4)
+AC_INIT(minidjvu, 0.5)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR(mdjvucfg.h)
 AM_CONFIG_HEADER(config.h)

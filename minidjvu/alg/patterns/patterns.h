@@ -60,40 +60,49 @@
 #define MDJVU_PATTERNS_H
 
 
+typedef struct MinidjvuMatcherOptions *mdjvu_matcher_options_t;
+
+MDJVU_FUNCTION mdjvu_matcher_options_t mdjvu_matcher_options_create(void);
+MDJVU_FUNCTION void mdjvu_set_aggression(mdjvu_matcher_options_t, int level);
+
+#define MDJVU_MATCHER_DEFAULT 0
+#define MDJVU_MATCHER_PITH_2  1  /* use it like a bitmask, not enum */
+#define MDJVU_MATCHER_RAMPAGE 2  /* without pith2, makes (almost) no sense */
+
+/* turn method on (|=) */
+MDJVU_FUNCTION void mdjvu_use_matcher_method(mdjvu_matcher_options_t, int method);
+
+MDJVU_FUNCTION void mdjvu_matcher_options_destroy(mdjvu_matcher_options_t);
+
+
 /* To get an image ready for comparisons, one have to `prepare' it.
  * A prepared image is called a `pattern' here.
  */
+
 
 /* the struct itself is not defined in this header */
 typedef struct MinidjvuPattern *mdjvu_pattern_t;
 
 
 /* Allocate a pattern and calculate all necessary information.
- * Memory consumption is byte per pixel + constant.
- * The pattern would be completely independent on the bitmap given.
+ * Memory consumption is byte per pixel + constant (with default matcher).
+ * The pattern would be independent on the bitmap given.
  *     (that is, you can destroy the bitmap immediately)
  */
 #ifndef NO_MINIDJVU
-MDJVU_FUNCTION mdjvu_pattern_t mdjvu_pattern_create(mdjvu_bitmap_t);
+MDJVU_FUNCTION mdjvu_pattern_t mdjvu_pattern_create(mdjvu_matcher_options_t, mdjvu_bitmap_t);
 #endif
 
 /* Same, but create from two-dimensional array.
  */
 
 MDJVU_FUNCTION mdjvu_pattern_t mdjvu_pattern_create_from_array
-    (unsigned char **, int32 w, int32 h);
+    (mdjvu_matcher_options_t, unsigned char **, int32 w, int32 h);
 
 
 /* Destroy the pattern. */
 
 MDJVU_FUNCTION void mdjvu_pattern_destroy(mdjvu_pattern_t);
-
-
-typedef struct MinidjvuMatcherOptions *mdjvu_matcher_options_t;
-
-MDJVU_FUNCTION mdjvu_matcher_options_t mdjvu_matcher_options_create(void);
-MDJVU_FUNCTION void mdjvu_set_aggression(mdjvu_matcher_options_t, int level);
-MDJVU_FUNCTION void mdjvu_matcher_options_destroy(mdjvu_matcher_options_t);
 
 
 /* Compare patterns.

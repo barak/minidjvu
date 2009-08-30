@@ -82,8 +82,3 @@ MDJVU_FUNCTION void mdjvu_set_report_total_pages(mdjvu_compression_options_t, in
 
 MDJVU_FUNCTION void mdjvu_compress_image(mdjvu_image_t, mdjvu_compression_options_t);
 MDJVU_FUNCTION mdjvu_image_t mdjvu_compress_multipage(int n, mdjvu_image_t *pages, mdjvu_compression_options_t);
-
-/* Find substitutions by using pattern matcher and classifier.
- * That will enable `substitutions' artifact in the image.
- */
-MDJVU_FUNCTION void mdjvu_find_substitutions(mdjvu_image_t image, mdjvu_matcher_options_t);

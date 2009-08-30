@@ -111,12 +111,13 @@ MDJVU_IMPLEMENT void mdjvu_set_report_start_page(mdjvu_compression_options_t opt
 MDJVU_IMPLEMENT void mdjvu_set_report_total_pages(mdjvu_compression_options_t opt, int v)
     {opt->report_total_pages = v;}
 
-MDJVU_IMPLEMENT void mdjvu_find_substitutions(mdjvu_image_t image,
-                                              mdjvu_matcher_options_t options)
+static void find_substitutions(mdjvu_image_t image,
+                                              struct MinidjvuCompressionOptions *opt)
 {
+    mdjvu_matcher_options_t m_opt = opt->matcher_options;
     int32 i, n = mdjvu_image_get_bitmap_count(image);
     int32 *tags = (int32 *) malloc(n * sizeof(int32));
-    int32 max_tag = mdjvu_classify_bitmaps(image, tags, options);
+    int32 max_tag = mdjvu_classify_bitmaps(image, tags, m_opt);
     mdjvu_bitmap_t *representatives = (mdjvu_bitmap_t *)
         calloc(max_tag + 1 /* cause starts with 1 */, sizeof(mdjvu_bitmap_t));
 
@@ -125,6 +126,30 @@ MDJVU_IMPLEMENT void mdjvu_find_substitutions(mdjvu_image_t image,
         if (!representatives[tags[i]])
             representatives[tags[i]] = mdjvu_image_get_bitmap(image, i);
     }
+
+    /*
+
+       LETTER AVERAGING STILL DOES NOT WORK.
+       I WONDER, WHY.
+
+    mdjvu_bitmap_t *sources = (mdjvu_bitmap_t *) calloc(n, sizeof(mdjvu_bitmap_t));
+    for (i = 1; i < max_tag; i++)
+    {
+        int j, sources_found = 0;
+        mdjvu_bitmap_t rep;
+
+        for (j = 0; j < n; j++)
+        {
+            if (tags[j] == i)
+                sources[sources_found++] = mdjvu_image_get_bitmap(image, j);
+        }
+
+        rep = mdjvu_average(image, sources, sources_found);
+        mdjvu_image_add_bitmap(image, rep);
+        representatives[i] = rep;
+    }
+    free(sources);
+    */
 
     if (!mdjvu_image_has_substitutions(image))
         mdjvu_image_enable_substitutions(image);
@@ -170,7 +195,7 @@ MDJVU_IMPLEMENT void mdjvu_compress_image(mdjvu_image_t image, mdjvu_compression
     if (options->matcher_options)
     {
         if (options->verbose) puts("matching patterns");
-        mdjvu_find_substitutions(image, options->matcher_options);
+        find_substitutions(image, options);
         if (options->verbose) puts("adjusting substitution coordinates");
         mdjvu_adjust(image);
         if (options->verbose) puts("removing unused bitmaps");

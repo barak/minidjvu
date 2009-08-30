@@ -127,10 +127,10 @@ static void update_blits(mdjvu_image_t image, int32 *x_adjust, int32 *y_adjust)
         int32 y = mdjvu_image_get_blit_y(image, i);
         mdjvu_bitmap_t bitmap = mdjvu_image_get_blit_bitmap(image, i);
         mdjvu_bitmap_t subst = mdjvu_image_get_substitution(image, bitmap);
-        int32 index = mdjvu_bitmap_get_index(bitmap);
+        int32 k = mdjvu_bitmap_get_index(bitmap);
 
-        mdjvu_image_set_blit_x(image, i, x + x_adjust[index]);
-        mdjvu_image_set_blit_y(image, i, y + y_adjust[index]);
+        mdjvu_image_set_blit_x(image, i, x + x_adjust[k]);
+        mdjvu_image_set_blit_y(image, i, y + y_adjust[k]);
         mdjvu_image_set_blit_bitmap(image, i, subst);
     }
 }

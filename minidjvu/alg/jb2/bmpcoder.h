@@ -74,15 +74,7 @@ class JB2BitmapCoder
             symbol_height,
             symbol_width_difference,
             symbol_height_difference;
-        inline JB2BitmapCoder(ZPMemoryWatcher *w = NULL) :
-            symbol_width(0, jb2_big_positive_number, w),
-            symbol_height(0, jb2_big_positive_number, w),
-            symbol_width_difference
-                (jb2_big_negative_number, jb2_big_positive_number, w),
-            symbol_height_difference
-                (jb2_big_negative_number, jb2_big_positive_number, w)
-        {
-        }
+        JB2BitmapCoder(ZPMemoryWatcher *w = NULL);
 
         virtual ~JB2BitmapCoder() {}
 

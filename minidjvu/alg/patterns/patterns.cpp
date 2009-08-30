@@ -63,7 +63,10 @@
 
 #include "mdjvucfg.h"
 #include "minidjvu.h"
+#include "bitmaps.h"
+#include "thinning.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
@@ -102,6 +105,8 @@ typedef struct
     double shiftdiff1_threshold;
     double shiftdiff2_threshold;
     double shiftdiff3_threshold;
+    int aggression;
+    int method;
 } Options;
 
 static const double pithdiff_veto_threshold        = 23;
@@ -142,6 +147,8 @@ MDJVU_IMPLEMENT void mdjvu_set_aggression(mdjvu_matcher_options_t opt, int level
 
     if (level < 0) level = 0;
 
+    ((Options *) opt)->aggression = level;
+
     if (level > 150)
         interpolate((Options *) opt, set150, set200, 150, 200, level);
     else
@@ -154,7 +161,13 @@ MDJVU_IMPLEMENT mdjvu_matcher_options_t mdjvu_matcher_options_create(void)
 {
     mdjvu_matcher_options_t options = (mdjvu_matcher_options_t) MALLOC(Options);
     mdjvu_set_aggression(options, 100);
+    ((Options *) options)->method = 0;
     return options;
+}
+
+MDJVU_IMPLEMENT void mdjvu_use_matcher_method(mdjvu_matcher_options_t opt, int method)
+{
+    ((Options *) opt)->method |= method;
 }
 
 MDJVU_IMPLEMENT void mdjvu_matcher_options_destroy(mdjvu_matcher_options_t opt)
@@ -162,6 +175,7 @@ MDJVU_IMPLEMENT void mdjvu_matcher_options_destroy(mdjvu_matcher_options_t opt)
     FREE((Options *) opt);
 }
 
+/* ========================================================================== */
 
 /* FIXME: maxint is maxint32 */
 static const int32 maxint = ~(1L << (sizeof(int32) * 8 - 1));
@@ -170,6 +184,8 @@ typedef unsigned char byte;
 typedef struct ComparableImageData
 {
     byte **pixels; /* 0 - purely white, 255 - purely black (inverse to PGM!) */
+    byte **pith2_inner;
+    byte **pith2_outer;
     int32 width, height, mass;
     int32 mass_center_x, mass_center_y;
     byte signature[SIGNATURE_SIZE];  /* for shiftdiff 1 and 3 tests */
@@ -218,8 +234,6 @@ static int simple_tests(Image *i1, Image *i2)
 
 /* Computing distance by comparing pixels {{{ */
 
-#if USE_PITHDIFF || USE_SOFTDIFF
-
 /* This function compares two images pixel by pixel.
  * The exact way to compare pixels is defined by two functions,
  *     compare_row and compare_with_white.
@@ -230,7 +244,9 @@ static int simple_tests(Image *i1, Image *i2)
  */
 static int32 distance_by_pixeldiff_functions_by_shift(Image *i1, Image *i2,
     int32 (*compare_row)(byte *, byte *, int32),
-    int32 (*compare_with_white)(byte *, int32), int32 ceiling,
+    int32 (*compare_1_with_white)(byte *, int32),
+    int32 (*compare_2_with_white)(byte *, int32),
+    int32 ceiling,
     int32 shift_x, int32 shift_y) /* of i1's coordinate system with respect to i2 */
 {
     int32 w1 = i1->width, w2 = i2->width, h1 = i1->height, h2 = i2->height;
@@ -256,12 +272,12 @@ static int32 distance_by_pixeldiff_functions_by_shift(Image *i1, Image *i2,
         if (i < 0 || i >= h2)
         {
             /* calculate difference of i1 with white */
-            score += compare_with_white(i1->pixels[y1], w1);
+            score += compare_1_with_white(i1->pixels[y1], w1);
         }
         else if (i < shift_y || i >= shift_y + h1)
         {
             /* calculate difference of i2 with white */
-            score += compare_with_white(i2->pixels[i], w2);
+            score += compare_2_with_white(i2->pixels[i], w2);
         }
         else
         {
@@ -273,20 +289,20 @@ static int32 distance_by_pixeldiff_functions_by_shift(Image *i1, Image *i2,
 
             /* calculate penalty for the left margin */
             if (min_overlap_x > 0)
-                score += compare_with_white(i2->pixels[i], min_overlap_x);
+                score += compare_2_with_white(i2->pixels[i], min_overlap_x);
             else
-                score += compare_with_white(i1->pixels[y1], min_overlap_x_for_i1);
+                score += compare_1_with_white(i1->pixels[y1], min_overlap_x_for_i1);
 
             /* calculate penalty for the right margin */
             if (max_overlap_x_plus_1 < w2)
             {
-                score += compare_with_white(
+                score += compare_2_with_white(
                     i2->pixels[i] + max_overlap_x_plus_1,
                     w2 - max_overlap_x_plus_1);
             }
             else
             {
-                score += compare_with_white(
+                score += compare_1_with_white(
                      i1->pixels[y1] + max_overlap_x_plus_1_for_i1,
                      w1 - max_overlap_x_plus_1_for_i1);
 
@@ -300,7 +316,9 @@ static int32 distance_by_pixeldiff_functions_by_shift(Image *i1, Image *i2,
 
 static int32 distance_by_pixeldiff_functions(Image *i1, Image *i2,
     int32 (*compare_row)(byte *, byte *, int32),
-    int32 (*compare_with_white)(byte *, int32), int32 ceiling)
+    int32 (*compare_1_with_white)(byte *, int32),
+    int32 (*compare_2_with_white)(byte *, int32),
+    int32 ceiling)
 {
     byte **p1, **p2;
     int32 w1, w2, h1, h2;
@@ -337,90 +355,9 @@ static int32 distance_by_pixeldiff_functions(Image *i1, Image *i2,
         shift_y = (shift_y + MASS_CENTER_QUANT / 2) / MASS_CENTER_QUANT;
 
     return distance_by_pixeldiff_functions_by_shift(
-        i1, i2, compare_row, compare_with_white, ceiling, shift_x, shift_y);
-
-/* FIXME */
-#if 0
-    /* Compute difference in the non-overlapping top margin */
-
-    if (shift_y < 0)
-    {
-        /* i1 has top rows not covered by i2 */
-        i_cap = -shift_y;
-        for (i = 0; i < i_cap; i++)
-        {
-            assert(i >= 0 && i < h1);
-            s += compare_with_white(p1[i], w1);
-            if (s > ceiling) return maxint;
-        }
-        i_start = i_cap; /* topmost overlapping row in i1's coords */
-    }
-    else
-    {
-        /* i2 has top rows not covered by i1 */
-        for (i = 0; i < shift_y; i++)
-        {
-            assert(i >= 0 && i < h2);
-            s += compare_with_white(p2[i], w2);
-            if (s > ceiling) return maxint;
-        }
-        i_start = 0;
-    }
-
-    /* Compute difference in the overlapping area */
-
-    i_cap = h2 - shift_y;
-    if (h1 < i_cap) i_cap = h1;
-
-    right_margin_start = shift_x + w1;
-    right_margin_width = w2 - right_margin_start;
-
-    for (i = i_start; i < i_cap; i++) /* i is a coordinate in i1 system */
-    {
-        int32 y = i + shift_y; /* same row coordinate in i2 system */
-        assert(y >= 0 && y < h2);
-        s += compare_with_white(p2[y], shift_x);
-        if (s > ceiling) return maxint;
-        assert(i >= 0 && i < h1);
-        assert(shift_x + w1 <= w2);
-        assert(i < h1);
-        s += compare_row(p2[y] + shift_x, p1[i], w1);
-        if (s > ceiling) return maxint;
-        s += compare_with_white(p2[y] + right_margin_start, right_margin_width);
-        if (s > ceiling) return maxint;
-    }
-
-
-    /* Compute difference in the non-overlapping bottom margin */
-
-    if (i_cap == h1)
-    {
-        /* i2 has bottom rows not covered by i1 */
-        i_start = i_cap + shift_y;
-        for (i = i_start; i < h2; i++)
-        {
-            assert(i >= 0 && i < h2);
-            s += compare_with_white(p2[i], w2);
-            if (s > ceiling) return maxint;
-        }
-    }
-    else
-    {
-        /* i1 has bottom rows not covered by i2 */
-        i_start = i_cap;
-        for (i = i_cap; i < h1; i++)
-        {
-            assert(i >= 0 && i < h1);
-            s += compare_with_white(p1[i], w1);
-            if (s > ceiling) return maxint;
-        }
-    }
-
-    return s;
-#endif
+        i1, i2, compare_row, compare_1_with_white, compare_2_with_white,
+        ceiling, shift_x, shift_y);
 }
-
-#endif
 
 /* Computing distance by comparing pixels }}} */
 /* inscribed framework penalty counting {{{ */
@@ -460,14 +397,17 @@ static int32 pithdiff_compare_with_white(byte *row, int32 n)
 static int32 pithdiff_distance(Image *i1, Image *i2, int32 ceiling)
 {
     return distance_by_pixeldiff_functions(i1, i2,
-            &pithdiff_compare_row, &pithdiff_compare_with_white, ceiling);
+            &pithdiff_compare_row,
+            &pithdiff_compare_with_white,
+            &pithdiff_compare_with_white,
+            ceiling);
 }
 
 static int pithdiff_equivalence(Image *i1, Image *i2, double threshold, int32 dpi)
 {
     int32 perimeter = i1->width + i1->height + i2->width + i2->height;
-    double ceiling = pithdiff_veto_threshold * dpi * perimeter / 100;
-    int32 d = pithdiff_distance(i1, i2, (int32) ceiling);
+    int32 ceiling = (int32) (pithdiff_veto_threshold * dpi * perimeter / 100);
+    int32 d = pithdiff_distance(i1, i2, ceiling);
     if (d == maxint) return -1;
     if (d < threshold * dpi * perimeter / 100) return 1;
     return 0;
@@ -509,14 +449,17 @@ static int32 softdiff_compare_with_white(byte *row, int32 n)
 static int32 softdiff_distance(Image *i1, Image *i2, int32 ceiling)
 {
     return distance_by_pixeldiff_functions(i1, i2,
-            &softdiff_compare_row, &softdiff_compare_with_white, ceiling);
+            &softdiff_compare_row,
+            &softdiff_compare_with_white,
+            &softdiff_compare_with_white,
+            ceiling);
 }
 
 static int softdiff_equivalence(Image *i1, Image *i2, double threshold, int32 dpi)
 {
     int32 perimeter = i1->width + i1->height + i2->width + i2->height;
-    double ceiling = softdiff_veto_threshold * dpi * perimeter / 100;
-    int32 d = softdiff_distance(i1, i2, (int32) ceiling);
+    int32 ceiling = (int32) (softdiff_veto_threshold * dpi * perimeter / 100);
+    int32 d = softdiff_distance(i1, i2, ceiling);
     if (d == maxint) return -1;
     if (d < threshold * dpi * perimeter / 100) return 1;
     return 0;
@@ -557,14 +500,14 @@ static int shiftdiff_equivalence(byte *s1, byte *s2, double falloff, double veto
 /* shift signature comparison }}} */
 
 #ifndef NO_MINIDJVU
-mdjvu_pattern_t mdjvu_pattern_create(mdjvu_bitmap_t bitmap)
+mdjvu_pattern_t mdjvu_pattern_create(mdjvu_matcher_options_t opt, mdjvu_bitmap_t bitmap)
 {
     int32 w = mdjvu_bitmap_get_width(bitmap);
     int32 h = mdjvu_bitmap_get_height(bitmap);
     mdjvu_pattern_t pattern;
     byte **pixels = mdjvu_create_2d_array(w, h);
     mdjvu_bitmap_unpack_all(bitmap, pixels);
-    pattern = mdjvu_pattern_create_from_array(pixels, w, h);
+    pattern = mdjvu_pattern_create_from_array(opt, pixels, w, h);
     mdjvu_destroy_2d_array(pixels);
     return pattern;
 }
@@ -597,19 +540,59 @@ static void get_mass_center(unsigned char **pixels, int32 w, int32 h,
 /* Finding mass center }}} */
 
 
-MDJVU_IMPLEMENT mdjvu_pattern_t mdjvu_pattern_create_from_array(byte **pixels, int32 w, int32 h)/*{{{*/
+/*static int at_least_one_black_of_3(byte *row, int x, int w_minus_one)
 {
+    return (x > 0                      && row[x - 1])
+        || (x >= 0 && x <= w_minus_one && row[x])
+        || (x < w_minus_one            && row[x + 1]);
+}
+
+static byte **fatten(byte **pixels, int w, int h)
+{
+    int x, y;
+    int h_minus_one = h - 1;
+    byte **result = allocate_bitmap(w + 2, h + 2);
+
+    for (y = -1; y <= h; y++) for (x = -1; x <= w; x++)
+    {
+        if ((y > 0                      && at_least_one_black_of_3(pixels[y - 1], x, w))
+         || (y >= 0 && y <= h_minus_one && at_least_one_black_of_3(pixels[y    ], x, w))
+         || (y < h_minus_one            && at_least_one_black_of_3(pixels[y + 1], x, w)))
+        result[y + 1][x + 1] = 1;
+    }
+
+    return result;
+}*/
+
+
+/* overwrites `pixels'
+ */
+static void pith2_create_inner(byte **pixels, int w, int h)
+{
+    /*byte **frame = thin(pixels, w, h, 1);
+    strip_endpoints_8(pixels, frame, w, h);
+    free_bitmap_with_margins(frame);*/
+    byte **buffer = allocate_bitmap_with_white_margins(w, h);
+    assign_bitmap(buffer, pixels, w, h);
+    make_bitmap_0_or_1(buffer, w, h);
+    peel(buffer, pixels, w, h);
+    assign_bitmap(pixels, buffer, w, h);
+    free_bitmap_with_margins(buffer);
+}
+
+
+
+MDJVU_IMPLEMENT mdjvu_pattern_t mdjvu_pattern_create_from_array(mdjvu_matcher_options_t m_opt, byte **pixels, int32 w, int32 h)/*{{{*/
+{
+    Options *opt = (Options *) m_opt;
     int32 i, mass;
     Image *img = MALLOC(Image);
-    byte *pool = MALLOCV(byte, w * h);
-    memset(pool, 0, w * h);
 
     img->width = w;
     img->height = h;
 
-    img->pixels = MALLOCV(byte *, h);
-    for (i = 0; i < h; i++)
-        img->pixels[i] = pool + i * w;
+    img->pixels = allocate_bitmap(w, h);
+    memset(img->pixels[0], 0, w * h);
 
     mass = 0;
     for (i = 0; i < h; i++)
@@ -625,14 +608,101 @@ MDJVU_IMPLEMENT mdjvu_pattern_t mdjvu_pattern_create_from_array(byte **pixels, i
     img->mass = mass;
 
     mdjvu_soften_pattern(img->pixels, img->pixels, w, h);
+
     get_mass_center(img->pixels, w, h,
                     &img->mass_center_x, &img->mass_center_y);
     mdjvu_get_gray_signature(img->pixels, w, h,
                              img->signature, SIGNATURE_SIZE);
+
     mdjvu_get_black_and_white_signature(img->pixels, w, h,
                                         img->signature2, SIGNATURE_SIZE);
+
+    if (!opt->aggression)
+    {
+        free_bitmap(img->pixels);
+        img->pixels = NULL;
+    }
+
+    if (opt->method & MDJVU_MATCHER_PITH_2)
+    {
+        img->pith2_outer = inverted_peel(pixels, w, h);
+        img->pith2_inner = copy_bitmap(pixels, w, h);
+        pith2_create_inner(img->pith2_inner, w, h);
+    }
+    else
+    {
+        img->pith2_inner = NULL;
+        img->pith2_outer = NULL;
+    }
+
     return (mdjvu_pattern_t) img;
 }/*}}}*/
+
+
+
+static int32 pith2_row_subset(byte *A, byte *B, int32 length)
+{
+    int32 i;
+    for (i = 0; i < length; i++)
+    {
+        if (A[i] & !B[i])
+            return 1;
+    }
+    return 0;
+}
+
+static int32 pith2_row_has_black(byte *row, int32 length)
+{
+    int32 i;
+    for (i = 0; i < length; i++)
+    {
+        if (row[i])
+            return 1;
+    }
+    return 0;
+}
+
+static int32 pith2_return_0(byte *A, int32 length)
+{
+    return 0;
+}
+
+static int pith2_is_subset(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2)
+{
+    Image *i1 = (Image *) ptr1;
+    Image *i2 = (Image *) ptr2;
+    Image ptr1_inner;
+    Image ptr2_outer;
+
+    ptr1_inner.pixels = i1->pith2_inner;
+    ptr1_inner.width  = i1->width;
+    ptr1_inner.height = i1->height;
+    ptr1_inner.mass_center_x = i1->mass_center_x;
+    ptr1_inner.mass_center_y = i1->mass_center_y;
+
+    ptr2_outer.pixels = i2->pith2_outer;
+    ptr2_outer.width  = i2->width + 2;
+    ptr2_outer.height = i2->height + 2;
+    ptr2_outer.mass_center_x = i2->mass_center_x + MASS_CENTER_QUANT;
+    ptr2_outer.mass_center_y = i2->mass_center_y + MASS_CENTER_QUANT;
+
+
+    if (distance_by_pixeldiff_functions(&ptr1_inner, &ptr2_outer,
+        &pith2_row_subset,
+        &pith2_row_has_black,
+        &pith2_return_0,
+        /* ceiling: */ 1))
+        return 0;
+    else
+        return 1;
+}
+
+static int pith2_test(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2)
+{
+    return (pith2_is_subset(ptr1, ptr2) && pith2_is_subset(ptr2, ptr1)) ? 1 : 0;
+}
+
+
 
 /* Requires `opt' to be non-NULL */
 static int compare_patterns(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2,/*{{{*/
@@ -665,16 +735,28 @@ static int compare_patterns(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2,/*{{{*/
         state |= i;
     #endif
 
+    if (!pith2_test(ptr1, ptr2))
+        return 0;
+
+    if (opt->method & MDJVU_MATCHER_RAMPAGE)
+        return 1;
+
     #if USE_PITHDIFF
-        i = pithdiff_equivalence(i1, i2, opt->pithdiff_threshold, dpi);
-        if (i == -1) return 0; /* pithdiff has no right to veto at upper level */
-        state |= i;
+        if (opt->aggression > 0)
+        {
+            i = pithdiff_equivalence(i1, i2, opt->pithdiff_threshold, dpi);
+            if (i == -1) return 0; /* pithdiff has no right to veto at upper level */
+            state |= i;
+        }
     #endif
 
     #if USE_SOFTDIFF
-        i = softdiff_equivalence(i1, i2, opt->softdiff_threshold, dpi);
-        if (i == -1) return 0;  /* softdiff has no right to veto at upper level */
-        state |= i;
+        if (opt->aggression > 0)
+        {
+            i = softdiff_equivalence(i1, i2, opt->softdiff_threshold, dpi);
+            if (i == -1) return 0;  /* softdiff has no right to veto at upper level */
+            state |= i;
+        }
     #endif
 
     return state;
@@ -702,7 +784,14 @@ MDJVU_IMPLEMENT int mdjvu_match_patterns(mdjvu_pattern_t ptr1, mdjvu_pattern_t p
 MDJVU_IMPLEMENT void mdjvu_pattern_destroy(mdjvu_pattern_t p)/*{{{*/
 {
     Image *img = (Image *) p;
-    FREEV(img->pixels[0]);
-    FREEV(img->pixels);
+    if (img->pixels)
+        free_bitmap(img->pixels);
+
+    if (img->pith2_inner)
+        free_bitmap(img->pith2_inner);
+
+    if (img->pith2_outer)
+        free_bitmap_with_margins(img->pith2_outer);
+
     FREE(img);
 }/*}}}*/

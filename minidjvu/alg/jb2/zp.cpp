@@ -65,6 +65,11 @@
 #include <stdlib.h>
 #include "zp.h"
 
+ZPMemoryWatcher::~ZPMemoryWatcher()
+{
+}
+
+
 // NumContext {{{
 
 enum {numcontext_first_allocation_size = 512};
