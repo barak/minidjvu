@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * jb2.h - functions to load from JB2 raw streams (that's part of DjVu format)
+ * 2io.c - a stdio wrapper
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,24 +56,19 @@
  * +------------------------------------------------------------------
  */
 
+#include "config.h"
+#include <minidjvu.h>
+#include <stdio.h>
 
-/*
- * These functions return NULL if failed to read JB2.
- */
-MDJVU_FUNCTION mdjvu_image_t mdjvu_load_jb2(const char *path, mdjvu_error_t *);
-MDJVU_FUNCTION mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t, mdjvu_error_t *);
+MDJVU_IMPLEMENT mdjvu_file_t mdjvu_fopen(const char *path, const char *mode)
+    { return (mdjvu_file_t) fopen(path, mode); }
 
-/*
- * 1 - success, 0 - error
- * As for now, cannot save images that use shared dictionary.
- */
-MDJVU_FUNCTION int mdjvu_save_jb2(mdjvu_image_t, const char *path, mdjvu_error_t *);
-MDJVU_FUNCTION int mdjvu_file_save_jb2(mdjvu_image_t, mdjvu_file_t, mdjvu_error_t *);
+MDJVU_IMPLEMENT void mdjvu_fclose(mdjvu_file_t f)
+    { fclose((FILE *) f); }
 
-/*
- * This is called automatically by xxx_save_jb2() functions.
- * This function finds "cross-coding prototypes" (read DjVu spec).
- * It's VERY SLOW.
- */
+MDJVU_IMPLEMENT int32 mdjvu_fread(void *p, int32 size, int32 n, mdjvu_file_t f)
+    { return (int32) fread(p, size, n, (FILE *) f); }
 
-MDJVU_FUNCTION void mdjvu_find_prototypes(mdjvu_image_t);
+MDJVU_IMPLEMENT int32
+    mdjvu_fwrite(const void *p, int32 size, int32 n, mdjvu_file_t f)
+    { return (int32) fwrite(p, size, n, (FILE *) f); }

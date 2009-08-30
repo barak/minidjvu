@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * 3bitmap.c - routines for handling packed bitmaps
+ * 4bitmap.c - routines for handling packed bitmaps
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -66,7 +66,7 @@ typedef struct
 {
     unsigned char **data;
     int32 width, height;
-    int32 link_counter;
+    int32 index;
 } Bitmap;
 
 #define BYTES_PER_ROW(WIDTH) (((WIDTH) + 7) >> 3)
@@ -78,7 +78,7 @@ MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_bitmap_create(int32 width, int32 height)
     Bitmap *b = (Bitmap *) malloc(sizeof(Bitmap));
     b->width = width;
     b->height = height;
-    b->link_counter = 0;
+    b->index = -1;
     b->data = mdjvu_create_2d_array(BYTES_PER_ROW(width), height);
     return (mdjvu_bitmap_t) b;
 }
@@ -116,9 +116,13 @@ MDJVU_IMPLEMENT void mdjvu_bitmap_assign(mdjvu_bitmap_t dst, mdjvu_bitmap_t b)
 
 MDJVU_IMPLEMENT void mdjvu_bitmap_exchange(mdjvu_bitmap_t d, mdjvu_bitmap_t src)
 {
+    int32 d_index_backup = ((Bitmap *) d)->index;
+    int32 s_index_backup = ((Bitmap *) src)->index;
     Bitmap tmp = * (Bitmap *) d;
     * (Bitmap *) d = * (Bitmap *) src;
     * (Bitmap *) src = tmp;
+    ((Bitmap *) d)->index = d_index_backup;
+    ((Bitmap *) src)->index = s_index_backup;
 }
 
 
@@ -135,24 +139,17 @@ MDJVU_IMPLEMENT int32 mdjvu_bitmap_get_height(mdjvu_bitmap_t b)
     return BMP->height;
 }
 
-MDJVU_IMPLEMENT int32 mdjvu_bitmap_get_link_counter(mdjvu_bitmap_t b)
+MDJVU_IMPLEMENT int32 mdjvu_bitmap_get_index(mdjvu_bitmap_t b)
 {
-    return BMP->link_counter;
+    if (b)
+        return BMP->index;
+    else
+        return -1;
 }
 
-MDJVU_IMPLEMENT void mdjvu_bitmap_set_link_counter(mdjvu_bitmap_t b, int32 v)
+MDJVU_IMPLEMENT void mdjvu_bitmap_set_index(mdjvu_bitmap_t b, int32 v)
 {
-    BMP->link_counter = v;
-}
-
-MDJVU_IMPLEMENT void mdjvu_bitmap_link(mdjvu_bitmap_t b)
-{
-    BMP->link_counter++;
-}
-
-MDJVU_IMPLEMENT void mdjvu_bitmap_unlink(mdjvu_bitmap_t b)
-{
-    BMP->link_counter--;
+    BMP->index = v;
 }
 
 MDJVU_IMPLEMENT int32 mdjvu_bitmap_get_packed_row_size(mdjvu_bitmap_t b)
@@ -289,7 +286,7 @@ MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_bitmap_crop
         assert(left >= 0);
         assert(left + w <= BMP->width);
         assert(top >= 0);
-        assert(top + h >= BMP->height);
+        assert(top + h <= BMP->height);
 
         result = mdjvu_bitmap_create(w, h);
         buf = (unsigned char *) malloc(BMP->width);
@@ -359,11 +356,39 @@ MDJVU_IMPLEMENT void mdjvu_bitmap_get_bounding_box(mdjvu_bitmap_t b,
     *ph = bottom - top + 1;
 }
 
-MDJVU_FUNCTION mdjvu_bitmap_t
-mdjvu_bitmap_remove_margins(mdjvu_bitmap_t b, int32 *px, int32 *py)
+MDJVU_IMPLEMENT void mdjvu_bitmap_remove_margins
+    (mdjvu_bitmap_t b, int32 *px, int32 *py)
 {
     int32 w, h;
+    mdjvu_bitmap_t cropped;
     mdjvu_bitmap_get_bounding_box(b, px, py, &w, &h);
-    return mdjvu_bitmap_crop(b, *px, *py, w, h);
+    if (!*px && !*py && w == BMP->width && h == BMP->height)
+        return;
+    cropped = mdjvu_bitmap_crop(b, *px, *py, w, h);
+    mdjvu_bitmap_exchange(b, cropped);
+    mdjvu_bitmap_destroy(cropped);
+}
+
+/* _______________________________   misc   ________________________________ */
+
+/* This is a sub-optimal way to count mass.
+ * Run "fortune -m BITCOUNT" to see a better way...
+ */
+MDJVU_IMPLEMENT int32 mdjvu_bitmap_get_mass(mdjvu_bitmap_t b)
+{
+    int32 m = 0;
+    int32 w = BMP->width;
+    int32 h = BMP->height;
+    unsigned char *buf = (unsigned char *) malloc(w);
+    int32 y;
+    for (y = 0; y < h; y++)
+    {
+        int x;
+        mdjvu_bitmap_unpack_row_0_or_1(b, buf, y);
+        for (x = 0; x < w; x++)
+            m += buf[x];
+    }
+    free(buf);
+    return m;
 }
 

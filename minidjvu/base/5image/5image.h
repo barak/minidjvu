@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * 4image.h - manipulating split images, the main data structure of minidjvu
+ * 5image.h - manipulating split images, the main data structure of minidjvu
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -79,6 +79,10 @@ MDJVU_FUNCTION int32 mdjvu_image_get_height(mdjvu_image_t);
  */
 MDJVU_FUNCTION void mdjvu_image_freeze(mdjvu_image_t);
 
+/* Remove white margins from each bitmap and adjust blits accordingly. */
+MDJVU_FUNCTION void mdjvu_image_remove_bitmap_margins(mdjvu_image_t);
+
+
 /* _______________________________   blits   _______________________________ */
 
 /* Get the number of blits in a split image. */
@@ -96,6 +100,9 @@ MDJVU_FUNCTION void mdjvu_image_set_blit_bitmap(mdjvu_image_t, int32 blit_index,
 
 MDJVU_FUNCTION int32 mdjvu_image_add_blit(mdjvu_image_t, int32 x, int32 y, mdjvu_bitmap_t);
 
+MDJVU_FUNCTION void mdjvu_image_exchange_blits
+    (mdjvu_image_t, int32, int32);
+
 /* _________________________   bitmaps in an image   _______________________ */
 
 /* Get the number of bitmaps in a split image. */
@@ -107,18 +114,22 @@ MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_image_get_bitmap(mdjvu_image_t, int32);
 /* Append a bitmap. */
 MDJVU_FUNCTION int32 mdjvu_image_add_bitmap(mdjvu_image_t, mdjvu_bitmap_t);
 
+/* Exchange two bitmaps (bitmap pointers) and all additional info they have.
+ * Does not change the image look; does not touch blits.
+ */
+MDJVU_FUNCTION void mdjvu_image_exchange_bitmaps(mdjvu_image_t, int32, int32);
+
 /* Create a new bitmap and add it. */
 MDJVU_FUNCTION mdjvu_bitmap_t
 mdjvu_image_new_bitmap(mdjvu_image_t, int32 w, int32 h);
 
-MDJVU_FUNCTION void
-mdjvu_image_delete_bitmap_by_index(mdjvu_image_t, int32 index);
+MDJVU_FUNCTION void mdjvu_image_delete_bitmap(mdjvu_image_t, mdjvu_bitmap_t);
 
-MDJVU_FUNCTION void mdjvu_image_delete_bitmap(mdjvu_image_t, int32 index);
-
-/* Get the index of a bitmap by linear search. Returns -1 if not found. */
-MDJVU_FUNCTION int32
-mdjvu_image_get_bitmap_index(mdjvu_image_t, mdjvu_bitmap_t);
+/*
+ * Returns 1 if the bitmap indices are set correctly.
+ * (for using with assert())
+ */
+MDJVU_FUNCTION int mdjvu_image_check_indices(mdjvu_image_t);
 
 /* ______________________   additional info for images   ___________________ */
 
@@ -131,12 +142,47 @@ MDJVU_FUNCTION mdjvu_image_t mdjvu_image_get_dictionary(mdjvu_image_t);
 
 /* ______________________   additional info for bitmaps   __________________ */
 
+/* Prototypes */
+
+MDJVU_FUNCTION int mdjvu_image_has_prototypes
+    (mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_enable_prototypes
+    (mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_disable_prototypes
+    (mdjvu_image_t);
+MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_image_get_prototype
+    (mdjvu_image_t, mdjvu_bitmap_t);
+MDJVU_FUNCTION void mdjvu_image_set_prototype
+    (mdjvu_image_t, mdjvu_bitmap_t, mdjvu_bitmap_t prototype);
+
+/* Substitutions */
+MDJVU_FUNCTION int mdjvu_image_has_substitutions(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_enable_substitutions(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_disable_substitutions(mdjvu_image_t);
+MDJVU_FUNCTION mdjvu_bitmap_t
+    mdjvu_image_get_substitution(mdjvu_image_t, mdjvu_bitmap_t);
+MDJVU_FUNCTION void
+    mdjvu_image_set_substitution(mdjvu_image_t, mdjvu_bitmap_t, mdjvu_bitmap_t);
+
+/* is-a-letter flag (right now - always ON) */
+
+MDJVU_FUNCTION int mdjvu_image_bitmap_is_a_letter(mdjvu_image_t, mdjvu_bitmap_t);
+
+/* masses */
+
+MDJVU_FUNCTION int mdjvu_image_has_masses(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_enable_masses(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_disable_masses(mdjvu_image_t);
+MDJVU_FUNCTION int32 mdjvu_image_get_bitmap_mass(mdjvu_image_t, mdjvu_bitmap_t);
+
 
 /* _______________________________   render   ______________________________ */
 
 MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_render(mdjvu_image_t);
 
 /* _______________________________   wrapper   _____________________________ */
+
+/* DO NOT USE THIS YET */
 
 #ifdef MINIDJVU_WRAPPERS
 
@@ -147,9 +193,5 @@ MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_render(mdjvu_image_t);
          inline void set_resolution(int32 dpi)
              {return mdjvu_image_set_resolution(this, dpi);}
     };
-
-    #ifdef MINIDJVU_NO_WRAPPER_PREFIX
-        #define Image MinidjvuImage
-    #endif
 
 #endif

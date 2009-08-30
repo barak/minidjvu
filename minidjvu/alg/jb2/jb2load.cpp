@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * jb2.cpp - loading JB2 files by interpreting them record-by-record
+ * jb2load.cpp - loading JB2 files by interpreting them record-by-record
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -88,9 +88,7 @@ static mdjvu_bitmap_t decode_lib_shape/*{{{*/
     }
 
     int32 x, y;
-    mdjvu_bitmap_t cropped = mdjvu_bitmap_remove_margins(shape, &x, &y);
-    mdjvu_bitmap_exchange(cropped, shape);
-    mdjvu_bitmap_destroy(cropped);
+    mdjvu_bitmap_remove_margins(shape, &x, &y);
 
     if (with_blit)
     {
@@ -101,8 +99,14 @@ static mdjvu_bitmap_t decode_lib_shape/*{{{*/
     return shape;
 }/*}}}*/
 
-MDJVU_IMPLEMENT mdjvu_image_t mdjvu_load_from_jb2_file(mdjvu_file_t file)/*{{{*/
+#define COMPLAIN \
+{ \
+    if (perr) *perr = mdjvu_get_error(mdjvu_error_corrupted_jb2); \
+    return NULL; \
+}
+MDJVU_IMPLEMENT mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t file, mdjvu_error_t *perr)/*{{{*/
 {
+    if (perr) *perr = NULL;
     FILE *f = (FILE *) file;
     JB2Decoder jb2(f);
     ZPDecoder &zp = jb2.zp;
@@ -116,7 +120,7 @@ MDJVU_IMPLEMENT mdjvu_image_t mdjvu_load_from_jb2_file(mdjvu_file_t file)/*{{{*/
         t = jb2.decode_record_type();
     }
 
-    if (t != jb2_start_of_image) return NULL;
+    if (t != jb2_start_of_image) COMPLAIN;
 
     int32 w = zp.decode(jb2.image_size);
     int32 h = zp.decode(jb2.image_size);
@@ -156,7 +160,7 @@ MDJVU_IMPLEMENT mdjvu_image_t mdjvu_load_from_jb2_file(mdjvu_file_t file)/*{{{*/
                 {
                     mdjvu_image_destroy(img);
                     free(library);
-                    return NULL;
+                    COMPLAIN;
                 }
                 jb2.matching_symbol_index.set_interval(0, lib_count - 1);
                 int32 match = zp.decode(jb2.matching_symbol_index);
@@ -170,7 +174,7 @@ MDJVU_IMPLEMENT mdjvu_image_t mdjvu_load_from_jb2_file(mdjvu_file_t file)/*{{{*/
                 {
                     mdjvu_image_destroy(img);
                     free(library);
-                    return NULL;
+                    COMPLAIN;
                 }
                 jb2.matching_symbol_index.set_interval(0, lib_count - 1);
                 int32 match = zp.decode(jb2.matching_symbol_index);
@@ -184,7 +188,7 @@ MDJVU_IMPLEMENT mdjvu_image_t mdjvu_load_from_jb2_file(mdjvu_file_t file)/*{{{*/
                 {
                     mdjvu_image_destroy(img);
                     free(library);
-                    return NULL;
+                    COMPLAIN;
                 }
                 jb2.matching_symbol_index.set_interval(0, lib_count - 1);
                 int32 match = zp.decode(jb2.matching_symbol_index);
@@ -198,7 +202,7 @@ MDJVU_IMPLEMENT mdjvu_image_t mdjvu_load_from_jb2_file(mdjvu_file_t file)/*{{{*/
                 {
                     mdjvu_image_destroy(img);
                     free(library);
-                    return NULL;
+                    COMPLAIN;
                 }
                 jb2.matching_symbol_index.set_interval(0, lib_count - 1);
                 int32 match = zp.decode(jb2.matching_symbol_index);
@@ -231,16 +235,21 @@ MDJVU_IMPLEMENT mdjvu_image_t mdjvu_load_from_jb2_file(mdjvu_file_t file)/*{{{*/
             default:
                 free(library);
                 mdjvu_image_destroy(img);
-                return NULL;
+                COMPLAIN;
         } // switch
     } // while(1)
 }/*}}}*/
 
-MDJVU_IMPLEMENT mdjvu_image_t mdjvu_load_from_jb2(const char *path)
+MDJVU_IMPLEMENT mdjvu_image_t mdjvu_load_jb2(const char *path, mdjvu_error_t *perr)
 {
     FILE *f = fopen(path, "rb");
-    if (!f) return NULL;
-    mdjvu_image_t result = mdjvu_load_from_jb2_file((mdjvu_file_t) f);
+    if (perr) *perr = NULL;
+    if (!f)
+    {
+        if (perr) *perr = mdjvu_get_error(mdjvu_error_fopen_read);
+        return NULL;
+    }
+    mdjvu_image_t result = mdjvu_file_load_jb2((mdjvu_file_t) f, perr);
     fclose(f);
     return result;
 }

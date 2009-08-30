@@ -1,3 +1,11 @@
-../bin/minidjvu: minidjvu.c
+CFLAGS:=-pipe -g -I.. \
+        -Wall -Werror -Wshadow -pedantic-errors \
+       -Wpointer-arith -Waggregate-return \
+       -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations \
+       -Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align \
+       -D__STRICT_ANSI__
+
+
+../bin/minidjvu: minidjvu.c Makefile
 	mkdir -p $(dir $@)
-	g++ -Wall -g -I.. ../bin/libminidjvu.so $< -o $@
+	libtool gcc $(CFLAGS) -L../bin/ -lminidjvu $< -o $@

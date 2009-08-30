@@ -1,4 +1,12 @@
 ---
+0.2
+---
+    Added lossless compression (runs slow)
+    Added "smooth" filter (gains about 5% in file size)
+    Added minimal error-handling
+    Documentation is now nonzero!
+
+---
 0.1
 ---
 

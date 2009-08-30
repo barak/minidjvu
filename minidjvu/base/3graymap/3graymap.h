@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * 2graymap.c - very simple 2d array handling
+ * 3graymap.h - just a couple of functions, possibly will be bigger later
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,26 +56,12 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
-#include <stdlib.h>
+/* Create a two-dimensional array of pixels with initial value 0.
+ * The array is in fact one-dimensional, and you may use that.
+ * But do not permute the array of row pointers.
+ * The returned array must be released by mdjvu_destroy_2d_array().
+ */
+MDJVU_FUNCTION unsigned char **mdjvu_create_2d_array(int32 w, int32 h);
 
-MDJVU_IMPLEMENT unsigned char **mdjvu_create_2d_array(int32 w, int32 h)
-{
-    int32 i;
-    unsigned char *data, **result;
-    result = (unsigned char **) calloc(h, sizeof(unsigned char *) + w);
-    data = (unsigned char *) (result + h);
-
-    for (i = 0; i < h; i++)
-    {
-        result[i] = data + w * i;
-    }
-
-    return result;
-}
-
-MDJVU_IMPLEMENT void mdjvu_destroy_2d_array(unsigned char **p)
-{
-    free(p);
-}
+/* Destroy a two-dimensional pixel array. */
+MDJVU_FUNCTION void mdjvu_destroy_2d_array(unsigned char **);

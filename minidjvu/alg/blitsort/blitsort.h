@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * 1io.h - a stdio wrapper
+ * blitsort.h - sorting blits and bitmaps in an image
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,12 +56,4 @@
  * +------------------------------------------------------------------
  */
 
-typedef struct MinidjvuFile *mdjvu_file_t;
-
-MDJVU_FUNCTION mdjvu_file_t mdjvu_fopen(const char *path, const char *mode);
-MDJVU_FUNCTION void mdjvu_fclose(mdjvu_file_t);
-
-MDJVU_FUNCTION int32
-    mdjvu_fread(void *, int32 size, int32 n, mdjvu_file_t);
-MDJVU_FUNCTION int32
-    mdjvu_fwrite(const void *, int32 size, int32 n, mdjvu_file_t);
+MDJVU_FUNCTION void mdjvu_sort_blits_and_bitmaps(mdjvu_image_t);

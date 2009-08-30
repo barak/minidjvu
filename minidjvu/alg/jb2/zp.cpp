@@ -242,9 +242,9 @@ static struct Initer {Initer(){init();}} initer;
 
 // Encoder {{{
 
-inline void ZPEncoder::emit_byte(unsigned char byte)/*{{{*/
+inline void ZPEncoder::emit_byte(unsigned char b)/*{{{*/
 {
-    fputc(byte, file);
+    fputc(b, file);
 }/*}}}*/
 ZPEncoder::ZPEncoder(FILE *f)/*{{{*/
     : file(f), a(0), nrun(0), subend(0), buffer(0xffffff),
@@ -488,11 +488,11 @@ void ZPEncoder::encode(Bit bit, ZPBitContext &context) /*{{{*/
 
 // Decoder {{{
 
-inline bool ZPDecoder::next_byte(unsigned char &byte)/*{{{*/
+inline bool ZPDecoder::next_byte(unsigned char &b)/*{{{*/
 {
     int c = fgetc(file);
     if (c == EOF) return false;
-    byte = c;
+    b = c;
     return true;
 }/*}}}*/
 ZPDecoder::ZPDecoder(FILE *f)/*{{{*/

@@ -217,10 +217,10 @@ void JB2BitmapCoder::code_image_by_refinement/*{{{*/
 
     y = shift_y - 1;
     if (y >= 0 && y < ph)
-        mdjvu_bitmap_unpack_row(prototype, prototype_sm + proto_unpack, y);
+        mdjvu_bitmap_unpack_row_0_or_1(prototype, prototype_sm + proto_unpack, y);
     y = shift_y;
     if (y >= 0 && y < ph)
-        mdjvu_bitmap_unpack_row(prototype, prototype_dn + proto_unpack, y);
+        mdjvu_bitmap_unpack_row_0_or_1(prototype, prototype_dn + proto_unpack, y);
 
     for (y = 0; y < (int) h; y++)
     {
@@ -240,7 +240,7 @@ void JB2BitmapCoder::code_image_by_refinement/*{{{*/
                 prototype_sm = prototype_dn;
                 prototype_dn = t;
 
-                mdjvu_bitmap_unpack_row(prototype,
+                mdjvu_bitmap_unpack_row_0_or_1(prototype,
                                        prototype_dn + proto_unpack,
                                        proto_y_dn);
             }
@@ -360,7 +360,7 @@ void JB2BitmapEncoder::save_row(mdjvu_bitmap_t sh, int y, unsigned char *row){}
 
 void JB2BitmapEncoder::load_row(mdjvu_bitmap_t sh, int y, unsigned char *row)
 {
-    mdjvu_bitmap_unpack_row(sh, row, y);
+    mdjvu_bitmap_unpack_row_0_or_1(sh, row, y);
 }
 
 // JB2BitmapEncoder }}}

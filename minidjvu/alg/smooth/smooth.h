@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * 1io.c - a stdio wrapper
+ * smooth.h - pre-filtering bitmap before splitting
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,19 +56,4 @@
  * +------------------------------------------------------------------
  */
 
-#include "config.h"
-#include <minidjvu.h>
-#include <stdio.h>
-
-MDJVU_IMPLEMENT mdjvu_file_t mdjvu_fopen(const char *path, const char *mode)
-    { return (mdjvu_file_t) fopen(path, mode); }
-
-MDJVU_IMPLEMENT void mdjvu_fclose(mdjvu_file_t f)
-    { fclose((FILE *) f); }
-
-MDJVU_IMPLEMENT int32 mdjvu_fread(void *p, int32 size, int32 n, mdjvu_file_t f)
-    { return (int32) fread(p, size, n, (FILE *) f); }
-
-MDJVU_IMPLEMENT int32
-    mdjvu_fwrite(const void *p, int32 size, int32 n, mdjvu_file_t f)
-    { return (int32) fwrite(p, size, n, (FILE *) f); }
+MDJVU_FUNCTION void mdjvu_smooth(mdjvu_bitmap_t b);

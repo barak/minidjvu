@@ -56,4 +56,7 @@
  * +------------------------------------------------------------------
  */
 
+#include <minidjvu/alg/smooth/smooth.h>
+#include <minidjvu/alg/split/split.h>
+#include <minidjvu/alg/blitsort/blitsort.h>
 #include <minidjvu/alg/jb2/jb2.h>

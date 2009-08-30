@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * jb2.h - functions to load from JB2 raw streams (that's part of DjVu format)
+ * 1error.c - error handling
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,24 +56,40 @@
  * +------------------------------------------------------------------
  */
 
+#include "config.h"
+#include "minidjvu.h"
 
-/*
- * These functions return NULL if failed to read JB2.
- */
-MDJVU_FUNCTION mdjvu_image_t mdjvu_load_jb2(const char *path, mdjvu_error_t *);
-MDJVU_FUNCTION mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t, mdjvu_error_t *);
+MDJVU_IMPLEMENT const char *mdjvu_get_error_message(mdjvu_error_t error)
+{
+    return (const char *) error;
+}
 
-/*
- * 1 - success, 0 - error
- * As for now, cannot save images that use shared dictionary.
- */
-MDJVU_FUNCTION int mdjvu_save_jb2(mdjvu_image_t, const char *path, mdjvu_error_t *);
-MDJVU_FUNCTION int mdjvu_file_save_jb2(mdjvu_image_t, mdjvu_file_t, mdjvu_error_t *);
-
-/*
- * This is called automatically by xxx_save_jb2() functions.
- * This function finds "cross-coding prototypes" (read DjVu spec).
- * It's VERY SLOW.
- */
-
-MDJVU_FUNCTION void mdjvu_find_prototypes(mdjvu_image_t);
+MDJVU_IMPLEMENT mdjvu_error_t mdjvu_get_error(MinidjvuErrorType e)
+{
+    switch(e)
+    {
+        case mdjvu_error_fopen_write:
+            return (mdjvu_error_t) "unable to write to file";
+        case mdjvu_error_fopen_read:
+            return (mdjvu_error_t) "unable to read from file";
+        case mdjvu_error_io:
+            return (mdjvu_error_t) "I/O error";
+        case mdjvu_error_corrupted_pbm:
+            return (mdjvu_error_t) "bad PBM file";
+        case mdjvu_error_corrupted_bmp:
+            return (mdjvu_error_t) "bad Windows BMP file";
+        case mdjvu_error_corrupted_djvu:
+            return (mdjvu_error_t) "bad DjVu file";
+        case mdjvu_error_corrupted_jb2:
+            return (mdjvu_error_t) "bad bilevel data in DjVu file";
+        case mdjvu_error_wrong_djvu_type:
+            return (mdjvu_error_t) "unsupported type of DjVu file";
+        case mdjvu_error_djvu_no_Sjbz:
+            return (mdjvu_error_t) "bilevel data not found in DjVu file";
+        case mdjvu_error_recursive_prototypes:
+            return (mdjvu_error_t) "somehow prototype references recursed";
+        default:
+            return (mdjvu_error_t)
+                "some weird error happened, probably caused by a bug";
+    }
+}

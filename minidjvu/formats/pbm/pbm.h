@@ -56,11 +56,14 @@
  * +------------------------------------------------------------------
  */
 
-MDJVU_FUNCTION int mdjvu_save_to_pbm(mdjvu_bitmap_t, const char *path);
-MDJVU_FUNCTION int mdjvu_save_to_pbm_file(mdjvu_bitmap_t, mdjvu_file_t);
+/*
+ * 1 - success, 0 - failure
+ */
+MDJVU_FUNCTION int mdjvu_save_pbm(mdjvu_bitmap_t, const char *path, mdjvu_error_t *);
+MDJVU_FUNCTION int mdjvu_file_save_pbm(mdjvu_bitmap_t, mdjvu_file_t, mdjvu_error_t *);
 
 /*
- * These functions return NULL if failed to read PBM.
+ * These functions return NULL if failed
  */
-MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_load_from_pbm(const char *path);
-MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_load_from_pbm_file(mdjvu_file_t);
+MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_load_pbm(const char *path, mdjvu_error_t *);
+MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_file_load_pbm(mdjvu_file_t, mdjvu_error_t *);

@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * jb2.h - functions to load from JB2 raw streams (that's part of DjVu format)
+ * 1error.h - error handling
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,24 +56,21 @@
  * +------------------------------------------------------------------
  */
 
+typedef const struct MinidjvuError *mdjvu_error_t;
 
-/*
- * These functions return NULL if failed to read JB2.
- */
-MDJVU_FUNCTION mdjvu_image_t mdjvu_load_jb2(const char *path, mdjvu_error_t *);
-MDJVU_FUNCTION mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t, mdjvu_error_t *);
+typedef enum
+{
+    mdjvu_error_fopen_write,
+    mdjvu_error_fopen_read,
+    mdjvu_error_io,
+    mdjvu_error_corrupted_pbm,
+    mdjvu_error_corrupted_bmp,
+    mdjvu_error_corrupted_djvu,
+    mdjvu_error_corrupted_jb2,
+    mdjvu_error_wrong_djvu_type,
+    mdjvu_error_djvu_no_Sjbz,
+    mdjvu_error_recursive_prototypes
+} MinidjvuErrorType;
 
-/*
- * 1 - success, 0 - error
- * As for now, cannot save images that use shared dictionary.
- */
-MDJVU_FUNCTION int mdjvu_save_jb2(mdjvu_image_t, const char *path, mdjvu_error_t *);
-MDJVU_FUNCTION int mdjvu_file_save_jb2(mdjvu_image_t, mdjvu_file_t, mdjvu_error_t *);
-
-/*
- * This is called automatically by xxx_save_jb2() functions.
- * This function finds "cross-coding prototypes" (read DjVu spec).
- * It's VERY SLOW.
- */
-
-MDJVU_FUNCTION void mdjvu_find_prototypes(mdjvu_image_t);
+MDJVU_FUNCTION const char *mdjvu_get_error_message(mdjvu_error_t);
+MDJVU_FUNCTION mdjvu_error_t mdjvu_get_error(MinidjvuErrorType);

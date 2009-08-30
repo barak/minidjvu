@@ -56,6 +56,14 @@
  * +------------------------------------------------------------------
  */
 
-MDJVU_FUNCTION void mdjvu_locate_jb2_chunk(mdjvu_file_t file);
-MDJVU_FUNCTION mdjvu_image_t mdjvu_load_from_djvu_file(mdjvu_file_t file);
-MDJVU_FUNCTION mdjvu_image_t mdjvu_load_from_djvu(const char *path);
+MDJVU_FUNCTION int mdjvu_locate_jb2_chunk(mdjvu_file_t file, mdjvu_error_t *);
+MDJVU_FUNCTION mdjvu_image_t mdjvu_file_load_djvu_page(mdjvu_file_t file, mdjvu_error_t *);
+MDJVU_FUNCTION mdjvu_image_t mdjvu_load_djvu_page(const char *path, mdjvu_error_t *);
+
+/*
+ * 1 - success, 0 - failure
+ * After mdjvu_file_save_djvu_page() the file cursor is before the JB2 chunk.
+ */
+MDJVU_FUNCTION int mdjvu_file_save_djvu_page(mdjvu_image_t, mdjvu_file_t, mdjvu_error_t *);
+MDJVU_FUNCTION int mdjvu_save_djvu_page(mdjvu_image_t image, const char *path, mdjvu_error_t *);
+

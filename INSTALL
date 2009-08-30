@@ -14,7 +14,7 @@ __________________
 If you want to compile it all manually, read this.
 
 The release directory should be treated as an include directory
-(usually -I option). That applies both to the library and the program.
+(usually -I or /I option). That applies both to the library and the program.
 
 The library is built from sources in `minidjvu' subdirectory.
 The program is built from sources in `src' subdirectory.

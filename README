@@ -1,11 +1,15 @@
-This is `minidjvu' (version 0.1), a library that supports
-decompression of single-page black-and-white DjVu files.
+This is minidjvu, version 0.2.
+
+
+It's a library that supports decompression and lossless compression 
+of black-and-white DjVu pages.
 
 Under Windows, it compiles into a DLL (unlike DjVuLibre).
 I hope that will make adding minimal DjVu support into programs easier.
 
-It also comes with an example program, named also `minidjvu',
-which decompresses DjVu into PBM or Windows BMP from the command line.
+It also comes with an example command-line program, named also `minidjvu',
+which can compress and decompress DjVu files and "smooth" bitmaps (use -s).
+Bitmaps can be read/written in PBM and Windows BMP formats.
 
 
-This is a very early release. The library interface is _unstable_.
+This is an early release. The library interface is _unstable_.

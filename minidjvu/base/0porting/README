@@ -1,0 +1,25 @@
+"0porting" keeps several typedefs and MDJVU_FUNCTION/MDJVU_IMPLEMENT macros.
+
+To compile a native Windows DLL, you need to put "__declspec(dllexport)" before
+every exported function. To use a DLL, you have to put "__declspec(dllimport)"
+before every function prototype you use. That's why we need macros here.
+
+So, a function prototype
+
+    MDJVU_FUNCTION void mdjvu_foo(void);
+
+under Windows (when compiling the library) will expand into
+
+    __declspec(dllexport) void mdjvu_foo(void);
+
+and when compiling any other application - into
+
+    __declspec(dllimport) void mdjvu_foo(void);
+
+Under Linux this will lead to
+
+    void mdjvu_foo(void);
+
+in both cases.
+
+That was for C. There's also C++ with its `extern "C"'.

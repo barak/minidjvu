@@ -1,0 +1,114 @@
+<HTML>
+<H1>minidjvu: how to compress into DjVu</H1>
+
+This file describes minidjvu 0.2.
+Version 0.1 couldn't compress at all.
+<P>
+See also: <a href="decode.html">how to decode a DjVu page</a>
+<HR>
+<H3>Step 0: get things working</H3>
+Add this include line to you source files that use minidjvu:
+<PRE>
+    #include &lt;minidjvu.h&gt;
+</PRE>
+I'll assume that your compiler can find the minidjvu headers
+and your linker can link against the library. If not, try to read INSTALL
+or README, or try to add the parent release directory into the header search path.
+<P>
+This examples also require
+<PRE>
+    #include &lt;assert.h&gt;
+    #include &lt;stdio.h&gt;
+    #include &lt;stdlib.h&gt;
+</PRE>
+
+<HR>
+<H3>Step 1: get the bitmap to compress</H3>
+
+There are many ways to get a bitmap, but only loading from files is demonstrated here.
+<P>
+To load a Windows BMP file, use <I>mdjvu_load_bmp()</I>; here's the example with
+error handling:
+
+<PRE>
+    const char *input = "your_input_file_name_here.bmp";
+    mdjvu_error_t error;
+    mdjvu_bitmap_t bitmap = mdjvu_load_bmp(input, &amp;error);
+    if (!bitmap)
+    {
+        fprintf(stderr, "%s: %s\n", input, mdjvu_get_error_message(error));
+        exit(1);
+    }
+</PRE>
+
+PBM files are read in the same way with <I>mdjvu_load_pbm()</I>:
+
+<PRE>
+    const char *input = "your_input_file_name_here.pbm";
+    mdjvu_error_t error;
+    mdjvu_bitmap_t bitmap = mdjvu_load_pbm(input, &amp;error);
+    if (!bitmap)
+    {
+        fprintf(stderr, "%s: %s\n", input, mdjvu_get_error_message(error));
+        exit(1);
+    }
+</PRE>
+
+<HR>
+<H3>Step 2: split the bitmap</H3>
+We have the bitmap now; but we need a split image.
+A split image, or simply an image, is a sequence of commands "put (a bitmap)
+at point x = (an integer), y = (an integer)". An image is obtained from a bitmap by splitting.
+<P>
+You have to supply the resolution (in dots per inch) and a pointer to options,
+which may be NULL.
+<PRE>
+    int32 dpi = 300;    // change the resolution if necessary
+    mdjvu_image_t image = mdjvu_split(bitmap, dpi, NULL);
+    assert(image);
+</PRE>
+
+<HR>
+<H3>Step 3 (optional): remove the white margins</H3>
+Saving the image in DjVu does not work if some bitmaps in it have white edges.
+If your image comes from mdjvu_split() or mdjvu_load_djvu_page(),
+then there's nothing to worry about and you may skip this step.
+Otherwise, remove unnecessary margins by this call:
+<PRE>
+    mdjvu_image_remove_bitmap_margins(image);
+</PRE>
+
+<HR>
+<H3>Step 4: sort the letters</H3>
+This is an easy step:
+<PRE>
+    mdjvu_sort_blits_and_bitmaps(image);
+</PRE>
+In fact this is optional but unsorted images compress worse.
+
+<HR>
+<H3>Step 5: save the image</H3>
+Just one call to mdjvu_save_djvu_page() does the job.
+The file is silently rewritten if it exists.
+<P>
+Here's an example of dealing with possible errors:
+<PRE>
+    const char *output = "your_output_file_name_here.djvu";
+    mdjvu_error_t error;
+    if (!mdjvu_save_djvu_page(image, output, &amp;error))
+    {
+        fprintf(stderr, "%s: %s\n", output, mdjvu_get_error_message(error));
+        exit(1);
+    }
+</PRE>
+For the sake of completeness, there's a second declaration of <I>error</I>
+in this example. Obviously, you should remove it if you plan to compile this.
+<HR>
+<H3>Step 6: clean up</H3>
+If you no longer need the image and the bitmap, destroy them:
+<PRE>
+    mdjvu_image_destroy(image);
+    mdjvu_bitmap_destroy(bitmap);
+</PRE>
+You could as well destroy the bitmap immediately after splitting it.
+</HTML>

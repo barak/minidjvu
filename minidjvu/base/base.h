@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * base.h - an intermediate header to include all basic headers in proper order
+ * base.h - an intermediate header to include all `base' headers in proper order
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -57,7 +57,8 @@
  */
 
 #include <minidjvu/base/0porting/0porting.h>
-#include <minidjvu/base/1io/1io.h>
-#include <minidjvu/base/2graymap/2graymap.h>
-#include <minidjvu/base/3bitmap/3bitmap.h>
-#include <minidjvu/base/4image/4image.h>
+#include <minidjvu/base/1error/1error.h>
+#include <minidjvu/base/2io/2io.h>
+#include <minidjvu/base/3graymap/3graymap.h>
+#include <minidjvu/base/4bitmap/4bitmap.h>
+#include <minidjvu/base/5image/5image.h>

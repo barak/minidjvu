@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * jb2.h - functions to load from JB2 raw streams (that's part of DjVu format)
+ * split.h - splitting bitmaps to letters
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,24 +56,16 @@
  * +------------------------------------------------------------------
  */
 
+typedef struct MinidjvuSplitOptions *mdjvu_split_options_t;
 
+
+MDJVU_FUNCTION mdjvu_split_options_t mdjvu_split_options_create(void);
 /*
- * These functions return NULL if failed to read JB2.
+ * This is only a recomendation, nothing is guaranteed.
  */
-MDJVU_FUNCTION mdjvu_image_t mdjvu_load_jb2(const char *path, mdjvu_error_t *);
-MDJVU_FUNCTION mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t, mdjvu_error_t *);
+MDJVU_FUNCTION void mdjvu_split_options_set_maximum_shape_size(mdjvu_split_options_t, int32 s);
+MDJVU_FUNCTION void mdjvu_split_options_destroy(mdjvu_split_options_t);
 
-/*
- * 1 - success, 0 - error
- * As for now, cannot save images that use shared dictionary.
- */
-MDJVU_FUNCTION int mdjvu_save_jb2(mdjvu_image_t, const char *path, mdjvu_error_t *);
-MDJVU_FUNCTION int mdjvu_file_save_jb2(mdjvu_image_t, mdjvu_file_t, mdjvu_error_t *);
 
-/*
- * This is called automatically by xxx_save_jb2() functions.
- * This function finds "cross-coding prototypes" (read DjVu spec).
- * It's VERY SLOW.
- */
-
-MDJVU_FUNCTION void mdjvu_find_prototypes(mdjvu_image_t);
+MDJVU_FUNCTION mdjvu_image_t
+    mdjvu_split(mdjvu_bitmap_t, int32 dpi, mdjvu_split_options_t);

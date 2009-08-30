@@ -66,7 +66,7 @@
 struct JB2Rect
 {
     int left, top, width, height;
-    inline JB2Rect::JB2Rect() {}
+    inline JB2Rect() {}
     inline JB2Rect(int l, int t, int w, int h)
         : left(l), top(t), width(w), height(h) {}
 };

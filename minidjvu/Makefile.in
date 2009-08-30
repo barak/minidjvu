@@ -84,8 +84,8 @@ am__include = @am__include@
 am__quote = @am__quote@
 install_sh = @install_sh@
 lib_LTLIBRARIES = libminidjvu.la
-libminidjvu_la_SOURCES = ./formats/bmp/bmp.c ./formats/djvu/djvu.c ./formats/pbm/pbm.c ./base/4image/4image.c ./base/4image/render.c ./base/0porting/0porting.c ./base/1io/1io.c ./base/2graymap/2graymap.c ./base/3bitmap/3bitmap.c ./alg/jb2/jb2.cpp ./alg/jb2/zp.cpp ./alg/jb2/bmpcoder.cpp ./alg/jb2/jb2coder.cpp ./version.c
-LDFLAGS = -version-info 0:0
+libminidjvu_la_SOURCES = ./alg/smooth/smooth.c ./alg/blitsort/blitsort.c ./alg/split/split.c ./alg/jb2/proto.c ./alg/jb2/zp.cpp ./alg/jb2/bmpcoder.cpp ./alg/jb2/jb2coder.cpp ./alg/jb2/jb2load.cpp ./alg/jb2/jb2save.cpp ./formats/djvu/djvuload.c ./formats/djvu/djvusave.c ./formats/bmp/bmp.c ./formats/pbm/pbm.c ./base/0porting/0porting.c ./base/4bitmap/4bitmap.c ./base/5image/5image.c ./base/5image/render.c ./base/1error/1error.c ./base/2io/2io.c ./base/3graymap/3graymap.c ./version.c
+LDFLAGS = -version-info 1:0:0
 INCLUDES = -I..
 subdir = minidjvu
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -94,9 +94,10 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 
 libminidjvu_la_LDFLAGS =
 libminidjvu_la_LIBADD =
-am_libminidjvu_la_OBJECTS = bmp.lo djvu.lo pbm.lo 4image.lo render.lo \
-	0porting.lo 1io.lo 2graymap.lo 3bitmap.lo jb2.lo zp.lo \
-	bmpcoder.lo jb2coder.lo version.lo
+am_libminidjvu_la_OBJECTS = smooth.lo blitsort.lo split.lo proto.lo \
+	zp.lo bmpcoder.lo jb2coder.lo jb2load.lo jb2save.lo djvuload.lo \
+	djvusave.lo bmp.lo pbm.lo 0porting.lo 4bitmap.lo 5image.lo \
+	render.lo 1error.lo 2io.lo 3graymap.lo version.lo
 libminidjvu_la_OBJECTS = $(am_libminidjvu_la_OBJECTS)
 
 DEFS = @DEFS@
@@ -105,13 +106,17 @@ CPPFLAGS = @CPPFLAGS@
 LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/0porting.Plo ./$(DEPDIR)/1io.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/2graymap.Plo ./$(DEPDIR)/3bitmap.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/4image.Plo ./$(DEPDIR)/bmp.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/bmpcoder.Plo ./$(DEPDIR)/djvu.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/jb2.Plo ./$(DEPDIR)/jb2coder.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/pbm.Plo ./$(DEPDIR)/render.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/version.Plo ./$(DEPDIR)/zp.Plo
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/0porting.Plo ./$(DEPDIR)/1error.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/2io.Plo ./$(DEPDIR)/3graymap.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/4bitmap.Plo ./$(DEPDIR)/5image.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/blitsort.Plo ./$(DEPDIR)/bmp.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/bmpcoder.Plo ./$(DEPDIR)/djvuload.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/djvusave.Plo ./$(DEPDIR)/jb2coder.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/jb2load.Plo ./$(DEPDIR)/jb2save.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/pbm.Plo ./$(DEPDIR)/proto.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/render.Plo ./$(DEPDIR)/smooth.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/split.Plo ./$(DEPDIR)/version.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/zp.Plo
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
@@ -164,19 +169,26 @@ uninstall-libLTLIBRARIES:
 
 clean-libLTLIBRARIES:
 	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
-bmp.lo: ./formats/bmp/bmp.c
-djvu.lo: ./formats/djvu/djvu.c
-pbm.lo: ./formats/pbm/pbm.c
-4image.lo: ./base/4image/4image.c
-render.lo: ./base/4image/render.c
-0porting.lo: ./base/0porting/0porting.c
-1io.lo: ./base/1io/1io.c
-2graymap.lo: ./base/2graymap/2graymap.c
-3bitmap.lo: ./base/3bitmap/3bitmap.c
-jb2.lo: ./alg/jb2/jb2.cpp
+smooth.lo: ./alg/smooth/smooth.c
+blitsort.lo: ./alg/blitsort/blitsort.c
+split.lo: ./alg/split/split.c
+proto.lo: ./alg/jb2/proto.c
 zp.lo: ./alg/jb2/zp.cpp
 bmpcoder.lo: ./alg/jb2/bmpcoder.cpp
 jb2coder.lo: ./alg/jb2/jb2coder.cpp
+jb2load.lo: ./alg/jb2/jb2load.cpp
+jb2save.lo: ./alg/jb2/jb2save.cpp
+djvuload.lo: ./formats/djvu/djvuload.c
+djvusave.lo: ./formats/djvu/djvusave.c
+bmp.lo: ./formats/bmp/bmp.c
+pbm.lo: ./formats/pbm/pbm.c
+0porting.lo: ./base/0porting/0porting.c
+4bitmap.lo: ./base/4bitmap/4bitmap.c
+5image.lo: ./base/5image/5image.c
+render.lo: ./base/5image/render.c
+1error.lo: ./base/1error/1error.c
+2io.lo: ./base/2io/2io.c
+3graymap.lo: ./base/3graymap/3graymap.c
 version.lo: ./version.c
 libminidjvu.la: $(libminidjvu_la_OBJECTS) $(libminidjvu_la_DEPENDENCIES) 
 	$(CXXLINK) -rpath $(libdir) $(libminidjvu_la_LDFLAGS) $(libminidjvu_la_OBJECTS) $(libminidjvu_la_LIBADD) $(LIBS)
@@ -188,17 +200,24 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/0porting.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/1io.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/2graymap.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/3bitmap.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/4image.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/1error.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/2io.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/3graymap.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/4bitmap.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/5image.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/blitsort.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bmp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bmpcoder.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/djvu.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jb2.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/djvuload.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/djvusave.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jb2coder.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jb2load.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jb2save.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pbm.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/proto.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/render.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smooth.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/split.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/version.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/zp.Plo@am__quote@
 
@@ -223,6 +242,114 @@ distclean-depend:
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LTCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 
+smooth.o: ./alg/smooth/smooth.c
+@AMDEP_TRUE@	source='./alg/smooth/smooth.c' object='smooth.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/smooth.Po' tmpdepfile='$(DEPDIR)/smooth.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o smooth.o `test -f './alg/smooth/smooth.c' || echo '$(srcdir)/'`./alg/smooth/smooth.c
+
+smooth.obj: ./alg/smooth/smooth.c
+@AMDEP_TRUE@	source='./alg/smooth/smooth.c' object='smooth.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/smooth.Po' tmpdepfile='$(DEPDIR)/smooth.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o smooth.obj `cygpath -w ./alg/smooth/smooth.c`
+
+smooth.lo: ./alg/smooth/smooth.c
+@AMDEP_TRUE@	source='./alg/smooth/smooth.c' object='smooth.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/smooth.Plo' tmpdepfile='$(DEPDIR)/smooth.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o smooth.lo `test -f './alg/smooth/smooth.c' || echo '$(srcdir)/'`./alg/smooth/smooth.c
+
+blitsort.o: ./alg/blitsort/blitsort.c
+@AMDEP_TRUE@	source='./alg/blitsort/blitsort.c' object='blitsort.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/blitsort.Po' tmpdepfile='$(DEPDIR)/blitsort.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o blitsort.o `test -f './alg/blitsort/blitsort.c' || echo '$(srcdir)/'`./alg/blitsort/blitsort.c
+
+blitsort.obj: ./alg/blitsort/blitsort.c
+@AMDEP_TRUE@	source='./alg/blitsort/blitsort.c' object='blitsort.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/blitsort.Po' tmpdepfile='$(DEPDIR)/blitsort.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o blitsort.obj `cygpath -w ./alg/blitsort/blitsort.c`
+
+blitsort.lo: ./alg/blitsort/blitsort.c
+@AMDEP_TRUE@	source='./alg/blitsort/blitsort.c' object='blitsort.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/blitsort.Plo' tmpdepfile='$(DEPDIR)/blitsort.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o blitsort.lo `test -f './alg/blitsort/blitsort.c' || echo '$(srcdir)/'`./alg/blitsort/blitsort.c
+
+split.o: ./alg/split/split.c
+@AMDEP_TRUE@	source='./alg/split/split.c' object='split.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/split.Po' tmpdepfile='$(DEPDIR)/split.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o split.o `test -f './alg/split/split.c' || echo '$(srcdir)/'`./alg/split/split.c
+
+split.obj: ./alg/split/split.c
+@AMDEP_TRUE@	source='./alg/split/split.c' object='split.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/split.Po' tmpdepfile='$(DEPDIR)/split.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o split.obj `cygpath -w ./alg/split/split.c`
+
+split.lo: ./alg/split/split.c
+@AMDEP_TRUE@	source='./alg/split/split.c' object='split.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/split.Plo' tmpdepfile='$(DEPDIR)/split.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o split.lo `test -f './alg/split/split.c' || echo '$(srcdir)/'`./alg/split/split.c
+
+proto.o: ./alg/jb2/proto.c
+@AMDEP_TRUE@	source='./alg/jb2/proto.c' object='proto.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/proto.Po' tmpdepfile='$(DEPDIR)/proto.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o proto.o `test -f './alg/jb2/proto.c' || echo '$(srcdir)/'`./alg/jb2/proto.c
+
+proto.obj: ./alg/jb2/proto.c
+@AMDEP_TRUE@	source='./alg/jb2/proto.c' object='proto.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/proto.Po' tmpdepfile='$(DEPDIR)/proto.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o proto.obj `cygpath -w ./alg/jb2/proto.c`
+
+proto.lo: ./alg/jb2/proto.c
+@AMDEP_TRUE@	source='./alg/jb2/proto.c' object='proto.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/proto.Plo' tmpdepfile='$(DEPDIR)/proto.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o proto.lo `test -f './alg/jb2/proto.c' || echo '$(srcdir)/'`./alg/jb2/proto.c
+
+djvuload.o: ./formats/djvu/djvuload.c
+@AMDEP_TRUE@	source='./formats/djvu/djvuload.c' object='djvuload.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/djvuload.Po' tmpdepfile='$(DEPDIR)/djvuload.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o djvuload.o `test -f './formats/djvu/djvuload.c' || echo '$(srcdir)/'`./formats/djvu/djvuload.c
+
+djvuload.obj: ./formats/djvu/djvuload.c
+@AMDEP_TRUE@	source='./formats/djvu/djvuload.c' object='djvuload.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/djvuload.Po' tmpdepfile='$(DEPDIR)/djvuload.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o djvuload.obj `cygpath -w ./formats/djvu/djvuload.c`
+
+djvuload.lo: ./formats/djvu/djvuload.c
+@AMDEP_TRUE@	source='./formats/djvu/djvuload.c' object='djvuload.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/djvuload.Plo' tmpdepfile='$(DEPDIR)/djvuload.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o djvuload.lo `test -f './formats/djvu/djvuload.c' || echo '$(srcdir)/'`./formats/djvu/djvuload.c
+
+djvusave.o: ./formats/djvu/djvusave.c
+@AMDEP_TRUE@	source='./formats/djvu/djvusave.c' object='djvusave.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/djvusave.Po' tmpdepfile='$(DEPDIR)/djvusave.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o djvusave.o `test -f './formats/djvu/djvusave.c' || echo '$(srcdir)/'`./formats/djvu/djvusave.c
+
+djvusave.obj: ./formats/djvu/djvusave.c
+@AMDEP_TRUE@	source='./formats/djvu/djvusave.c' object='djvusave.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/djvusave.Po' tmpdepfile='$(DEPDIR)/djvusave.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o djvusave.obj `cygpath -w ./formats/djvu/djvusave.c`
+
+djvusave.lo: ./formats/djvu/djvusave.c
+@AMDEP_TRUE@	source='./formats/djvu/djvusave.c' object='djvusave.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/djvusave.Plo' tmpdepfile='$(DEPDIR)/djvusave.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o djvusave.lo `test -f './formats/djvu/djvusave.c' || echo '$(srcdir)/'`./formats/djvu/djvusave.c
+
 bmp.o: ./formats/bmp/bmp.c
 @AMDEP_TRUE@	source='./formats/bmp/bmp.c' object='bmp.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@	depfile='$(DEPDIR)/bmp.Po' tmpdepfile='$(DEPDIR)/bmp.TPo' @AMDEPBACKSLASH@
@@ -240,24 +367,6 @@ bmp.lo: ./formats/bmp/bmp.c
 @AMDEP_TRUE@	depfile='$(DEPDIR)/bmp.Plo' tmpdepfile='$(DEPDIR)/bmp.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bmp.lo `test -f './formats/bmp/bmp.c' || echo '$(srcdir)/'`./formats/bmp/bmp.c
-
-djvu.o: ./formats/djvu/djvu.c
-@AMDEP_TRUE@	source='./formats/djvu/djvu.c' object='djvu.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/djvu.Po' tmpdepfile='$(DEPDIR)/djvu.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o djvu.o `test -f './formats/djvu/djvu.c' || echo '$(srcdir)/'`./formats/djvu/djvu.c
-
-djvu.obj: ./formats/djvu/djvu.c
-@AMDEP_TRUE@	source='./formats/djvu/djvu.c' object='djvu.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/djvu.Po' tmpdepfile='$(DEPDIR)/djvu.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o djvu.obj `cygpath -w ./formats/djvu/djvu.c`
-
-djvu.lo: ./formats/djvu/djvu.c
-@AMDEP_TRUE@	source='./formats/djvu/djvu.c' object='djvu.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/djvu.Plo' tmpdepfile='$(DEPDIR)/djvu.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o djvu.lo `test -f './formats/djvu/djvu.c' || echo '$(srcdir)/'`./formats/djvu/djvu.c
 
 pbm.o: ./formats/pbm/pbm.c
 @AMDEP_TRUE@	source='./formats/pbm/pbm.c' object='pbm.o' libtool=no @AMDEPBACKSLASH@
@@ -277,42 +386,6 @@ pbm.lo: ./formats/pbm/pbm.c
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pbm.lo `test -f './formats/pbm/pbm.c' || echo '$(srcdir)/'`./formats/pbm/pbm.c
 
-4image.o: ./base/4image/4image.c
-@AMDEP_TRUE@	source='./base/4image/4image.c' object='4image.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/4image.Po' tmpdepfile='$(DEPDIR)/4image.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 4image.o `test -f './base/4image/4image.c' || echo '$(srcdir)/'`./base/4image/4image.c
-
-4image.obj: ./base/4image/4image.c
-@AMDEP_TRUE@	source='./base/4image/4image.c' object='4image.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/4image.Po' tmpdepfile='$(DEPDIR)/4image.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 4image.obj `cygpath -w ./base/4image/4image.c`
-
-4image.lo: ./base/4image/4image.c
-@AMDEP_TRUE@	source='./base/4image/4image.c' object='4image.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/4image.Plo' tmpdepfile='$(DEPDIR)/4image.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 4image.lo `test -f './base/4image/4image.c' || echo '$(srcdir)/'`./base/4image/4image.c
-
-render.o: ./base/4image/render.c
-@AMDEP_TRUE@	source='./base/4image/render.c' object='render.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/render.Po' tmpdepfile='$(DEPDIR)/render.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o render.o `test -f './base/4image/render.c' || echo '$(srcdir)/'`./base/4image/render.c
-
-render.obj: ./base/4image/render.c
-@AMDEP_TRUE@	source='./base/4image/render.c' object='render.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/render.Po' tmpdepfile='$(DEPDIR)/render.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o render.obj `cygpath -w ./base/4image/render.c`
-
-render.lo: ./base/4image/render.c
-@AMDEP_TRUE@	source='./base/4image/render.c' object='render.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/render.Plo' tmpdepfile='$(DEPDIR)/render.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o render.lo `test -f './base/4image/render.c' || echo '$(srcdir)/'`./base/4image/render.c
-
 0porting.o: ./base/0porting/0porting.c
 @AMDEP_TRUE@	source='./base/0porting/0porting.c' object='0porting.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@	depfile='$(DEPDIR)/0porting.Po' tmpdepfile='$(DEPDIR)/0porting.TPo' @AMDEPBACKSLASH@
@@ -331,59 +404,113 @@ render.lo: ./base/4image/render.c
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 0porting.lo `test -f './base/0porting/0porting.c' || echo '$(srcdir)/'`./base/0porting/0porting.c
 
-1io.o: ./base/1io/1io.c
-@AMDEP_TRUE@	source='./base/1io/1io.c' object='1io.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/1io.Po' tmpdepfile='$(DEPDIR)/1io.TPo' @AMDEPBACKSLASH@
+4bitmap.o: ./base/4bitmap/4bitmap.c
+@AMDEP_TRUE@	source='./base/4bitmap/4bitmap.c' object='4bitmap.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/4bitmap.Po' tmpdepfile='$(DEPDIR)/4bitmap.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 1io.o `test -f './base/1io/1io.c' || echo '$(srcdir)/'`./base/1io/1io.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 4bitmap.o `test -f './base/4bitmap/4bitmap.c' || echo '$(srcdir)/'`./base/4bitmap/4bitmap.c
 
-1io.obj: ./base/1io/1io.c
-@AMDEP_TRUE@	source='./base/1io/1io.c' object='1io.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/1io.Po' tmpdepfile='$(DEPDIR)/1io.TPo' @AMDEPBACKSLASH@
+4bitmap.obj: ./base/4bitmap/4bitmap.c
+@AMDEP_TRUE@	source='./base/4bitmap/4bitmap.c' object='4bitmap.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/4bitmap.Po' tmpdepfile='$(DEPDIR)/4bitmap.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 1io.obj `cygpath -w ./base/1io/1io.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 4bitmap.obj `cygpath -w ./base/4bitmap/4bitmap.c`
 
-1io.lo: ./base/1io/1io.c
-@AMDEP_TRUE@	source='./base/1io/1io.c' object='1io.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/1io.Plo' tmpdepfile='$(DEPDIR)/1io.TPlo' @AMDEPBACKSLASH@
+4bitmap.lo: ./base/4bitmap/4bitmap.c
+@AMDEP_TRUE@	source='./base/4bitmap/4bitmap.c' object='4bitmap.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/4bitmap.Plo' tmpdepfile='$(DEPDIR)/4bitmap.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 1io.lo `test -f './base/1io/1io.c' || echo '$(srcdir)/'`./base/1io/1io.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 4bitmap.lo `test -f './base/4bitmap/4bitmap.c' || echo '$(srcdir)/'`./base/4bitmap/4bitmap.c
 
-2graymap.o: ./base/2graymap/2graymap.c
-@AMDEP_TRUE@	source='./base/2graymap/2graymap.c' object='2graymap.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/2graymap.Po' tmpdepfile='$(DEPDIR)/2graymap.TPo' @AMDEPBACKSLASH@
+5image.o: ./base/5image/5image.c
+@AMDEP_TRUE@	source='./base/5image/5image.c' object='5image.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/5image.Po' tmpdepfile='$(DEPDIR)/5image.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 2graymap.o `test -f './base/2graymap/2graymap.c' || echo '$(srcdir)/'`./base/2graymap/2graymap.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 5image.o `test -f './base/5image/5image.c' || echo '$(srcdir)/'`./base/5image/5image.c
 
-2graymap.obj: ./base/2graymap/2graymap.c
-@AMDEP_TRUE@	source='./base/2graymap/2graymap.c' object='2graymap.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/2graymap.Po' tmpdepfile='$(DEPDIR)/2graymap.TPo' @AMDEPBACKSLASH@
+5image.obj: ./base/5image/5image.c
+@AMDEP_TRUE@	source='./base/5image/5image.c' object='5image.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/5image.Po' tmpdepfile='$(DEPDIR)/5image.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 2graymap.obj `cygpath -w ./base/2graymap/2graymap.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 5image.obj `cygpath -w ./base/5image/5image.c`
 
-2graymap.lo: ./base/2graymap/2graymap.c
-@AMDEP_TRUE@	source='./base/2graymap/2graymap.c' object='2graymap.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/2graymap.Plo' tmpdepfile='$(DEPDIR)/2graymap.TPlo' @AMDEPBACKSLASH@
+5image.lo: ./base/5image/5image.c
+@AMDEP_TRUE@	source='./base/5image/5image.c' object='5image.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/5image.Plo' tmpdepfile='$(DEPDIR)/5image.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 2graymap.lo `test -f './base/2graymap/2graymap.c' || echo '$(srcdir)/'`./base/2graymap/2graymap.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 5image.lo `test -f './base/5image/5image.c' || echo '$(srcdir)/'`./base/5image/5image.c
 
-3bitmap.o: ./base/3bitmap/3bitmap.c
-@AMDEP_TRUE@	source='./base/3bitmap/3bitmap.c' object='3bitmap.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/3bitmap.Po' tmpdepfile='$(DEPDIR)/3bitmap.TPo' @AMDEPBACKSLASH@
+render.o: ./base/5image/render.c
+@AMDEP_TRUE@	source='./base/5image/render.c' object='render.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/render.Po' tmpdepfile='$(DEPDIR)/render.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 3bitmap.o `test -f './base/3bitmap/3bitmap.c' || echo '$(srcdir)/'`./base/3bitmap/3bitmap.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o render.o `test -f './base/5image/render.c' || echo '$(srcdir)/'`./base/5image/render.c
 
-3bitmap.obj: ./base/3bitmap/3bitmap.c
-@AMDEP_TRUE@	source='./base/3bitmap/3bitmap.c' object='3bitmap.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/3bitmap.Po' tmpdepfile='$(DEPDIR)/3bitmap.TPo' @AMDEPBACKSLASH@
+render.obj: ./base/5image/render.c
+@AMDEP_TRUE@	source='./base/5image/render.c' object='render.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/render.Po' tmpdepfile='$(DEPDIR)/render.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 3bitmap.obj `cygpath -w ./base/3bitmap/3bitmap.c`
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o render.obj `cygpath -w ./base/5image/render.c`
 
-3bitmap.lo: ./base/3bitmap/3bitmap.c
-@AMDEP_TRUE@	source='./base/3bitmap/3bitmap.c' object='3bitmap.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/3bitmap.Plo' tmpdepfile='$(DEPDIR)/3bitmap.TPlo' @AMDEPBACKSLASH@
+render.lo: ./base/5image/render.c
+@AMDEP_TRUE@	source='./base/5image/render.c' object='render.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/render.Plo' tmpdepfile='$(DEPDIR)/render.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 3bitmap.lo `test -f './base/3bitmap/3bitmap.c' || echo '$(srcdir)/'`./base/3bitmap/3bitmap.c
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o render.lo `test -f './base/5image/render.c' || echo '$(srcdir)/'`./base/5image/render.c
+
+1error.o: ./base/1error/1error.c
+@AMDEP_TRUE@	source='./base/1error/1error.c' object='1error.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/1error.Po' tmpdepfile='$(DEPDIR)/1error.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 1error.o `test -f './base/1error/1error.c' || echo '$(srcdir)/'`./base/1error/1error.c
+
+1error.obj: ./base/1error/1error.c
+@AMDEP_TRUE@	source='./base/1error/1error.c' object='1error.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/1error.Po' tmpdepfile='$(DEPDIR)/1error.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 1error.obj `cygpath -w ./base/1error/1error.c`
+
+1error.lo: ./base/1error/1error.c
+@AMDEP_TRUE@	source='./base/1error/1error.c' object='1error.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/1error.Plo' tmpdepfile='$(DEPDIR)/1error.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 1error.lo `test -f './base/1error/1error.c' || echo '$(srcdir)/'`./base/1error/1error.c
+
+2io.o: ./base/2io/2io.c
+@AMDEP_TRUE@	source='./base/2io/2io.c' object='2io.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/2io.Po' tmpdepfile='$(DEPDIR)/2io.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 2io.o `test -f './base/2io/2io.c' || echo '$(srcdir)/'`./base/2io/2io.c
+
+2io.obj: ./base/2io/2io.c
+@AMDEP_TRUE@	source='./base/2io/2io.c' object='2io.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/2io.Po' tmpdepfile='$(DEPDIR)/2io.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 2io.obj `cygpath -w ./base/2io/2io.c`
+
+2io.lo: ./base/2io/2io.c
+@AMDEP_TRUE@	source='./base/2io/2io.c' object='2io.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/2io.Plo' tmpdepfile='$(DEPDIR)/2io.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 2io.lo `test -f './base/2io/2io.c' || echo '$(srcdir)/'`./base/2io/2io.c
+
+3graymap.o: ./base/3graymap/3graymap.c
+@AMDEP_TRUE@	source='./base/3graymap/3graymap.c' object='3graymap.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/3graymap.Po' tmpdepfile='$(DEPDIR)/3graymap.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 3graymap.o `test -f './base/3graymap/3graymap.c' || echo '$(srcdir)/'`./base/3graymap/3graymap.c
+
+3graymap.obj: ./base/3graymap/3graymap.c
+@AMDEP_TRUE@	source='./base/3graymap/3graymap.c' object='3graymap.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/3graymap.Po' tmpdepfile='$(DEPDIR)/3graymap.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 3graymap.obj `cygpath -w ./base/3graymap/3graymap.c`
+
+3graymap.lo: ./base/3graymap/3graymap.c
+@AMDEP_TRUE@	source='./base/3graymap/3graymap.c' object='3graymap.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/3graymap.Plo' tmpdepfile='$(DEPDIR)/3graymap.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o 3graymap.lo `test -f './base/3graymap/3graymap.c' || echo '$(srcdir)/'`./base/3graymap/3graymap.c
 
 version.o: ./version.c
 @AMDEP_TRUE@	source='./version.c' object='version.o' libtool=no @AMDEPBACKSLASH@
@@ -421,24 +548,6 @@ CCDEPMODE = @CCDEPMODE@
 @AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LTCXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
-
-jb2.o: ./alg/jb2/jb2.cpp
-@AMDEP_TRUE@	source='./alg/jb2/jb2.cpp' object='jb2.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/jb2.Po' tmpdepfile='$(DEPDIR)/jb2.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jb2.o `test -f './alg/jb2/jb2.cpp' || echo '$(srcdir)/'`./alg/jb2/jb2.cpp
-
-jb2.obj: ./alg/jb2/jb2.cpp
-@AMDEP_TRUE@	source='./alg/jb2/jb2.cpp' object='jb2.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/jb2.Po' tmpdepfile='$(DEPDIR)/jb2.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jb2.obj `cygpath -w ./alg/jb2/jb2.cpp`
-
-jb2.lo: ./alg/jb2/jb2.cpp
-@AMDEP_TRUE@	source='./alg/jb2/jb2.cpp' object='jb2.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/jb2.Plo' tmpdepfile='$(DEPDIR)/jb2.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jb2.lo `test -f './alg/jb2/jb2.cpp' || echo '$(srcdir)/'`./alg/jb2/jb2.cpp
 
 zp.o: ./alg/jb2/zp.cpp
 @AMDEP_TRUE@	source='./alg/jb2/zp.cpp' object='zp.o' libtool=no @AMDEPBACKSLASH@
@@ -493,6 +602,42 @@ jb2coder.lo: ./alg/jb2/jb2coder.cpp
 @AMDEP_TRUE@	depfile='$(DEPDIR)/jb2coder.Plo' tmpdepfile='$(DEPDIR)/jb2coder.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jb2coder.lo `test -f './alg/jb2/jb2coder.cpp' || echo '$(srcdir)/'`./alg/jb2/jb2coder.cpp
+
+jb2load.o: ./alg/jb2/jb2load.cpp
+@AMDEP_TRUE@	source='./alg/jb2/jb2load.cpp' object='jb2load.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/jb2load.Po' tmpdepfile='$(DEPDIR)/jb2load.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jb2load.o `test -f './alg/jb2/jb2load.cpp' || echo '$(srcdir)/'`./alg/jb2/jb2load.cpp
+
+jb2load.obj: ./alg/jb2/jb2load.cpp
+@AMDEP_TRUE@	source='./alg/jb2/jb2load.cpp' object='jb2load.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/jb2load.Po' tmpdepfile='$(DEPDIR)/jb2load.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jb2load.obj `cygpath -w ./alg/jb2/jb2load.cpp`
+
+jb2load.lo: ./alg/jb2/jb2load.cpp
+@AMDEP_TRUE@	source='./alg/jb2/jb2load.cpp' object='jb2load.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/jb2load.Plo' tmpdepfile='$(DEPDIR)/jb2load.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jb2load.lo `test -f './alg/jb2/jb2load.cpp' || echo '$(srcdir)/'`./alg/jb2/jb2load.cpp
+
+jb2save.o: ./alg/jb2/jb2save.cpp
+@AMDEP_TRUE@	source='./alg/jb2/jb2save.cpp' object='jb2save.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/jb2save.Po' tmpdepfile='$(DEPDIR)/jb2save.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jb2save.o `test -f './alg/jb2/jb2save.cpp' || echo '$(srcdir)/'`./alg/jb2/jb2save.cpp
+
+jb2save.obj: ./alg/jb2/jb2save.cpp
+@AMDEP_TRUE@	source='./alg/jb2/jb2save.cpp' object='jb2save.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/jb2save.Po' tmpdepfile='$(DEPDIR)/jb2save.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jb2save.obj `cygpath -w ./alg/jb2/jb2save.cpp`
+
+jb2save.lo: ./alg/jb2/jb2save.cpp
+@AMDEP_TRUE@	source='./alg/jb2/jb2save.cpp' object='jb2save.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/jb2save.Plo' tmpdepfile='$(DEPDIR)/jb2save.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jb2save.lo `test -f './alg/jb2/jb2save.cpp' || echo '$(srcdir)/'`./alg/jb2/jb2save.cpp
 CXXDEPMODE = @CXXDEPMODE@
 
 mostlyclean-libtool:

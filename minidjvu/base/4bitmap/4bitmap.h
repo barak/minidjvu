@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * 3bitmap.h - routines for handling packed bitmaps
+ * 4bitmap.h - routines for handling packed bitmaps
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -58,24 +58,23 @@
 
 typedef struct MinidjvuBitmap *mdjvu_bitmap_t;
 
-/*
- * Create a bitmap.
+/* Create a bitmap.
  * Width and height must be positive, or NULL is returned.
  */
 MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_bitmap_create(int32 width, int32 height);
 
-/* Destroy a bitmap. Each created bitmap must be eventually destroyed. */
+/* Destroy a bitmap. Each created bitmap must be destroyed sometime. */
 MDJVU_FUNCTION void mdjvu_bitmap_destroy(mdjvu_bitmap_t);
 
 /* Get the width and height of a bitmap. */
 MDJVU_FUNCTION int32 mdjvu_bitmap_get_width(mdjvu_bitmap_t);
 MDJVU_FUNCTION int32 mdjvu_bitmap_get_height(mdjvu_bitmap_t);
 
-/* Each bitmap keeps a link counter. */
-MDJVU_FUNCTION int32 mdjvu_bitmap_get_link_counter(mdjvu_bitmap_t);
-MDJVU_FUNCTION void mdjvu_bitmap_set_link_counter(mdjvu_bitmap_t, int32 new_value);
-MDJVU_FUNCTION void mdjvu_bitmap_link(mdjvu_bitmap_t);
-MDJVU_FUNCTION void mdjvu_bitmap_unlink(mdjvu_bitmap_t);
+/* Each bitmap keeps its index.
+ * If this bitmap is not attached to an image, the index will be -1.
+ */
+MDJVU_FUNCTION int32 mdjvu_bitmap_get_index(mdjvu_bitmap_t);
+MDJVU_FUNCTION void mdjvu_bitmap_set_index(mdjvu_bitmap_t, int32 new_value);
 
 /* Returns the size of a packed row in bytes.
  * Packing stores 8 pixels to a byte,
@@ -118,19 +117,29 @@ MDJVU_FUNCTION void mdjvu_bitmap_unpack_all(mdjvu_bitmap_t, unsigned char **);
 MDJVU_FUNCTION void mdjvu_bitmap_unpack_all_0_or_1
     (mdjvu_bitmap_t, unsigned char **);
 
+/* Exchange and assign do NOT touch indices. */
 MDJVU_FUNCTION void mdjvu_bitmap_assign(mdjvu_bitmap_t d, mdjvu_bitmap_t src);
 MDJVU_FUNCTION void mdjvu_bitmap_exchange(mdjvu_bitmap_t d, mdjvu_bitmap_t src);
 MDJVU_FUNCTION void mdjvu_bitmap_clear(mdjvu_bitmap_t);
 MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_bitmap_crop
     (mdjvu_bitmap_t b, int32 left, int32 top, int32 w, int32 h);
+MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_bitmap_clone(mdjvu_bitmap_t b);
 
-/* Remove white edges from the bitmap and return the result.
- * The original bitmap remains unchanged.
+MDJVU_FUNCTION void mdjvu_bitmap_get_bounding_box
+    (mdjvu_bitmap_t b, int32 *pl, int32 *pt, int32 *pw, int32 *ph);
+
+/* Remove white edges from the bitmap.
+ * The given bitmap is changed.
  * The left top corner of the bitmap's bounding box is written into *x and *y.
  * Blits that access this shape may become invalid (add x and y to them).
  */
-MDJVU_FUNCTION mdjvu_bitmap_t
-    mdjvu_bitmap_remove_margins(mdjvu_bitmap_t, int32 *x, int32 *y);
+MDJVU_FUNCTION void mdjvu_bitmap_remove_margins
+    (mdjvu_bitmap_t, int32 *x, int32 *y);
+
+/* Count the number of black pixels in the bitmap.
+ * The results are not cached, so it uses O(width * height) time each call.
+ */
+MDJVU_FUNCTION int32 mdjvu_bitmap_get_mass(mdjvu_bitmap_t);
 
 #ifdef MINIDJVU_WRAPPERS
     struct MinidjvuBitmap
@@ -145,14 +154,10 @@ MDJVU_FUNCTION mdjvu_bitmap_t
         inline int32 get_height()
             { return mdjvu_bitmap_get_height(this); }
 
-        inline int32 get_link_counter()
-            { return mdjvu_bitmap_get_link_counter(this); }
-        inline void set_link_counter(int32 new_value)
-            { mdjvu_bitmap_set_link_counter(this, new_value); }
-        inline void link()
-            { mdjvu_bitmap_link(this); }
-        inline void unlink()
-            { mdjvu_bitmap_unlink(this); }
+        inline int32 get_index()
+            { return mdjvu_bitmap_get_index(this); }
+        inline void set_index(int32 new_value)
+            { mdjvu_bitmap_set_index(this, new_value); }
 
         inline int32 get_packed_row_size()
             { return mdjvu_bitmap_get_packed_row_size(this); }
@@ -186,11 +191,10 @@ MDJVU_FUNCTION mdjvu_bitmap_t
         inline mdjvu_bitmap_t crop(int32 l, int32 t, int32 w, int32 h)
             { return mdjvu_bitmap_crop(this, l, t, w, h); }
 
-        inline mdjvu_bitmap_t remove_margins(int32 *x, int32 *y)
-            { return mdjvu_bitmap_remove_margins(this, x, y); }
-    };
+        inline void remove_margins(int32 *x, int32 *y)
+            { mdjvu_bitmap_remove_margins(this, x, y); }
 
-    #ifdef MINIDJVU_NO_WRAPPER_PREFIX
-        #define Bitmap MinidjvuBitmap
-    #endif
+        inline int32 get_mass()
+            { return mdjvu_bitmap_get_mass(this); }
+    };
 #endif
