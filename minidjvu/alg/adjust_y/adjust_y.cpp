@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * adjust.c - adjust blits so the text won't look bumpy
+ * adjust_y.c - adjust y coordinates of blits so the text won't look bumpy
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -59,6 +59,7 @@
 #include "mdjvucfg.h"
 #include "minidjvu.h"
 #include <stdlib.h>
+#include <assert.h>
 
 /*
  * This algorithm was made by Leon Bottou.
@@ -112,59 +113,14 @@ static int32 compute_baseline(mdjvu_bitmap_t bitmap)
     return 4 * (h - 1) - i;
 }
 
-
-MDJVU_IMPLEMENT void mdjvu_adjust(mdjvu_image_t image)
+/*
+ * Set blits to their substitutes using given x and y adjustments.
+ * Before this, blits may not use dictionary bitmaps.
+ */
+static void update_blits(mdjvu_image_t image, int32 *x_adjust, int32 *y_adjust)
 {
-    /* Process shape substitutions */
-
     int32 b = mdjvu_image_get_blit_count(image);
-    int32 n = mdjvu_image_get_bitmap_count(image);
-    int32 *baseline = (int32 *) malloc(n * sizeof(int32));
-
     int32 i;
-    int32 *x_adjust = (int32 *) calloc(n, sizeof(int32));
-    int32 *y_adjust = (int32 *) calloc(n, sizeof(int32));
-
-    for (i = 0; i < n; i++)
-    {
-        mdjvu_bitmap_t bitmap = mdjvu_image_get_bitmap(image, i);
-        if (!mdjvu_image_get_no_substitution_flag(image, bitmap))
-            baseline[i] = compute_baseline(bitmap);
-    }
-
-
-    for (i = 0; i < b; i++)
-    {
-        mdjvu_bitmap_t bitmap = mdjvu_image_get_blit_bitmap(image, i);
-        mdjvu_bitmap_t subst = mdjvu_image_get_substitution(image, bitmap);
-        int32 w, h, subst_w, subst_h, adjust;
-
-        if (subst == bitmap) continue;
-
-        /* Compute coordinate adjustment */
-        w = mdjvu_bitmap_get_width(bitmap);
-        h = mdjvu_bitmap_get_height(bitmap);
-        subst_w = mdjvu_bitmap_get_width(subst);
-        subst_h = mdjvu_bitmap_get_height(subst);
-        x_adjust[i] = (w - subst_w) / 2;
-        y_adjust[i] = (h - subst_h) / 2;
-
-        /* Refine vertical adjustment */
-        adjust = baseline[i] - baseline[mdjvu_bitmap_get_index(subst)];
-
-        if (adjust < 0)
-            adjust = - (2 - adjust) / 4;
-        else
-            adjust =   (2 + adjust) / 4;
-
-        if (abs(adjust - y_adjust[i]) <= 1 + w/16 )
-            y_adjust[i] = adjust;
-    }
-
-    free(baseline);
-
-    /* Update blits */
-
     for (i = 0; i < b; i++)
     {
         int32 x = mdjvu_image_get_blit_x(image, i);
@@ -177,7 +133,137 @@ MDJVU_IMPLEMENT void mdjvu_adjust(mdjvu_image_t image)
         mdjvu_image_set_blit_y(image, i, y + y_adjust[index]);
         mdjvu_image_set_blit_bitmap(image, i, subst);
     }
+}
+
+/*
+ * Return the baselines array. To be MDJVU_FREEV'ed later.
+ */
+static int32 *get_baselines(mdjvu_image_t image)
+{
+    int32 i;
+    int32 n = mdjvu_image_get_bitmap_count(image);
+    int32 *baseline = MDJVU_MALLOCV(int32, n);
+    for (i = 0; i < n; i++)
+    {
+        mdjvu_bitmap_t bitmap = mdjvu_image_get_bitmap(image, i);
+        if (mdjvu_image_has_not_a_letter_flags(image) && !mdjvu_image_get_not_a_letter_flag(image, bitmap))
+            baseline[i] = compute_baseline(bitmap);
+    }
+    return baseline;
+}
+
+
+/*
+ * Computes x and y adjustsments.
+ * bitmap != subst.
+ */
+static void compute_adjustments(mdjvu_bitmap_t bitmap, mdjvu_bitmap_t subst,
+                                int32 b_base, int32 s_base,
+                                int32 *dx, int32 *dy)
+{
+    int32 w, h, subst_w, subst_h, adjust;
+
+    /* Compute coordinate adjustment */
+    w = mdjvu_bitmap_get_width(bitmap);
+    h = mdjvu_bitmap_get_height(bitmap);
+    subst_w = mdjvu_bitmap_get_width(subst);
+    subst_h = mdjvu_bitmap_get_height(subst);
+    *dx = (w - subst_w) / 2;
+    *dy = (h - subst_h) / 2;
+
+    /* Refine vertical adjustment */
+    adjust = b_base - s_base;
+
+    if (adjust < 0)
+        adjust = - (2 - adjust) / 4;
+    else
+        adjust =   (2 + adjust) / 4;
+
+    if (abs(adjust - *dy) <= 1 + w/16 )
+        *dy = adjust;
+}
+
+MDJVU_IMPLEMENT void mdjvu_adjust(mdjvu_image_t image)
+{
+    int32 b = mdjvu_image_get_blit_count(image);
+    int32 n = mdjvu_image_get_bitmap_count(image);
+    int32 *baseline = get_baselines(image);
+
+    int32 i;
+    int32 *x_adjust = (int32 *) calloc(n, sizeof(int32));
+    int32 *y_adjust = (int32 *) calloc(n, sizeof(int32));
+
+    for (i = 0; i < b; i++)
+    {
+        mdjvu_bitmap_t bitmap = mdjvu_image_get_blit_bitmap(image, i);
+        mdjvu_bitmap_t subst = mdjvu_image_get_substitution(image, bitmap);
+
+        if (subst == bitmap) continue;
+
+        compute_adjustments(bitmap, subst,
+                            baseline[i],
+                            baseline[mdjvu_bitmap_get_index(subst)],
+                            &x_adjust[i], &y_adjust[i]);
+    }
+
+    MDJVU_FREEV(baseline);
+
+    update_blits(image, x_adjust, y_adjust);
 
     free(x_adjust);
     free(y_adjust);
+}
+
+static void adjust_page(mdjvu_image_t dict,
+                        int32 *dict_baselines,
+                        mdjvu_image_t image)
+{
+    int32 b = mdjvu_image_get_blit_count(image);
+    int32 n = mdjvu_image_get_bitmap_count(image);
+    int32 *baseline = get_baselines(image);
+
+    int32 i;
+    int32 *x_adjust = (int32 *) calloc(n, sizeof(int32));
+    int32 *y_adjust = (int32 *) calloc(n, sizeof(int32));
+
+    for (i = 0; i < b; i++)
+    {
+        mdjvu_bitmap_t bitmap = mdjvu_image_get_blit_bitmap(image, i);
+        mdjvu_bitmap_t subst = mdjvu_image_get_substitution(image, bitmap);
+        int32 subst_baseline;
+
+        if (subst == bitmap) continue;
+
+        if (mdjvu_image_has_bitmap(dict, subst))
+            subst_baseline = dict_baselines[mdjvu_bitmap_get_index(subst)];
+        else
+        {
+            assert(mdjvu_image_has_bitmap(image, subst));
+            subst_baseline = baseline[mdjvu_bitmap_get_index(subst)];
+        }
+
+        compute_adjustments(bitmap, subst,
+                            baseline[i],
+                            subst_baseline,
+                            &x_adjust[i], &y_adjust[i]);
+    }
+
+    MDJVU_FREEV(baseline);
+
+    update_blits(image, x_adjust, y_adjust);
+
+    free(x_adjust);
+    free(y_adjust);
+}
+
+
+MDJVU_FUNCTION void mdjvu_multipage_adjust(mdjvu_image_t dict,
+                                           int32 npages,
+                                           mdjvu_image_t *pages)
+{
+    int32 *dict_baselines = get_baselines(dict);
+    int32 i;
+    for (i = 0; i < npages; i++)
+        adjust_page(dict, dict_baselines, pages[i]);
+    MDJVU_FREEV(dict_baselines);
 }

@@ -83,23 +83,23 @@ VERSION = @VERSION@
 am__include = @am__include@
 am__quote = @am__quote@
 install_sh = @install_sh@
-bin_PROGRAMS = minidjvu
-minidjvu_SOURCES = minidjvu.cpp
+bin_PROGRAMS = ../bin/minidjvu
+___bin_minidjvu_SOURCES = minidjvu.cpp
 man_MANS = ../doc/minidjvu.1
 INCLUDES = -I..
-LDADD = ../minidjvu/libminidjvu.la -ltiff
+LDADD = ../bin/libminidjvu.la
 subdir = src
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-bin_PROGRAMS = minidjvu$(EXEEXT)
+bin_PROGRAMS = ../bin/minidjvu$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
-am_minidjvu_OBJECTS = minidjvu.$(OBJEXT)
-minidjvu_OBJECTS = $(am_minidjvu_OBJECTS)
-minidjvu_LDADD = $(LDADD)
-minidjvu_DEPENDENCIES = ../minidjvu/libminidjvu.la
-minidjvu_LDFLAGS =
+am____bin_minidjvu_OBJECTS = minidjvu.$(OBJEXT)
+___bin_minidjvu_OBJECTS = $(am____bin_minidjvu_OBJECTS)
+___bin_minidjvu_LDADD = $(LDADD)
+___bin_minidjvu_DEPENDENCIES = ../bin/libminidjvu.la
+___bin_minidjvu_LDFLAGS =
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -118,12 +118,12 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CXXFLAGS = @CXXFLAGS@
-DIST_SOURCES = $(minidjvu_SOURCES)
+DIST_SOURCES = $(___bin_minidjvu_SOURCES)
 
 NROFF = nroff
 MANS = $(man_MANS)
 DIST_COMMON = README Makefile.am Makefile.in
-SOURCES = $(minidjvu_SOURCES)
+SOURCES = $(___bin_minidjvu_SOURCES)
 
 all: all-am
 
@@ -161,15 +161,19 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-minidjvu$(EXEEXT): $(minidjvu_OBJECTS) $(minidjvu_DEPENDENCIES) 
-	@rm -f minidjvu$(EXEEXT)
-	$(CXXLINK) $(minidjvu_LDFLAGS) $(minidjvu_OBJECTS) $(minidjvu_LDADD) $(LIBS)
+../bin/.dirstamp:
+	@$(mkinstalldirs) ../bin
+	@: > ../bin/.dirstamp
+../bin/minidjvu$(EXEEXT): $(___bin_minidjvu_OBJECTS) $(___bin_minidjvu_DEPENDENCIES) ../bin/.dirstamp
+	@rm -f ../bin/minidjvu$(EXEEXT)
+	$(CXXLINK) $(___bin_minidjvu_LDFLAGS) $(___bin_minidjvu_OBJECTS) $(___bin_minidjvu_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
 
 distclean-compile:
 	-rm -f *.tab.c
+	-rm -f ../bin/.dirstamp
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/minidjvu.Po@am__quote@
 

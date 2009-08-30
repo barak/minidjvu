@@ -1,4 +1,4 @@
-AC_INIT(minidjvu, 0.33)
+AC_INIT(minidjvu, 0.4)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR(mdjvucfg.h)
 AM_CONFIG_HEADER(config.h)
@@ -9,11 +9,8 @@ AC_PROG_LIBTOOL
 AC_HEADER_STDC
 AC_CHECK_HEADERS
 
+AC_CHECK_HEADERS(tiffio.h)
 AC_CHECK_LIB(m,pow)
-
-AC_CHECK_HEADER(tiffio.h,AC_DEFINE(HAVE_TIFFIO_H))
-AC_CHECK_LIB(tiff,TIFFOpen,AC_DEFINE(HAVE_LIBTIFF))
-
-AC_C_INLINE
+AC_CHECK_LIB(tiff,TIFFOpen)
 
 AC_OUTPUT(Makefile minidjvu/Makefile src/Makefile)

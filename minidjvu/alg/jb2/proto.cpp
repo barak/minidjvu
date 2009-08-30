@@ -128,8 +128,10 @@ static int diff(mdjvu_bitmap_t image,
     return s;
 }
 
-MDJVU_IMPLEMENT void mdjvu_find_prototypes(mdjvu_image_t img)
+static void find_prototypes
+    (mdjvu_image_t dict, unsigned char ***uncompressed_dict, mdjvu_image_t img)
 {
+    int32 d = dict ? mdjvu_image_get_bitmap_count(dict) : 0;
     int32 i, n = mdjvu_image_get_bitmap_count(img);
     unsigned char ***uncompressed_bitmaps = (unsigned char ***)
         malloc(n * sizeof(unsigned char **));
@@ -152,7 +154,7 @@ MDJVU_IMPLEMENT void mdjvu_find_prototypes(mdjvu_image_t img)
     for (i = 0; i < n; i++)
     {
         mdjvu_bitmap_t current = mdjvu_image_get_bitmap(img, i);
-        int32 mass = mdjvu_image_get_bitmap_mass(img, current);
+        int32 mass = mdjvu_image_get_mass(img, current);
         int32 w = mdjvu_bitmap_get_width(current);
         int32 h = mdjvu_bitmap_get_height(current);
         int32 max_score = w * h * THRESHOLD / 100;
@@ -160,11 +162,31 @@ MDJVU_IMPLEMENT void mdjvu_find_prototypes(mdjvu_image_t img)
         mdjvu_bitmap_t best_match = NULL;
         int32 best_score = max_score;
 
-        for (j = 0; j < i; j++)
+        for (j = 0; j < d; j++)
+        {
+            int32 score;
+            mdjvu_bitmap_t candidate = mdjvu_image_get_bitmap(dict, j);
+            int32 c_mass = mdjvu_image_get_mass(dict, candidate);
+            if (abs(mass - c_mass) > best_score) continue;
+            score = diff(current,
+                         candidate,
+                         uncompressed_bitmaps[i],
+                         uncompressed_dict[j],
+                         best_score);
+            if (score < best_score)
+            {
+                best_score = score;
+                best_match = candidate;
+                if (!score)
+                    break; /* a perfect match is found */
+            }
+        }
+
+        if (best_score) for (j = 0; j < i; j++)
         {
             int32 score;
             mdjvu_bitmap_t candidate = mdjvu_image_get_bitmap(img, j);
-            int32 c_mass = mdjvu_image_get_bitmap_mass(img, candidate);
+            int32 c_mass = mdjvu_image_get_mass(img, candidate);
             if (abs(mass - c_mass) > best_score) continue;
             score = diff(current,
                          candidate,
@@ -192,4 +214,46 @@ MDJVU_IMPLEMENT void mdjvu_find_prototypes(mdjvu_image_t img)
         mdjvu_destroy_2d_array(uncompressed_bitmaps[i]);
     }
     free(uncompressed_bitmaps);
+}
+
+MDJVU_IMPLEMENT void mdjvu_find_prototypes(mdjvu_image_t img)
+{
+    find_prototypes(NULL, NULL, img);
+}
+
+MDJVU_IMPLEMENT void mdjvu_multipage_find_prototypes(mdjvu_image_t dict,
+                                                     int32 npages,
+                                                     mdjvu_image_t *pages,
+                                                     void (*report)(void *, int ),
+                                                     void *param)
+{
+    int i;
+    int32 n = mdjvu_image_get_bitmap_count(dict);
+    unsigned char ***uncompressed_dict_bitmaps = (unsigned char ***)
+        malloc(n * sizeof(unsigned char **));
+
+    for (i = 0; i < n; i++)
+    {
+        mdjvu_bitmap_t current = mdjvu_image_get_bitmap(dict, i);
+        int32 w = mdjvu_bitmap_get_width(current);
+        int32 h = mdjvu_bitmap_get_height(current);
+        uncompressed_dict_bitmaps[i] = mdjvu_create_2d_array(w, h);
+        mdjvu_bitmap_unpack_all_0_or_1(current, uncompressed_dict_bitmaps[i]);
+    }
+
+    if (!mdjvu_image_has_masses(dict))
+        mdjvu_image_enable_masses(dict); /* calculates them, not just enables */
+
+    for (i = 0; i < npages; i++)
+    {
+        find_prototypes(dict, uncompressed_dict_bitmaps, pages[i]);
+        report(param, i);
+    }
+
+    /* destroy uncompressed bitmaps */
+    for (i = 0; i < n; i++)
+    {
+        mdjvu_destroy_2d_array(uncompressed_dict_bitmaps[i]);
+    }
+    free(uncompressed_dict_bitmaps);
 }

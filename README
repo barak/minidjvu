@@ -3,6 +3,7 @@ minidjvu is an encoder/decoder of black-and-white DjVu pages.
 
 
 It supports lossy and lossless compression modes and, of course, decompression.
+In 0.4, an experimental multipage encoder was added; see the man page.
 
 Besides DjVu, minidjvu understands PBM, Windows BMP and TIFF (through libtiff).
 

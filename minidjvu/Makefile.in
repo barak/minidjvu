@@ -83,8 +83,8 @@ VERSION = @VERSION@
 am__include = @am__include@
 am__quote = @am__quote@
 install_sh = @install_sh@
-lib_LTLIBRARIES = libminidjvu.la
-libminidjvu_la_SOURCES = ./alg/smooth/smooth.cpp ./alg/blitsort/blitsort.cpp ./alg/split/split.cpp ./alg/jb2/proto.cpp ./alg/jb2/zp.cpp ./alg/jb2/bmpcoder.cpp ./alg/jb2/jb2coder.cpp ./alg/jb2/jb2load.cpp ./alg/jb2/jb2save.cpp ./alg/adjust/adjust.cpp ./alg/classify/classify.cpp ./alg/patterns/patterns.cpp ./alg/patterns/cuts.cpp ./alg/patterns/frames.cpp ./alg/clean/clean.cpp ./alg/nosubst/nosubst.cpp ./alg/erosion/erosion.cpp ./formats/djvu/djvuload.cpp ./formats/djvu/djvusave.cpp ./formats/bmp/bmp.cpp ./formats/pbm/pbm.cpp ./formats/tiff/tiffsave.cpp ./formats/tiff/tiff.cpp ./formats/tiff/tiffload.cpp ./base/0porting/0porting.cpp ./base/4bitmap/4bitmap.cpp ./base/5image/5image.cpp ./base/5image/render.cpp ./base/1error/1error.cpp ./base/2io/2io.cpp ./base/3graymap/3graymap.cpp ./version.cpp ./compress.cpp
+lib_LTLIBRARIES = ../bin/libminidjvu.la
+___bin_libminidjvu_la_SOURCES = ./alg/smooth/smooth.cpp ./alg/blitsort/blitsort.cpp ./alg/split/split.cpp ./alg/jb2/proto.cpp ./alg/jb2/zp.cpp ./alg/jb2/bmpcoder.cpp ./alg/jb2/jb2coder.cpp ./alg/jb2/jb2load.cpp ./alg/jb2/jb2save.cpp ./alg/classify/classify.cpp ./alg/patterns/patterns.cpp ./alg/patterns/cuts.cpp ./alg/patterns/frames.cpp ./alg/clean/clean.cpp ./alg/nosubst/nosubst.cpp ./alg/erosion/erosion.cpp ./alg/delegate/delegate.cpp ./alg/adjust_y/adjust_y.cpp ./formats/djvu/djvuload.cpp ./formats/djvu/djvusave.cpp ./formats/djvu/djvuinfo.cpp ./formats/bmp/bmp.cpp ./formats/pbm/pbm.cpp ./formats/tiff/tiffsave.cpp ./formats/tiff/tiff.cpp ./formats/tiff/tiffload.cpp ./formats/iff/iff.cpp ./base/0porting/0porting.cpp ./base/4bitmap/4bitmap.cpp ./base/5image/5image.cpp ./base/5image/render.cpp ./base/1error/1error.cpp ./base/2io/2io.cpp ./base/3graymap/3graymap.cpp ./version.cpp ./compress.cpp
 LDFLAGS = -version-info 3:0:0
 INCLUDES = -I..
 subdir = minidjvu
@@ -93,15 +93,16 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(lib_LTLIBRARIES)
 
-libminidjvu_la_LDFLAGS =
-libminidjvu_la_LIBADD =
-am_libminidjvu_la_OBJECTS = smooth.lo blitsort.lo split.lo proto.lo \
-	zp.lo bmpcoder.lo jb2coder.lo jb2load.lo jb2save.lo adjust.lo \
+___bin_libminidjvu_la_LDFLAGS =
+___bin_libminidjvu_la_LIBADD =
+am____bin_libminidjvu_la_OBJECTS = smooth.lo blitsort.lo split.lo \
+	proto.lo zp.lo bmpcoder.lo jb2coder.lo jb2load.lo jb2save.lo \
 	classify.lo patterns.lo cuts.lo frames.lo clean.lo nosubst.lo \
-	erosion.lo djvuload.lo djvusave.lo bmp.lo pbm.lo tiffsave.lo \
-	tiff.lo tiffload.lo 0porting.lo 4bitmap.lo 5image.lo render.lo \
-	1error.lo 2io.lo 3graymap.lo version.lo compress.lo
-libminidjvu_la_OBJECTS = $(am_libminidjvu_la_OBJECTS)
+	erosion.lo delegate.lo adjust_y.lo djvuload.lo djvusave.lo \
+	djvuinfo.lo bmp.lo pbm.lo tiffsave.lo tiff.lo tiffload.lo \
+	iff.lo 0porting.lo 4bitmap.lo 5image.lo render.lo 1error.lo \
+	2io.lo 3graymap.lo version.lo compress.lo
+___bin_libminidjvu_la_OBJECTS = $(am____bin_libminidjvu_la_OBJECTS)
 
 DEFS = @DEFS@
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -112,20 +113,21 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/0porting.Plo ./$(DEPDIR)/1error.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/2io.Plo ./$(DEPDIR)/3graymap.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/4bitmap.Plo ./$(DEPDIR)/5image.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/adjust.Plo ./$(DEPDIR)/blitsort.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/adjust_y.Plo ./$(DEPDIR)/blitsort.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/bmp.Plo ./$(DEPDIR)/bmpcoder.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/classify.Plo ./$(DEPDIR)/clean.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/compress.Plo ./$(DEPDIR)/cuts.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/delegate.Plo ./$(DEPDIR)/djvuinfo.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/djvuload.Plo ./$(DEPDIR)/djvusave.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/erosion.Plo ./$(DEPDIR)/frames.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/jb2coder.Plo ./$(DEPDIR)/jb2load.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/jb2save.Plo ./$(DEPDIR)/nosubst.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/patterns.Plo ./$(DEPDIR)/pbm.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/proto.Plo ./$(DEPDIR)/render.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/smooth.Plo ./$(DEPDIR)/split.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/tiff.Plo ./$(DEPDIR)/tiffload.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/tiffsave.Plo ./$(DEPDIR)/version.Plo \
-@AMDEP_TRUE@	./$(DEPDIR)/zp.Plo
+@AMDEP_TRUE@	./$(DEPDIR)/iff.Plo ./$(DEPDIR)/jb2coder.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/jb2load.Plo ./$(DEPDIR)/jb2save.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/nosubst.Plo ./$(DEPDIR)/patterns.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/pbm.Plo ./$(DEPDIR)/proto.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/render.Plo ./$(DEPDIR)/smooth.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/split.Plo ./$(DEPDIR)/tiff.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/tiffload.Plo ./$(DEPDIR)/tiffsave.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/version.Plo ./$(DEPDIR)/zp.Plo
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
@@ -135,9 +137,9 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 CXXFLAGS = @CXXFLAGS@
-DIST_SOURCES = $(libminidjvu_la_SOURCES)
+DIST_SOURCES = $(___bin_libminidjvu_la_SOURCES)
 DIST_COMMON = README Makefile.am Makefile.in
-SOURCES = $(libminidjvu_la_SOURCES)
+SOURCES = $(___bin_libminidjvu_la_SOURCES)
 
 all: all-am
 
@@ -179,7 +181,6 @@ bmpcoder.lo: ./alg/jb2/bmpcoder.cpp
 jb2coder.lo: ./alg/jb2/jb2coder.cpp
 jb2load.lo: ./alg/jb2/jb2load.cpp
 jb2save.lo: ./alg/jb2/jb2save.cpp
-adjust.lo: ./alg/adjust/adjust.cpp
 classify.lo: ./alg/classify/classify.cpp
 patterns.lo: ./alg/patterns/patterns.cpp
 cuts.lo: ./alg/patterns/cuts.cpp
@@ -187,13 +188,17 @@ frames.lo: ./alg/patterns/frames.cpp
 clean.lo: ./alg/clean/clean.cpp
 nosubst.lo: ./alg/nosubst/nosubst.cpp
 erosion.lo: ./alg/erosion/erosion.cpp
+delegate.lo: ./alg/delegate/delegate.cpp
+adjust_y.lo: ./alg/adjust_y/adjust_y.cpp
 djvuload.lo: ./formats/djvu/djvuload.cpp
 djvusave.lo: ./formats/djvu/djvusave.cpp
+djvuinfo.lo: ./formats/djvu/djvuinfo.cpp
 bmp.lo: ./formats/bmp/bmp.cpp
 pbm.lo: ./formats/pbm/pbm.cpp
 tiffsave.lo: ./formats/tiff/tiffsave.cpp
 tiff.lo: ./formats/tiff/tiff.cpp
 tiffload.lo: ./formats/tiff/tiffload.cpp
+iff.lo: ./formats/iff/iff.cpp
 0porting.lo: ./base/0porting/0porting.cpp
 4bitmap.lo: ./base/4bitmap/4bitmap.cpp
 5image.lo: ./base/5image/5image.cpp
@@ -203,14 +208,18 @@ render.lo: ./base/5image/render.cpp
 3graymap.lo: ./base/3graymap/3graymap.cpp
 version.lo: ./version.cpp
 compress.lo: ./compress.cpp
-libminidjvu.la: $(libminidjvu_la_OBJECTS) $(libminidjvu_la_DEPENDENCIES) 
-	$(CXXLINK) -rpath $(libdir) $(libminidjvu_la_LDFLAGS) $(libminidjvu_la_OBJECTS) $(libminidjvu_la_LIBADD) $(LIBS)
+../bin/.dirstamp:
+	@$(mkinstalldirs) ../bin
+	@: > ../bin/.dirstamp
+../bin/libminidjvu.la: $(___bin_libminidjvu_la_OBJECTS) $(___bin_libminidjvu_la_DEPENDENCIES) ../bin/.dirstamp
+	$(CXXLINK) -rpath $(libdir) $(___bin_libminidjvu_la_LDFLAGS) $(___bin_libminidjvu_la_OBJECTS) $(___bin_libminidjvu_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
 
 distclean-compile:
 	-rm -f *.tab.c
+	-rm -f ../bin/.dirstamp
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/0porting.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/1error.Plo@am__quote@
@@ -218,7 +227,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/3graymap.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/4bitmap.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/5image.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adjust.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adjust_y.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/blitsort.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bmp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bmpcoder.Plo@am__quote@
@@ -226,10 +235,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/clean.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/compress.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cuts.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/delegate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/djvuinfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/djvuload.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/djvusave.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/erosion.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frames.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iff.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jb2coder.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jb2load.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jb2save.Plo@am__quote@
@@ -429,24 +441,6 @@ jb2save.lo: ./alg/jb2/jb2save.cpp
 @AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jb2save.lo `test -f './alg/jb2/jb2save.cpp' || echo '$(srcdir)/'`./alg/jb2/jb2save.cpp
 
-adjust.o: ./alg/adjust/adjust.cpp
-@AMDEP_TRUE@	source='./alg/adjust/adjust.cpp' object='adjust.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/adjust.Po' tmpdepfile='$(DEPDIR)/adjust.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o adjust.o `test -f './alg/adjust/adjust.cpp' || echo '$(srcdir)/'`./alg/adjust/adjust.cpp
-
-adjust.obj: ./alg/adjust/adjust.cpp
-@AMDEP_TRUE@	source='./alg/adjust/adjust.cpp' object='adjust.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/adjust.Po' tmpdepfile='$(DEPDIR)/adjust.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o adjust.obj `cygpath -w ./alg/adjust/adjust.cpp`
-
-adjust.lo: ./alg/adjust/adjust.cpp
-@AMDEP_TRUE@	source='./alg/adjust/adjust.cpp' object='adjust.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@	depfile='$(DEPDIR)/adjust.Plo' tmpdepfile='$(DEPDIR)/adjust.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o adjust.lo `test -f './alg/adjust/adjust.cpp' || echo '$(srcdir)/'`./alg/adjust/adjust.cpp
-
 classify.o: ./alg/classify/classify.cpp
 @AMDEP_TRUE@	source='./alg/classify/classify.cpp' object='classify.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@	depfile='$(DEPDIR)/classify.Po' tmpdepfile='$(DEPDIR)/classify.TPo' @AMDEPBACKSLASH@
@@ -573,6 +567,42 @@ erosion.lo: ./alg/erosion/erosion.cpp
 @AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o erosion.lo `test -f './alg/erosion/erosion.cpp' || echo '$(srcdir)/'`./alg/erosion/erosion.cpp
 
+delegate.o: ./alg/delegate/delegate.cpp
+@AMDEP_TRUE@	source='./alg/delegate/delegate.cpp' object='delegate.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/delegate.Po' tmpdepfile='$(DEPDIR)/delegate.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o delegate.o `test -f './alg/delegate/delegate.cpp' || echo '$(srcdir)/'`./alg/delegate/delegate.cpp
+
+delegate.obj: ./alg/delegate/delegate.cpp
+@AMDEP_TRUE@	source='./alg/delegate/delegate.cpp' object='delegate.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/delegate.Po' tmpdepfile='$(DEPDIR)/delegate.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o delegate.obj `cygpath -w ./alg/delegate/delegate.cpp`
+
+delegate.lo: ./alg/delegate/delegate.cpp
+@AMDEP_TRUE@	source='./alg/delegate/delegate.cpp' object='delegate.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/delegate.Plo' tmpdepfile='$(DEPDIR)/delegate.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o delegate.lo `test -f './alg/delegate/delegate.cpp' || echo '$(srcdir)/'`./alg/delegate/delegate.cpp
+
+adjust_y.o: ./alg/adjust_y/adjust_y.cpp
+@AMDEP_TRUE@	source='./alg/adjust_y/adjust_y.cpp' object='adjust_y.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/adjust_y.Po' tmpdepfile='$(DEPDIR)/adjust_y.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o adjust_y.o `test -f './alg/adjust_y/adjust_y.cpp' || echo '$(srcdir)/'`./alg/adjust_y/adjust_y.cpp
+
+adjust_y.obj: ./alg/adjust_y/adjust_y.cpp
+@AMDEP_TRUE@	source='./alg/adjust_y/adjust_y.cpp' object='adjust_y.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/adjust_y.Po' tmpdepfile='$(DEPDIR)/adjust_y.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o adjust_y.obj `cygpath -w ./alg/adjust_y/adjust_y.cpp`
+
+adjust_y.lo: ./alg/adjust_y/adjust_y.cpp
+@AMDEP_TRUE@	source='./alg/adjust_y/adjust_y.cpp' object='adjust_y.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/adjust_y.Plo' tmpdepfile='$(DEPDIR)/adjust_y.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o adjust_y.lo `test -f './alg/adjust_y/adjust_y.cpp' || echo '$(srcdir)/'`./alg/adjust_y/adjust_y.cpp
+
 djvuload.o: ./formats/djvu/djvuload.cpp
 @AMDEP_TRUE@	source='./formats/djvu/djvuload.cpp' object='djvuload.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@	depfile='$(DEPDIR)/djvuload.Po' tmpdepfile='$(DEPDIR)/djvuload.TPo' @AMDEPBACKSLASH@
@@ -608,6 +638,24 @@ djvusave.lo: ./formats/djvu/djvusave.cpp
 @AMDEP_TRUE@	depfile='$(DEPDIR)/djvusave.Plo' tmpdepfile='$(DEPDIR)/djvusave.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o djvusave.lo `test -f './formats/djvu/djvusave.cpp' || echo '$(srcdir)/'`./formats/djvu/djvusave.cpp
+
+djvuinfo.o: ./formats/djvu/djvuinfo.cpp
+@AMDEP_TRUE@	source='./formats/djvu/djvuinfo.cpp' object='djvuinfo.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/djvuinfo.Po' tmpdepfile='$(DEPDIR)/djvuinfo.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o djvuinfo.o `test -f './formats/djvu/djvuinfo.cpp' || echo '$(srcdir)/'`./formats/djvu/djvuinfo.cpp
+
+djvuinfo.obj: ./formats/djvu/djvuinfo.cpp
+@AMDEP_TRUE@	source='./formats/djvu/djvuinfo.cpp' object='djvuinfo.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/djvuinfo.Po' tmpdepfile='$(DEPDIR)/djvuinfo.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o djvuinfo.obj `cygpath -w ./formats/djvu/djvuinfo.cpp`
+
+djvuinfo.lo: ./formats/djvu/djvuinfo.cpp
+@AMDEP_TRUE@	source='./formats/djvu/djvuinfo.cpp' object='djvuinfo.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/djvuinfo.Plo' tmpdepfile='$(DEPDIR)/djvuinfo.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o djvuinfo.lo `test -f './formats/djvu/djvuinfo.cpp' || echo '$(srcdir)/'`./formats/djvu/djvuinfo.cpp
 
 bmp.o: ./formats/bmp/bmp.cpp
 @AMDEP_TRUE@	source='./formats/bmp/bmp.cpp' object='bmp.o' libtool=no @AMDEPBACKSLASH@
@@ -698,6 +746,24 @@ tiffload.lo: ./formats/tiff/tiffload.cpp
 @AMDEP_TRUE@	depfile='$(DEPDIR)/tiffload.Plo' tmpdepfile='$(DEPDIR)/tiffload.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tiffload.lo `test -f './formats/tiff/tiffload.cpp' || echo '$(srcdir)/'`./formats/tiff/tiffload.cpp
+
+iff.o: ./formats/iff/iff.cpp
+@AMDEP_TRUE@	source='./formats/iff/iff.cpp' object='iff.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/iff.Po' tmpdepfile='$(DEPDIR)/iff.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o iff.o `test -f './formats/iff/iff.cpp' || echo '$(srcdir)/'`./formats/iff/iff.cpp
+
+iff.obj: ./formats/iff/iff.cpp
+@AMDEP_TRUE@	source='./formats/iff/iff.cpp' object='iff.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/iff.Po' tmpdepfile='$(DEPDIR)/iff.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o iff.obj `cygpath -w ./formats/iff/iff.cpp`
+
+iff.lo: ./formats/iff/iff.cpp
+@AMDEP_TRUE@	source='./formats/iff/iff.cpp' object='iff.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@	depfile='$(DEPDIR)/iff.Plo' tmpdepfile='$(DEPDIR)/iff.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o iff.lo `test -f './formats/iff/iff.cpp' || echo '$(srcdir)/'`./formats/iff/iff.cpp
 
 0porting.o: ./base/0porting/0porting.cpp
 @AMDEP_TRUE@	source='./base/0porting/0porting.cpp' object='0porting.o' libtool=no @AMDEPBACKSLASH@

@@ -454,7 +454,7 @@ mdjvu_split(mdjvu_bitmap_t bitmap, int32 dpi, mdjvu_split_options_t opt)
     int32 width = mdjvu_bitmap_get_width(bitmap);
     int32 height = mdjvu_bitmap_get_height(bitmap);
     mdjvu_image_t result = mdjvu_image_create(width, height);
-    mdjvu_image_enable_suspiciously_big_flag(result);
+    mdjvu_image_enable_suspiciously_big_flags(result);
     mdjvu_image_set_resolution(result, dpi);
     add_to_image(result, bitmap, dpi, opt, 0, 0, /* big: */ 0);
     return result;

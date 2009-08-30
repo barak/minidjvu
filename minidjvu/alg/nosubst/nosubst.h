@@ -56,4 +56,4 @@
  * +------------------------------------------------------------------
  */
 
-MDJVU_FUNCTION void mdjvu_calculate_no_substitution_flag(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_calculate_not_a_letter_flags(mdjvu_image_t);

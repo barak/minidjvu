@@ -1,3 +1,12 @@
+---
+0.4
+---
+
+    bugfix: no more "some weird error happened" messages on color TIFFs
+    Binaries are built in bin/ now, where they should be
+    Experimental multipage compression (cannot bundle pages yet, however)
+    
+
 ----
 0.33
 ----

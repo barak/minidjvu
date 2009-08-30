@@ -113,6 +113,7 @@ class JB2BitmapDecoder : public JB2BitmapCoder
         JB2BitmapDecoder(ZPDecoder &, ZPMemoryWatcher *w = NULL);
     private:
         ZPDecoder &zp;
+        // JB3BitmapDecoder jb3; /* XXX */
         virtual int code_pixel(ZPBitContext &, unsigned char *pixel, int erosion);
         virtual void load_row(mdjvu_bitmap_t, int32 y, unsigned char *row);
         virtual void save_row(mdjvu_bitmap_t, int32 y, unsigned char *row, int erosion);
@@ -125,6 +126,7 @@ class JB2BitmapEncoder : public JB2BitmapCoder
         JB2BitmapEncoder(ZPEncoder &, ZPMemoryWatcher *w = NULL);
     private:
         ZPEncoder &zp;
+        // JB3BitmapEncoder jb3; /* XXX */
         virtual int code_pixel(ZPBitContext &, unsigned char *pixel, int erosion);
         virtual void load_row(mdjvu_bitmap_t, int32 y, unsigned char *row);
         virtual void save_row(mdjvu_bitmap_t, int32 y, unsigned char *row, int erosion);

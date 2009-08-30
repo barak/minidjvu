@@ -77,11 +77,13 @@ MDJVU_IMPLEMENT mdjvu_error_t mdjvu_get_error(MinidjvuErrorType e)
         case mdjvu_error_corrupted_pbm:
             return (mdjvu_error_t) "bad PBM file";
         case mdjvu_error_corrupted_bmp:
-            return (mdjvu_error_t) "bad Windows BMP file";
+            return (mdjvu_error_t) "bad Windows BMP file (perhaps it has non-bitonal data)";
         case mdjvu_error_corrupted_djvu:
             return (mdjvu_error_t) "bad DjVu file";
         case mdjvu_error_corrupted_jb2:
             return (mdjvu_error_t) "bad bilevel data in DjVu file";
+        case mdjvu_error_corrupted_tiff:
+            return (mdjvu_error_t) "bad TIFF file (perhaps it has non-bitonal data)";
         case mdjvu_error_wrong_djvu_type:
             return (mdjvu_error_t) "unsupported type of DjVu file";
         case mdjvu_error_djvu_no_Sjbz:
@@ -90,8 +92,9 @@ MDJVU_IMPLEMENT mdjvu_error_t mdjvu_get_error(MinidjvuErrorType e)
             return (mdjvu_error_t) "somehow prototype references recursed";
         case mdjvu_error_tiff_support_disabled:
             return (mdjvu_error_t) "minidjvu was compiled without TIFF support";
-        default:
-            return (mdjvu_error_t)
-                "some weird error happened, probably caused by a bug in minidjvu";
+        case mdjvu_error_png_support_disabled:
+            return (mdjvu_error_t) "minidjvu was compiled without PNG support";
     }
+    return (mdjvu_error_t)
+        "some weird error happened, probably caused by a bug in minidjvu";
 }

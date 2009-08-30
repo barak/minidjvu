@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * tiff.h - loading and saving TIFF files
+ * tiff.h - TIFF support
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *

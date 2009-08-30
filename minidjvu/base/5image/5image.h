@@ -103,8 +103,8 @@ MDJVU_FUNCTION int32 mdjvu_image_add_blit(mdjvu_image_t, int32 x, int32 y, mdjvu
 MDJVU_FUNCTION void mdjvu_image_exchange_blits
     (mdjvu_image_t, int32, int32);
 
-/* It's a good idea to remove NULL blits as soon as possible
- * because such a joke is poorly understood by most algorithms.
+/* It's a good idea to remove NULL blits (blits with NULL blit bitmap) as soon
+ * as possible because such jokes are poorly understood by most algorithms.
  */
 MDJVU_FUNCTION void mdjvu_image_remove_NULL_blits(mdjvu_image_t);
 
@@ -115,6 +115,9 @@ MDJVU_FUNCTION int32 mdjvu_image_get_bitmap_count(mdjvu_image_t);
 
 /* Get a bitmap by index. (index may be from 0 to get_bitmap_count() - 1. */
 MDJVU_FUNCTION mdjvu_bitmap_t mdjvu_image_get_bitmap(mdjvu_image_t, int32);
+
+/* Test if the bitmap belongs to this image (uses constant time). */
+MDJVU_FUNCTION int mdjvu_image_has_bitmap(mdjvu_image_t image, mdjvu_bitmap_t bitmap);
 
 /* Append a bitmap. */
 MDJVU_FUNCTION int32 mdjvu_image_add_bitmap(mdjvu_image_t, mdjvu_bitmap_t);
@@ -152,6 +155,7 @@ MDJVU_FUNCTION mdjvu_image_t mdjvu_image_get_dictionary(mdjvu_image_t);
 
 /* ______________________   additional info for bitmaps   __________________ */
 
+
 /* Prototypes */
 
 MDJVU_FUNCTION int mdjvu_image_has_prototypes
@@ -179,18 +183,18 @@ MDJVU_FUNCTION void
  * and can't serve as substitution to others.
  * This is for small pieces of large picture, which are not to be displaced.
  */
-MDJVU_FUNCTION int mdjvu_image_has_no_substitution_flag(mdjvu_image_t);
-MDJVU_FUNCTION void mdjvu_image_enable_no_substitution_flag(mdjvu_image_t);
-MDJVU_FUNCTION void mdjvu_image_disable_no_substitution_flag(mdjvu_image_t);
-MDJVU_FUNCTION int mdjvu_image_get_no_substitution_flag
+MDJVU_FUNCTION int mdjvu_image_has_not_a_letter_flags(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_enable_not_a_letter_flags(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_disable_not_a_letter_flags(mdjvu_image_t);
+MDJVU_FUNCTION int mdjvu_image_get_not_a_letter_flag
     (mdjvu_image_t, mdjvu_bitmap_t);
-MDJVU_FUNCTION void mdjvu_image_set_no_substitution_flag
+MDJVU_FUNCTION void mdjvu_image_set_not_a_letter_flag
     (mdjvu_image_t, mdjvu_bitmap_t, int new_val);
 
 /* suspiciously big flag */
-MDJVU_FUNCTION int mdjvu_image_has_suspiciously_big_flag(mdjvu_image_t);
-MDJVU_FUNCTION void mdjvu_image_enable_suspiciously_big_flag(mdjvu_image_t);
-MDJVU_FUNCTION void mdjvu_image_disable_suspiciously_big_flag(mdjvu_image_t);
+MDJVU_FUNCTION int mdjvu_image_has_suspiciously_big_flags(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_enable_suspiciously_big_flags(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_disable_suspiciously_big_flags(mdjvu_image_t);
 MDJVU_FUNCTION int mdjvu_image_get_suspiciously_big_flag
     (mdjvu_image_t, mdjvu_bitmap_t);
 MDJVU_FUNCTION void mdjvu_image_set_suspiciously_big_flag
@@ -202,8 +206,15 @@ MDJVU_FUNCTION void mdjvu_image_set_suspiciously_big_flag
 MDJVU_FUNCTION int mdjvu_image_has_masses(mdjvu_image_t);
 MDJVU_FUNCTION void mdjvu_image_enable_masses(mdjvu_image_t);
 MDJVU_FUNCTION void mdjvu_image_disable_masses(mdjvu_image_t);
-MDJVU_FUNCTION int32 mdjvu_image_get_bitmap_mass(mdjvu_image_t, mdjvu_bitmap_t);
+MDJVU_FUNCTION int32 mdjvu_image_get_mass(mdjvu_image_t, mdjvu_bitmap_t);
 
+
+/* dictionary index */
+MDJVU_FUNCTION int mdjvu_image_has_dictionary_indices(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_enable_dictionary_indices(mdjvu_image_t);
+MDJVU_FUNCTION void mdjvu_image_disable_dictionary_indices(mdjvu_image_t);
+MDJVU_FUNCTION int32 mdjvu_image_get_dictionary_index(mdjvu_image_t, mdjvu_bitmap_t);
+MDJVU_FUNCTION void mdjvu_image_set_dictionary_index(mdjvu_image_t image, mdjvu_bitmap_t b, int32 v);
 
 /* _______________________________   render   ______________________________ */
 

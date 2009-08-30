@@ -164,7 +164,7 @@ MDJVU_IMPLEMENT void mdjvu_matcher_options_destroy(mdjvu_matcher_options_t opt)
 
 
 /* FIXME: maxint is maxint32 */
-static const int32 maxint = ~(1 << (sizeof(int32) * 8 - 1));
+static const int32 maxint = ~(1L << (sizeof(int32) * 8 - 1));
 typedef unsigned char byte;
 
 typedef struct ComparableImageData

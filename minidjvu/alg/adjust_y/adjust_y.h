@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * alg.h - and intermediate header to include all algorithms' headers
+ * adjust_y.h - adjust y coordinates of blits so the text won't look bumpy
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,16 +56,18 @@
  * +------------------------------------------------------------------
  */
 
-/* algorithms are listed in the approximate order they're applied */
+/*
+ * For every blit B pointing to a bitmap with a substitution S,
+ * set B pointing to S instead and adjust its X and Y accordingly.
+ * X is matched by bounding box centers, but Y is not that simple...
+ */
+MDJVU_FUNCTION void mdjvu_adjust(mdjvu_image_t image);
 
-#include <minidjvu/alg/smooth/smooth.h>
-#include <minidjvu/alg/split/split.h>
-#include <minidjvu/alg/clean/clean.h>
-#include <minidjvu/alg/nosubst/nosubst.h>
-#include <minidjvu/alg/blitsort/blitsort.h>
-#include <minidjvu/alg/patterns/patterns.h>
-#include <minidjvu/alg/classify/classify.h>
-#include <minidjvu/alg/adjust_y/adjust_y.h>
-#include <minidjvu/alg/erosion/erosion.h>
-#include <minidjvu/alg/jb2/jb2.h>
-#include <minidjvu/alg/delegate/delegate.h>
+
+/*
+ * The same for multipage case.
+ * Before the call, pages *may not* contain blits from dictionary bitmaps.
+ */
+MDJVU_FUNCTION void mdjvu_multipage_adjust(mdjvu_image_t dict,
+                                           int32 npages,
+                                           mdjvu_image_t *);

@@ -208,13 +208,13 @@ void JB2BitmapCoder::code_image_by_refinement/*{{{*/
     unsigned char *prototype_dn = buf_prototype_dn + 1; // to have left margin of 1
 
     // align (see DjVu2 specs, page 32, bottom)
-    int center_x = w - w / 2; // opposite to specification - this favors right!
-    int center_y = h / 2; // opposite to specification - this favors top!
+    int center_x = w - w / 2; // this favors right (but that agrees with specs)
+    int center_y = h / 2; // this favors top (but that agrees with specs)
     int proto_center_x = pw - pw / 2;
     int proto_center_y = ph / 2;
 
     // (shift_x, shift_y) is a top left corner shift of symbol being decoded
-    // with respect to prototype's PBM top left corner.
+    // with respect to prototype's top left corner.
     int shift_x = proto_center_x - center_x;
     int shift_y = proto_center_y - center_y;
 
@@ -307,6 +307,7 @@ mdjvu_bitmap_t JB2BitmapDecoder::decode(mdjvu_image_t img, mdjvu_bitmap_t proto)
         int32 w = pw + zp.decode(symbol_width_difference);
         int32 h = ph + zp.decode(symbol_height_difference);
         mdjvu_bitmap_t shape = mdjvu_image_new_bitmap(img, w, h);
+
         code_image_by_refinement(shape, proto, NULL);
 
         return shape;

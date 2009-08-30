@@ -62,82 +62,52 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CHUNK_ID_AT_AND_T 0x41542654
-#define CHUNK_ID_FORM     0x464F524D
-#define ID_DJVU           0x444A5655
-#define CHUNK_ID_INFO     0x494E464F
-#define CHUNK_ID_Sjbz     0x536A627A
-
-#define VERSION_STAMP 24
-#define RESOLUTION 300
-#define GAMMA 278
-
-
-static void write_uint32_most_significant_byte_first(uint32 i, FILE *f)
+MDJVU_IMPLEMENT int mdjvu_file_save_djvu_page(mdjvu_image_t image, mdjvu_file_t file, const char *dict_name, mdjvu_error_t *perr, int erosion)
 {
-    fputc(i >> 24, f);
-    fputc(i >> 16, f);
-    fputc(i >> 8, f);
-    fputc(i, f);
-}
+    mdjvu_iff_t FORM, INFO, INCL, Sjbz;
 
-static void write_uint16_most_significant_byte_first(uint16 i, FILE *f)
-{
-    fputc(i >> 8, f);
-    fputc(i, f);
-}
+    mdjvu_write_big_endian_int32(MDJVU_IFF_ID("AT&T"), file);
+    FORM = mdjvu_iff_write_chunk(MDJVU_IFF_ID("FORM"), file);
+        mdjvu_write_big_endian_int32(MDJVU_IFF_ID("DJVU"), file);
 
-static void write_uint16_least_significant_byte_first(uint16 i, FILE *f)
-{
-    fputc(i, f);
-    fputc(i >> 8, f);
-}
+        if (dict_name)
+        {
+            INCL = mdjvu_iff_write_chunk(MDJVU_IFF_ID("INCL"), file);
+                fwrite(dict_name, 1, strlen(dict_name), (FILE *) file);
+            mdjvu_iff_close_chunk(INCL, file);
+        }
 
-MDJVU_IMPLEMENT int mdjvu_file_save_djvu_page(mdjvu_image_t image, mdjvu_file_t file, mdjvu_error_t *perr, int erosion)
-{
-    FILE *f = (FILE *) file;
-    long total_length;
-    char buffer[42];
-    int32 w, h, dpi;
-    int saving_result;
+        INFO = mdjvu_iff_write_chunk(MDJVU_IFF_ID("INFO"), file);
+            mdjvu_write_info_chunk(file, image);
+        mdjvu_iff_close_chunk(INFO, file);
 
-    if (perr) *perr = NULL;
-
-    memset(buffer, 0, sizeof(buffer));
-    fwrite(buffer, 1, 42, f);
-
-    saving_result = mdjvu_file_save_jb2(image, file, perr, erosion);
-
-    if (!saving_result)
-        return 0;
-
-    total_length = ftell(f);
-    fseek(f, 42, SEEK_SET);
-    w = mdjvu_image_get_width(image);
-    h = mdjvu_image_get_height(image);
-    dpi = mdjvu_image_get_resolution(image);
-    if (!dpi) dpi = 300;
-
-    rewind(f);
-
-    write_uint32_most_significant_byte_first(CHUNK_ID_AT_AND_T, f);
-    write_uint32_most_significant_byte_first(CHUNK_ID_FORM, f);
-    write_uint32_most_significant_byte_first(total_length - 12, f);
-    write_uint32_most_significant_byte_first(ID_DJVU, f);
-    write_uint32_most_significant_byte_first(CHUNK_ID_INFO, f);
-    write_uint32_most_significant_byte_first(10, f);
-    write_uint16_most_significant_byte_first((uint16) w, f);
-    write_uint16_most_significant_byte_first((uint16) h, f);
-    write_uint16_least_significant_byte_first(VERSION_STAMP, f);
-    write_uint16_least_significant_byte_first((uint16) dpi, f);
-    write_uint16_least_significant_byte_first(GAMMA, f);
-    write_uint32_most_significant_byte_first(CHUNK_ID_Sjbz, f);
-    write_uint32_most_significant_byte_first(total_length - 42, f);
+        Sjbz = mdjvu_iff_write_chunk(MDJVU_IFF_ID("Sjbz"), file);
+            if (!mdjvu_file_save_jb2(image, file, perr, erosion)) return 0;
+        mdjvu_iff_close_chunk(Sjbz, file);
+    mdjvu_iff_close_chunk(FORM, file);
 
     return 1;
 }
 
-MDJVU_IMPLEMENT int mdjvu_save_djvu_page(mdjvu_image_t image, const char *path, mdjvu_error_t *perr, int erosion)
+
+MDJVU_IMPLEMENT int mdjvu_file_save_djvu_dictionary(mdjvu_image_t image, mdjvu_file_t file, mdjvu_error_t *perr, int erosion)
+{
+    mdjvu_iff_t FORM, Djbz;
+
+    mdjvu_write_big_endian_int32(MDJVU_IFF_ID("AT&T"), file);
+    FORM = mdjvu_iff_write_chunk(MDJVU_IFF_ID("FORM"), file);
+        mdjvu_write_big_endian_int32(MDJVU_IFF_ID("DJVI"), file);
+
+        Djbz = mdjvu_iff_write_chunk(MDJVU_IFF_ID("Djbz"), file);
+            if (!mdjvu_file_save_jb2_dictionary(image, file, perr, erosion))
+                return 0;
+        mdjvu_iff_close_chunk(Djbz, file);
+    mdjvu_iff_close_chunk(FORM, file);
+
+    return 1;
+}
+
+MDJVU_IMPLEMENT int mdjvu_save_djvu_page(mdjvu_image_t image, const char *path, const char *dict, mdjvu_error_t *perr, int erosion)
 {
     int result;
     FILE *f = fopen(path, "wb");
@@ -147,7 +117,22 @@ MDJVU_IMPLEMENT int mdjvu_save_djvu_page(mdjvu_image_t image, const char *path, 
         if (perr) *perr = mdjvu_get_error(mdjvu_error_fopen_write);
         return 0;
     }
-    result = mdjvu_file_save_djvu_page(image, (mdjvu_file_t) f, perr, erosion);
+    result = mdjvu_file_save_djvu_page(image, (mdjvu_file_t) f, dict, perr, erosion);
+    fclose(f);
+    return result;
+}
+
+MDJVU_IMPLEMENT int mdjvu_save_djvu_dictionary(mdjvu_image_t image, const char *path, mdjvu_error_t *perr, int erosion)
+{
+    int result;
+    FILE *f = fopen(path, "wb");
+    if (perr) *perr = NULL;
+    if (!f)
+    {
+        if (perr) *perr = mdjvu_get_error(mdjvu_error_fopen_write);
+        return 0;
+    }
+    result = mdjvu_file_save_djvu_dictionary(image, (mdjvu_file_t) f, perr, erosion);
     fclose(f);
     return result;
 }

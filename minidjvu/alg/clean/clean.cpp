@@ -76,7 +76,7 @@ MDJVU_IMPLEMENT void mdjvu_clean(mdjvu_image_t image)
     for (i = 0; i < b; i++)
     {
         mdjvu_bitmap_t bitmap = mdjvu_image_get_blit_bitmap(image, i);
-        int32 mass = mdjvu_image_get_bitmap_mass(image, bitmap);
+        int32 mass = mdjvu_image_get_mass(image, bitmap);
         if (mass <= tinysize)
             mdjvu_image_set_blit_bitmap(image, i, NULL);
     }

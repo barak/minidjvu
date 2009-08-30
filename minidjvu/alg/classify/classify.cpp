@@ -59,7 +59,26 @@
 
 #include "mdjvucfg.h"
 #include "minidjvu.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+
+/* Stuff for not using malloc in C++
+ * (left here for DjVuLibre compatibility)
+ */
+#ifdef __cplusplus
+# define MALLOC(Type)    new Type
+# define FREE(p)         delete p
+# define MALLOCV(Type,n) new Type[n]
+# define FREEV(p)        delete [] p
+#else
+# define MALLOC(Type)    ((Type*)malloc(sizeof(Type)))
+# define FREE(p)         do{if(p)free(p);}while(0)
+# define MALLOCV(Type,n) ((Type*)malloc(sizeof(Type)*(n)))
+# define FREEV(p)        do{if(p)free(p);}while(0)
+#endif
+
 
 /* Classes are single-linked lists with an additional pointer to the last node.
  * This is an class item.
@@ -78,6 +97,7 @@ typedef struct Class
     ClassNode *first, *last;
     struct Class *prev_class;
     struct Class *next_class;
+    int32 last_page; /* last page on which this class was met */
 } Class;
 
 
@@ -90,7 +110,7 @@ typedef struct Classification
 /* Creates an empty class and links it to the list of classes. */
 static Class *new_class(Classification *cl)
 {
-    Class *c = (Class *) malloc(sizeof(Class));
+    Class *c = MALLOC(Class);
     c->first = c->last = NULL;
     c->prev_class = NULL;
     c->next_class = cl->first_class;
@@ -112,13 +132,13 @@ static void delete_class(Classification *cl, Class *c)
     if (next)
         next->prev_class = prev;
 
-    free(c);
+    FREE(c);
 }
 
 /* Creates a new node and adds it to the given class. */
 static ClassNode *new_node(Classification *cl, Class *c, mdjvu_pattern_t ptr)
 {
-    ClassNode *n = (ClassNode *) malloc(sizeof(ClassNode));
+    ClassNode *n = MALLOC(ClassNode);
     n->ptr = ptr;
     n->next = c->first;
     c->first = n;
@@ -178,7 +198,7 @@ static void delete_all_classes(Classification *cl)
     {
         Class *t = c;
         c = c->next_class;
-        free(t);
+        FREE(t);
     }
 }
 
@@ -198,7 +218,8 @@ static int compare_to_class(mdjvu_pattern_t p, Class *c, int32 dpi,
 }
 
 static void classify(Classification *cl, mdjvu_pattern_t p,
-                     int32 dpi, mdjvu_matcher_options_t options)
+                     int32 dpi, mdjvu_matcher_options_t options,
+                     int32 page /* of current pattern */)
 {
     Class *class_of_this = NULL;
     Class *c, *next_c = NULL;
@@ -207,6 +228,7 @@ static void classify(Classification *cl, mdjvu_pattern_t p,
         next_c = c->next_class; /* That's because c may be deleted in merging */
 
         if (class_of_this == c) continue;
+        if (c->last_page < page - 1) continue; /* multipage optimization */
         if (compare_to_class(p, c, dpi, options) != 1) continue;
 
         if (class_of_this)
@@ -215,27 +237,21 @@ static void classify(Classification *cl, mdjvu_pattern_t p,
             class_of_this = c;
     }
     if (!class_of_this) class_of_this = new_class(cl);
+    if (page > class_of_this->last_page)
+        class_of_this->last_page = page;
     new_node(cl, class_of_this, p);
 }
 
-MDJVU_IMPLEMENT int32 mdjvu_classify_patterns
-    (mdjvu_pattern_t *b, int32 *r, int32 n, int32 dpi,
-     mdjvu_matcher_options_t options)
+static int32 get_tags_from_classification(mdjvu_pattern_t *b, int32 *r, int32 n, Classification *cl)
 {
-    int32 i, max_tag;
+    int32 i;
+    int32 max_tag = put_tags(cl);
     ClassNode *node;
-    Classification cl;
 
-    cl.first_class = NULL;
-    cl.first_node = cl.last_node = NULL;
-
-    for (i = 0; i < n; i++) if (b[i]) classify(&cl, b[i], dpi, options);
-
-    max_tag = put_tags(&cl);
-    delete_all_classes(&cl);
+    delete_all_classes(cl);
 
     i = 0;
-    node = cl.first_node;
+    node = cl->first_node;
     while (node)
     {
         ClassNode *t;
@@ -243,25 +259,45 @@ MDJVU_IMPLEMENT int32 mdjvu_classify_patterns
         r[i++] = node->tag;
         t = node;
         node = node->global_next;
-        free(t);
+        FREE(t);
     }
     if (i < n) while (i < n) r[i++] = 0;
     return max_tag;
 }
 
-MDJVU_IMPLEMENT int32 mdjvu_classify_bitmaps_in_image
+static void init_classification(Classification *c)
+{
+    c->first_class = NULL;
+    c->first_node = c->last_node = NULL;
+}
+
+MDJVU_IMPLEMENT int32 mdjvu_classify_patterns
+    (mdjvu_pattern_t *b, int32 *r, int32 n, int32 dpi,
+     mdjvu_matcher_options_t options)
+{
+    int32 i;
+    Classification cl;
+    init_classification(&cl);
+
+    for (i = 0; i < n; i++) if (b[i]) classify(&cl, b[i], dpi, options, 1);
+
+    return get_tags_from_classification(b, r, n, &cl);
+}
+
+#ifndef NO_MINIDJVU
+
+MDJVU_IMPLEMENT int32 mdjvu_classify_bitmaps
     (mdjvu_image_t image, int32 *result, mdjvu_matcher_options_t options)
 {
     int32 i, n = mdjvu_image_get_bitmap_count(image);
     int32 dpi = mdjvu_image_get_resolution(image);
-    mdjvu_pattern_t *patterns = (mdjvu_pattern_t *)
-        malloc(n * sizeof(mdjvu_pattern_t));
+    mdjvu_pattern_t *patterns = MALLOCV(mdjvu_pattern_t, n);
     int32 max_tag;
 
     for (i = 0; i < n; i++)
     {
         mdjvu_bitmap_t bitmap = mdjvu_image_get_bitmap(image, i);
-        if (mdjvu_image_get_no_substitution_flag(image, bitmap))
+        if (mdjvu_image_get_not_a_letter_flag(image, bitmap))
             patterns[i] = NULL;
         else
             patterns[i] = mdjvu_pattern_create(bitmap);
@@ -271,8 +307,138 @@ MDJVU_IMPLEMENT int32 mdjvu_classify_bitmaps_in_image
 
     for (i = 0; i < n; i++)
         if (patterns[i]) mdjvu_pattern_destroy(patterns[i]);
-    free(patterns);
+    FREEV(patterns);
 
     return max_tag;
 }
 
+
+/* ____________________________   multipage stuff   ________________________ */
+
+/* FIXME: wrong dpi handling */
+MDJVU_IMPLEMENT int32 mdjvu_multipage_classify_patterns
+    (int32 npages, int32 total_patterns_count, int32 *npatterns,
+     mdjvu_pattern_t **patterns, int32 *result,
+     int32 *dpi, mdjvu_matcher_options_t options,
+     void (*report)(void *, int), void *param)
+{
+    /* a kluge for NULL patterns */
+    /* FIXME: do it decently */
+    mdjvu_pattern_t *all_patterns = MDJVU_MALLOCV(mdjvu_pattern_t, total_patterns_count);
+    int32 patterns_gathered;
+    int32 page;
+    int32 max_tag;
+
+    Classification cl;
+    init_classification(&cl);
+
+    patterns_gathered = 0;
+    for (page = 0; page < npages; page++)
+    {
+        int32 n = npatterns[page];
+        int32 d = dpi[page];
+        mdjvu_pattern_t *p = patterns[page];
+
+        int32 i;
+        for (i = 0; i < n; i++)
+        {
+            all_patterns[patterns_gathered++] = p[i];
+            if (p[i]) classify(&cl, p[i], d, options, page);
+        }
+        report(param, page);
+    }
+
+    max_tag = get_tags_from_classification
+        (all_patterns, result, total_patterns_count, &cl);
+
+    MDJVU_FREEV(all_patterns);
+    return max_tag;
+}
+
+MDJVU_IMPLEMENT int32 mdjvu_multipage_classify_bitmaps
+    (int32 npages, int32 total_patterns_count, mdjvu_image_t *pages,
+     int32 *result, mdjvu_matcher_options_t options,
+     void (*report)(void *, int), void *param)
+{
+    int32 max_tag, k, page;
+    int32 *npatterns = (int32 *) malloc(npages * sizeof(int32));
+    int32 *dpi = (int32 *) malloc(npages * sizeof(int32));
+    mdjvu_pattern_t *patterns = (mdjvu_pattern_t *)
+        malloc(total_patterns_count * sizeof(mdjvu_pattern_t));
+    mdjvu_pattern_t **pointers = (mdjvu_pattern_t **)
+        malloc(npages * sizeof(mdjvu_pattern_t *));
+
+    int32 patterns_created = 0;
+    for (page = 0; page < npages; page++)
+    {
+        mdjvu_image_t current_image = pages[page];
+        int32 c = npatterns[page] = mdjvu_image_get_bitmap_count(current_image);
+        int32 i;
+        dpi[page] = mdjvu_image_get_resolution(current_image);
+
+        pointers[page] = patterns + patterns_created;
+        for (i = 0; i < c; i++)
+        {
+            patterns[patterns_created++] = mdjvu_pattern_create(
+                mdjvu_image_get_bitmap(current_image, i)
+            );
+        }
+    }
+
+    max_tag = mdjvu_multipage_classify_patterns
+        (npages, total_patterns_count, npatterns,
+         pointers, result, dpi, options, report, param);
+
+    for (k = 0; k < total_patterns_count; k++)
+    {
+        mdjvu_pattern_destroy(patterns[k]);
+    }
+    free(patterns);
+    free(pointers);
+    free(npatterns);
+    free(dpi);
+
+    return max_tag;
+}
+
+
+MDJVU_IMPLEMENT void mdjvu_multipage_get_dictionary_flags
+   (int32 n,
+    int32 *npatterns,
+    int32 max_tag,
+    int32 *tags,
+    unsigned char *dictionary_flags)
+{
+    int32 page_number;
+    int32 *first_page_met = (int32 *) malloc((max_tag + 1) * sizeof(int32));
+    int32 i, total_bitmaps_passed = 0;
+    memset(dictionary_flags, 0, max_tag + 1);
+    for (i = 0; i <= max_tag; i++) first_page_met[i] = -1;
+
+    for (page_number = 0; page_number < n; page_number++)
+    {
+        int32 bitmap_count = npatterns[page_number];
+
+        for (i = 0; i < bitmap_count; i++)
+        {
+            int32 tag = tags[total_bitmaps_passed++];
+            if (!tag) continue; /* skip non-substitutable bitmaps */
+
+            if (first_page_met[tag] == -1)
+            {
+                /* never met this tag before */
+                first_page_met[tag] = page_number;
+            }
+            else if (first_page_met[tag] != page_number)
+            {
+                /* met this tag on another page */
+                dictionary_flags[tag] = 1;
+            }
+        }
+    }
+
+    free(first_page_met);
+}
+
+
+#endif /* NO_MINIDJVU */

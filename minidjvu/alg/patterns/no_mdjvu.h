@@ -71,3 +71,4 @@
 #define MDJVU_IMPLEMENT
 typedef int int32;
 #include "patterns.h"
+#include "classify.h" /* to compile it with the classificator */

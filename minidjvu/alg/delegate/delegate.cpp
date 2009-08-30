@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * alg.h - and intermediate header to include all algorithms' headers
+ * delegate.c - choosing a representative over a class of letters
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,16 +56,32 @@
  * +------------------------------------------------------------------
  */
 
-/* algorithms are listed in the approximate order they're applied */
+#include "mdjvucfg.h"
+#include "minidjvu.h"
+#include <string.h>
 
-#include <minidjvu/alg/smooth/smooth.h>
-#include <minidjvu/alg/split/split.h>
-#include <minidjvu/alg/clean/clean.h>
-#include <minidjvu/alg/nosubst/nosubst.h>
-#include <minidjvu/alg/blitsort/blitsort.h>
-#include <minidjvu/alg/patterns/patterns.h>
-#include <minidjvu/alg/classify/classify.h>
-#include <minidjvu/alg/adjust_y/adjust_y.h>
-#include <minidjvu/alg/erosion/erosion.h>
-#include <minidjvu/alg/jb2/jb2.h>
-#include <minidjvu/alg/delegate/delegate.h>
+MDJVU_IMPLEMENT void mdjvu_multipage_choose_representatives
+        (int32 npages,
+         mdjvu_image_t *pages,
+         int32 max_tag,
+         int32 *tags,
+         mdjvu_bitmap_t *representatives)
+{
+    int page_number;
+    int32 total_bitmaps_passed = 0;
+    memset(representatives, 0, (max_tag + 1) * sizeof(mdjvu_bitmap_t));
+    for (page_number = 0; page_number < npages; page_number++)
+    {
+        mdjvu_image_t page = pages[page_number];
+        int32 bitmap_count = mdjvu_image_get_bitmap_count(page);
+        int32 i; /* index of bitmap in a page */
+
+        for (i = 0; i < bitmap_count; i++)
+        {
+            int32 tag = tags[total_bitmaps_passed++];
+            if (!tag) continue; /* skip non-substitutable bitmaps */
+            if (!representatives[tag])
+                representatives[tag] = mdjvu_image_get_bitmap(page, i);
+        }
+    }
+}

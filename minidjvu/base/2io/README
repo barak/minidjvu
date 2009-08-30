@@ -2,3 +2,5 @@ Under Windows there is no libc. So it may well occur that minidjvu uses one
 stdio implementation, and an application linked against minidjvu uses another.
 In that case we can't exchange (FILE *) pointers reliably. So here is a simple
 stdio wrapper to allow applications invoke our stdio.
+
+Also added some integer read/write functions.

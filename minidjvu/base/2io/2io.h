@@ -70,3 +70,12 @@ MDJVU_FUNCTION int32 mdjvu_fread
     (void *, int32 size, int32 n, mdjvu_file_t);
 MDJVU_FUNCTION int32 mdjvu_fwrite
     (const void *, int32 size, int32 n, mdjvu_file_t);
+
+MDJVU_FUNCTION void mdjvu_write_big_endian_int32(int32, mdjvu_file_t);
+MDJVU_FUNCTION void mdjvu_write_little_endian_int32(int32, mdjvu_file_t);
+MDJVU_FUNCTION int32 mdjvu_read_big_endian_int32(mdjvu_file_t);
+MDJVU_FUNCTION int32 mdjvu_read_little_endian_int32(mdjvu_file_t);
+MDJVU_FUNCTION void mdjvu_write_big_endian_int16(int16, mdjvu_file_t);
+MDJVU_FUNCTION void mdjvu_write_little_endian_int16(int16, mdjvu_file_t);
+MDJVU_FUNCTION int16 mdjvu_read_big_endian_int16(mdjvu_file_t);
+MDJVU_FUNCTION int16 mdjvu_read_little_endian_int16(mdjvu_file_t);

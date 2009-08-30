@@ -1,0 +1,7 @@
+IFF is a simple convention for decorating chunks of the file with headers.
+However, it's regarded as a format in the DjVu Specs, so it's in formats
+directory.
+
+IFF is very generic and used not only in DjVu, but in some sound files also.
+
+This implements IFF parts of DjVu 2 Spec. (page 5, "Structure of DjVu files").

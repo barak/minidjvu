@@ -136,15 +136,15 @@ MDJVU_IMPLEMENT void mdjvu_sort_blits_and_bitmaps(mdjvu_image_t img)
     BlitPassport *bps;
     int32 *bottoms, *passport_of_blit;
 
-    if (!mdjvu_image_has_no_substitution_flag(img))
-        mdjvu_calculate_no_substitution_flag(img);
+    if (!mdjvu_image_has_not_a_letter_flags(img))
+        mdjvu_calculate_not_a_letter_flags(img);
 
     /* Count letter blits */
     blit_count = mdjvu_image_get_blit_count(img);
     for (i = 0; i < blit_count; i++)
     {
         mdjvu_bitmap_t bmp = mdjvu_image_get_blit_bitmap(img, i);
-        if (!mdjvu_image_get_no_substitution_flag(img, bmp))
+        if (!mdjvu_image_get_not_a_letter_flag(img, bmp))
             char_blit_count++;
     }
 
@@ -159,7 +159,7 @@ MDJVU_IMPLEMENT void mdjvu_sort_blits_and_bitmaps(mdjvu_image_t img)
     for (i = 0; i < blit_count; i++)
     {
         mdjvu_bitmap_t bmp = mdjvu_image_get_blit_bitmap(img, i);
-        if (!mdjvu_image_get_no_substitution_flag(img, bmp))
+        if (!mdjvu_image_get_not_a_letter_flag(img, bmp))
         {
             int32 x = bps[j].left = mdjvu_image_get_blit_x(img, i);
             int32 y = bps[j].top  = mdjvu_image_get_blit_y(img, i);;

@@ -57,14 +57,16 @@
  */
 
 #ifndef MDJVU_USE_TIFFIO /* kluge not to typedef twice when using tiffio.h */
-    typedef long int32;
-    typedef unsigned long uint32;
+    typedef int int32;
+    typedef unsigned int uint32;
     typedef unsigned short uint16;
+    typedef short int16;
 #endif
 
-#define MDJVU_INT32_FORMAT "%ld"
-#define MDJVU_UINT32_FORMAT "%lu"
-#define MDJVU_UINT16_FORMAT "%d"
+#define MDJVU_INT32_FORMAT "%d"
+#define MDJVU_INT16_FORMAT "%d"
+#define MDJVU_UINT32_FORMAT "%u"
+#define MDJVU_UINT16_FORMAT "%u"
 
 /* MDJVU_FUNCTION and MDJVU_IMPLEMENT are prefixes of exported functions.
  * MDJVU_FUNCTION is for declarations, MDJVU_IMPLEMENT is for implementations.
@@ -98,6 +100,13 @@
     #define MDJVU_FUNCTION MDJVU_C_EXPORT_PREFIX
     #define MDJVU_IMPLEMENT
 #endif
+
+/* Convenience macros. */
+#define MDJVU_MALLOC(T) ((T *) malloc(sizeof(T)))
+#define MDJVU_MALLOCV(T,N) ((T *) malloc((N) * sizeof(T)))
+#define MDJVU_FREE(P) free(P)
+#define MDJVU_FREEV(P) free(P)
+
 
 /* Check that the portability typedefs work as expected.
  * If not, returns an error message.

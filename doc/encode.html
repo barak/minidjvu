@@ -62,7 +62,7 @@ receives another argument, a pointer to resolution:
 <PRE>
     const char *input = "your_input_file_name_here.pbm";
     mdjvu_error_t error;
-    int32 resolution;
+    int32 resolution = 300; // always set a default value in case TIFF has no dpi recorded
     mdjvu_bitmap_t bitmap = mdjvu_load_tiff(input, &amp;resolution, &amp;error);
     if (!bitmap)
     {

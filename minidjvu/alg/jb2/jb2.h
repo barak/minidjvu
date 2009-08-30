@@ -65,16 +65,28 @@ MDJVU_FUNCTION mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t, int32 length, mdj
 
 /*
  * 1 - success, 0 - error
- * As for now, cannot save images that use shared dictionary.
- * With erosion turned on, this changes the image.
+ * Cannot save images that use shared dictionary.
+ * With erosion turned on, this function changes the image.
  */
 MDJVU_FUNCTION int mdjvu_save_jb2(mdjvu_image_t, const char *path, mdjvu_error_t *, int erosion);
 MDJVU_FUNCTION int mdjvu_file_save_jb2(mdjvu_image_t, mdjvu_file_t, mdjvu_error_t *, int erosion);
 
+MDJVU_FUNCTION int mdjvu_save_jb2_dictionary(mdjvu_image_t, const char *path, mdjvu_error_t *, int erosion);
+MDJVU_FUNCTION int mdjvu_file_save_jb2_dictionary(mdjvu_image_t, mdjvu_file_t, mdjvu_error_t *, int erosion);
+
+
 /*
  * This is called automatically by xxx_save_jb2() functions.
- * This function finds "cross-coding prototypes" (read DjVu spec).
+ * This function finds "cross-coding prototypes" (see DjVu spec).
  * It's VERY SLOW.
  */
 
 MDJVU_FUNCTION void mdjvu_find_prototypes(mdjvu_image_t);
+
+/*
+ * This is the multipage version. Does not search prototypes in the dictionary.
+ * Is not invoked by xxx_save_jb2().
+ */
+MDJVU_FUNCTION void mdjvu_multipage_find_prototypes
+    (mdjvu_image_t dict, int32 npages, mdjvu_image_t *pages,
+     void (*report)(void *param, int page), void *param);

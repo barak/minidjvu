@@ -95,8 +95,8 @@ static void make_no_subst(mdjvu_image_t image, int32 blit)
 {
     int32 i, b;
     mdjvu_bitmap_t bitmap = mdjvu_image_get_blit_bitmap(image, blit);
-    if (mdjvu_image_get_no_substitution_flag(image, bitmap)) return;
-    mdjvu_image_set_no_substitution_flag(image, bitmap, 1);
+    if (mdjvu_image_get_not_a_letter_flag(image, bitmap)) return;
+    mdjvu_image_set_not_a_letter_flag(image, bitmap, 1);
 
     /* infect all blits that intersect with this */
     b = mdjvu_image_get_blit_count(image);
@@ -107,11 +107,11 @@ static void make_no_subst(mdjvu_image_t image, int32 blit)
     }
 }
 
-MDJVU_IMPLEMENT void mdjvu_calculate_no_substitution_flag(mdjvu_image_t image)
+MDJVU_IMPLEMENT void mdjvu_calculate_not_a_letter_flags(mdjvu_image_t image)
 {
     int32 i, b;
-    assert(mdjvu_image_has_suspiciously_big_flag(image));
-    mdjvu_image_enable_no_substitution_flag(image);
+    assert(mdjvu_image_has_suspiciously_big_flags(image));
+    mdjvu_image_enable_not_a_letter_flags(image);
     b = mdjvu_image_get_blit_count(image);
     for (i = 0; i < b; i++)
     {

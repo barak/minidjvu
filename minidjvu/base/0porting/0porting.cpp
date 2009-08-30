@@ -69,6 +69,9 @@ MDJVU_IMPLEMENT const char *mdjvu_check_sanity(void)
     if (sizeof(uint32) != 4)
         return "mdjvu_check_sanity(): sizeof(uint32) != 4";
 
+    if (sizeof(int16) != 2)
+        return "mdjvu_check_sanity(): sizeof(int16) != 2";
+
     if (sizeof(uint16) != 2)
         return "mdjvu_check_sanity(): sizeof(uint16) != 2";
 

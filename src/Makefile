@@ -9,4 +9,4 @@ CFLAGS:=-pipe -g -I.. \
 ../bin/minidjvu: minidjvu.c Makefile
 	mkdir -p $(dir $@)
 #	libtool gcc $(CFLAGS) -L../bin/ -lminidjvu $< -o $@
-	gcc $(CFLAGS) $(PWD)/../bin/libminidjvu.so $< -o $@	
+	gcc $(CFLAGS) $(PWD)/../bin/libminidjvu.so $< -o $@

@@ -58,5 +58,6 @@
 
 #include <minidjvu/formats/pbm/pbm.h>
 #include <minidjvu/formats/bmp/bmp.h>
+#include <minidjvu/formats/iff/iff.h>
 #include <minidjvu/formats/tiff/tiff.h>
 #include <minidjvu/formats/djvu/djvu.h>

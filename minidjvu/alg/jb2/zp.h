@@ -91,6 +91,7 @@ class ZPBitContext
 
     public:
         inline Bit get_more_probable_bit() {return value & 1;}
+        inline void assign(ZPBitContext &c) {value = c.value;}
 };
 
 inline ZPBitContext::ZPBitContext(): value(0) {}
@@ -105,6 +106,7 @@ class ZPMemoryWatcher
 {
     public:
         virtual void handle_allocation() = 0;
+    inline virtual ~ZPMemoryWatcher(){}
 };
 
 
