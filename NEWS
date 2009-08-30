@@ -1,19 +1,31 @@
+----
+0.33
+----
+
+    bugfix: no more crashes on pages with gray background
+    bugfix: configure script now works with gcc3 (renamed all to C++)
+
+
 ---
 0.3
 ---
+
     Lossy compression
     New "erosion" algorithm (gains about 10% in file size)
     TIFF support (through libtiff)
     Command-line interface improved
     man page added
 
+
 ---
 0.2
 ---
+
     Added lossless compression (runs slow)
     Added "smooth" filter (gains about 5% in file size)
     Added minimal error-handling
     Documentation is now nonzero!
+
 
 ---
 0.1

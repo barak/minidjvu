@@ -19,7 +19,7 @@
 .\" License along with this manual. Otherwise check the web site
 .\" of the Free Software Foundation at http://www.fsf.org.
 .\" 
-.TH "MINIDJVU" "1" "March 2005" "minidjvu-0.3" "minidjvu-0.3"
+.TH "MINIDJVU" "1" "March 2005" "minidjvu-0.33" "minidjvu-0.33"
 .SH "NAME"
 minidjvu - encode/decode black-and-white DjVu pages
 
@@ -48,7 +48,7 @@ Specifying a bitmap-to-bitmap job is possible, but relatively useful only with
 .BR --smooth
 option.
 
-Note: 0.3 is an early release, the command-line interface may still change.
+Note: 0.33 is an early release, the command-line interface may still change.
 That mostly applies to DjVu-to-DjVu and bitmap-to-bitmap behaviors.
 
 All options preceded by two hyphens can be used with one hyphen.
@@ -102,20 +102,6 @@ This option is turned on by
 .BR "--lossy".
 
 .TP 
-.B "-s"
-.TP 
-.B "--smooth"
-Flip some pixels that appear to be noise. The gain in file size is about 5%.
-Visually the image is slightly improved, but it's hardly noticeable.
-
-Current filter is dumb and only removes black pixels with
-at least 3 white neighbors (of 4). You probably won't notice the effects.
-
-This option is turned on by
-.BR "--lossy".
-
-
-.TP 
 .B "-l"
 .TP 
 .B "--lossy"
@@ -139,6 +125,26 @@ This option is turned on by
 .BR "--lossy"
 or 
 .BR "--aggression".
+
+.TP 
+.B "-n"
+.TP 
+.B "--no-prototypes"
+Disable prototype searching. This makes lossless compression faster,
+but produced files become much bigger.
+
+.TP 
+.B "-s"
+.TP 
+.B "--smooth"
+Flip some pixels that appear to be noise. The gain in file size is about 5%.
+Visually the image is slightly improved, but it's hardly noticeable.
+
+Current filter is dumb and only removes black pixels with
+at least 3 white neighbors (of 4). You probably won't notice the effects.
+
+This option is turned on by
+.BR "--lossy".
 
 .TP 
 .B "-v"

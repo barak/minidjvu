@@ -68,6 +68,24 @@
 #include "minidjvu.h"
 #include <assert.h>
 
+
+/* Stuff for not using malloc in C++
+ * (made by Leon Bottou; has no use in minidjvu,
+ * but left here for potential DjVuLibre compatibility)
+ */
+#ifdef __cplusplus
+# define MALLOC(Type)    new Type
+# define FREE(p)         delete p
+# define MALLOCV(Type,n) new Type[n]
+# define FREEV(p)        delete [] p
+#else
+# define MALLOC(Type)    ((Type*)malloc(sizeof(Type)))
+# define FREE(p)         do{if(p)free(p);}while(0)
+# define MALLOCV(Type,n) ((Type*)malloc(sizeof(Type)*(n)))
+# define FREEV(p)        do{if(p)free(p);}while(0)
+#endif
+
+
 typedef unsigned char byte;
 
 static int32 sum_column_gray(byte **pixels, int32 x, int32 y1, int32 y2)

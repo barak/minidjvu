@@ -102,8 +102,8 @@ void JB2Coder::reset_numcontexts()
 
 // JB2Coder implementation }}}
 
-JB2Decoder::JB2Decoder(FILE *f)
- : JB2BitmapDecoder(zp), zp(f) {}
+JB2Decoder::JB2Decoder(FILE *f, int32 length)
+ : JB2BitmapDecoder(zp), zp(f, length) {}
 JB2Encoder::JB2Encoder(FILE *f)
  : JB2BitmapEncoder(zp), zp(f), no_symbols_yet(true) {}
 

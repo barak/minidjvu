@@ -1,6 +1,6 @@
 /* minidjvu - library for handling bilevel images with DjVuBitonal support
  *
- * version.h - returning version
+ * no_mdjvu.h - stuff for compiling the pattern matcher outside of minidjvu
  *
  * Copyright (C) 2005  Ilya Mezhirov
  *
@@ -56,12 +56,18 @@
  * +------------------------------------------------------------------
  */
 
-/*
- * This is the version of the headers.
- */
-#define MDJVU_VERSION "0.33"
 
 /*
- * This function returns the compile-time version stamp.
+ * to compile the pattern matcher without the rest of minidjvu,
+ * do this:
+ *
+ *  mv no_mdjvu.h minidjvu.h
+ *  touch mdjvucfg.h
+ *  g++ -c *.cpp
  */
-MDJVU_FUNCTION const char *mdjvu_get_version(void);
+
+#define NO_MINIDJVU
+#define MDJVU_FUNCTION
+#define MDJVU_IMPLEMENT
+typedef int int32;
+#include "patterns.h"

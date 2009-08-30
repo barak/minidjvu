@@ -121,7 +121,7 @@ static int find_sibling_chunk(FILE *file, IFFChunk *chunk, uint32 id)
 #define ID_DJVU           0x444A5655
 #define CHUNK_ID_Sjbz     0x536A627A
 
-MDJVU_IMPLEMENT int mdjvu_locate_jb2_chunk(mdjvu_file_t file, mdjvu_error_t *perr)
+MDJVU_IMPLEMENT int mdjvu_locate_jb2_chunk(mdjvu_file_t file, int32 *plength, mdjvu_error_t *perr)
 {
     IFFChunk FORM, Sjbz;
     FILE *f = (FILE *) file;
@@ -155,14 +155,17 @@ MDJVU_IMPLEMENT int mdjvu_locate_jb2_chunk(mdjvu_file_t file, mdjvu_error_t *per
         return 0;
     }
 
+    *plength = (int32) Sjbz.length;
+
     return 1;
 }
 
 MDJVU_IMPLEMENT mdjvu_image_t mdjvu_file_load_djvu_page(mdjvu_file_t file, mdjvu_error_t *perr)
 {
-    if (!mdjvu_locate_jb2_chunk(file, perr))
+    int32 length;
+    if (!mdjvu_locate_jb2_chunk(file, &length, perr))
         return NULL;
-    return mdjvu_file_load_jb2(file, perr);
+    return mdjvu_file_load_jb2(file, length, perr);
 }
 
 MDJVU_IMPLEMENT mdjvu_image_t mdjvu_load_djvu_page(const char *path, mdjvu_error_t *perr)

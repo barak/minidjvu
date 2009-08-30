@@ -56,7 +56,7 @@
  * +------------------------------------------------------------------
  */
 
-MDJVU_FUNCTION int mdjvu_locate_jb2_chunk(mdjvu_file_t file, mdjvu_error_t *);
+MDJVU_FUNCTION int mdjvu_locate_jb2_chunk(mdjvu_file_t file, int32 *plength, mdjvu_error_t *);
 
 /*
  * BUG: resolution is not loaded

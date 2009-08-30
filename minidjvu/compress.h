@@ -75,6 +75,7 @@ MDJVU_FUNCTION void mdjvu_set_matcher_options(mdjvu_compression_options_t, mdjvu
 
 MDJVU_FUNCTION void mdjvu_set_clean(mdjvu_compression_options_t, int);
 MDJVU_FUNCTION void mdjvu_set_verbose(mdjvu_compression_options_t, int);
+MDJVU_FUNCTION void mdjvu_set_no_prototypes(mdjvu_compression_options_t, int);
 
 MDJVU_FUNCTION void mdjvu_compress_image(mdjvu_image_t, mdjvu_compression_options_t);
 

@@ -84,7 +84,7 @@ am__include = @am__include@
 am__quote = @am__quote@
 install_sh = @install_sh@
 bin_PROGRAMS = minidjvu
-minidjvu_SOURCES = minidjvu.c
+minidjvu_SOURCES = minidjvu.cpp
 man_MANS = ../doc/minidjvu.1
 INCLUDES = -I..
 LDADD = ../minidjvu/libminidjvu.la -ltiff
@@ -109,14 +109,15 @@ LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/minidjvu.Po
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
-	$(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
 DIST_SOURCES = $(minidjvu_SOURCES)
 
 NROFF = nroff
@@ -127,7 +128,7 @@ SOURCES = $(minidjvu_SOURCES)
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .cpp .lo .o .obj
 $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --foreign  src/Makefile
@@ -162,7 +163,7 @@ clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 minidjvu$(EXEEXT): $(minidjvu_OBJECTS) $(minidjvu_DEPENDENCIES) 
 	@rm -f minidjvu$(EXEEXT)
-	$(LINK) $(minidjvu_LDFLAGS) $(minidjvu_OBJECTS) $(minidjvu_LDADD) $(LIBS)
+	$(CXXLINK) $(minidjvu_LDFLAGS) $(minidjvu_OBJECTS) $(minidjvu_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core
@@ -175,24 +176,24 @@ distclean-compile:
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
 
-.c.o:
+.cpp.o:
 @AMDEP_TRUE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c `test -f '$<' || echo '$(srcdir)/'`$<
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
 
-.c.obj:
+.cpp.obj:
 @AMDEP_TRUE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(COMPILE) -c `cygpath -w $<`
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(CXXCOMPILE) -c -o $@ `cygpath -w $<`
 
-.c.lo:
+.cpp.lo:
 @AMDEP_TRUE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-	$(LTCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
-CCDEPMODE = @CCDEPMODE@
+@AMDEP_TRUE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+	$(LTCXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
+CXXDEPMODE = @CXXDEPMODE@
 
 mostlyclean-libtool:
 	-rm -f *.lo

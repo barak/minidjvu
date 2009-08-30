@@ -59,9 +59,9 @@
 
 /*
  * These functions return NULL if failed to read JB2.
+ * Loading jb2 by path is not supported.
  */
-MDJVU_FUNCTION mdjvu_image_t mdjvu_load_jb2(const char *path, mdjvu_error_t *);
-MDJVU_FUNCTION mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t, mdjvu_error_t *);
+MDJVU_FUNCTION mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t, int32 length, mdjvu_error_t *);
 
 /*
  * 1 - success, 0 - error

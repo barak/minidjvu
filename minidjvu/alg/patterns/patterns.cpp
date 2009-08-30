@@ -556,6 +556,7 @@ static int shiftdiff_equivalence(byte *s1, byte *s2, double falloff, double veto
 #endif
 /* shift signature comparison }}} */
 
+#ifndef NO_MINIDJVU
 mdjvu_pattern_t mdjvu_pattern_create(mdjvu_bitmap_t bitmap)
 {
     int32 w = mdjvu_bitmap_get_width(bitmap);
@@ -567,6 +568,7 @@ mdjvu_pattern_t mdjvu_pattern_create(mdjvu_bitmap_t bitmap)
     mdjvu_destroy_2d_array(pixels);
     return pattern;
 }
+#endif
 
 /* Finding mass center {{{ */
 

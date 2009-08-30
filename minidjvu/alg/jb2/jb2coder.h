@@ -126,7 +126,7 @@ class JB2Coder
 struct JB2Decoder : JB2Coder, JB2BitmapDecoder
 {
     ZPDecoder zp;
-    JB2Decoder(FILE *f);
+    JB2Decoder(FILE *f, int32 chunk_length);
     JB2RecordType decode_record_type();
 
     // decodes character position and creates a new blit

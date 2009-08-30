@@ -73,8 +73,9 @@ typedef struct MinidjvuPattern *mdjvu_pattern_t;
  * The pattern would be completely independent on the bitmap given.
  *     (that is, you can destroy the bitmap immediately)
  */
-
+#ifndef NO_MINIDJVU
 MDJVU_FUNCTION mdjvu_pattern_t mdjvu_pattern_create(mdjvu_bitmap_t);
+#endif
 
 /* Same, but create from two-dimensional array.
  */
@@ -126,4 +127,4 @@ MDJVU_FUNCTION void mdjvu_get_black_and_white_signature(
     unsigned char **data, int32 w, int32 h,
     unsigned char *result, int32 size);
 
-#endif
+#endif /* MDJVU_PATTERNS_H */

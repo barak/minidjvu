@@ -164,13 +164,14 @@ class ZPEncoder
 class ZPDecoder
 {
     public:
-        ZPDecoder(FILE *); // does not close it on destruction
+        ZPDecoder(FILE *, int32 length); // does not close it on destruction
         Bit decode_without_context();
         Bit decode(ZPBitContext &);
         int32 decode(ZPNumContext &);
     private:
         FILE *file;
         uint32 a, code, fence, buffer;
+        int32 bytes_left;
         unsigned char byte, scount, delay;
         bool next_byte(unsigned char &);
         void open();

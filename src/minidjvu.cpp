@@ -74,6 +74,7 @@ int match = 0;
 int aggression = 100;
 int erosion = 0;
 int clean = 0;
+int no_prototypes = 0;
 int warnings = 0;
 
 /* Under Windows, there is usually no strcasecmp.
@@ -120,6 +121,7 @@ static void show_usage_and_exit(void)
     printf("    -e, --erosion              sacrifice quality to get smaller files\n");
     printf("    -l, --lossy:               apply all lossy options (-s -c -m -e)\n");
     printf("    -m, --match:               match and substitute patterns\n");
+    printf("    -n, --no-prototypes:       do not search for prototypes\n");
     printf("    -s, --smooth:              remove some badly looking pixels\n");
     printf("    -v, --verbose:             print messages about everything\n");
     printf("    -w, --warnings:            do not suppress TIFF warnings\n");
@@ -254,6 +256,7 @@ static void sort_and_save_image(mdjvu_image_t image, const char *path)
 
     mdjvu_set_clean(options, clean);
     mdjvu_set_verbose(options, verbose);
+    mdjvu_set_no_prototypes(options, no_prototypes);
     mdjvu_compress_image(image, options);
     mdjvu_compression_options_destroy(options);
 
@@ -405,6 +408,8 @@ static int process_options(int argc, char **argv)
             smooth = 1;
         else if (same_option(option, "match"))
             match = 1;
+        else if (same_option(option, "no-prototypes"))
+            no_prototypes = 1;
         else if (same_option(option, "erosion"))
             erosion = 1;
         else if (same_option(option, "clean"))

@@ -66,6 +66,7 @@ struct MinidjvuCompressionOptions
 {
     int clean;
     int verbose;
+    int no_prototypes;
     mdjvu_matcher_options_t matcher_options;
 };
 
@@ -75,6 +76,7 @@ MDJVU_IMPLEMENT mdjvu_compression_options_t mdjvu_compression_options_create()
         malloc(sizeof(struct MinidjvuCompressionOptions));
     opt->clean = 0;
     opt->verbose = 0;
+    opt->no_prototypes = 0;
     opt->matcher_options = NULL;
     return opt;
 }
@@ -96,6 +98,8 @@ MDJVU_IMPLEMENT void mdjvu_set_clean(mdjvu_compression_options_t opt, int v)
     {opt->clean = v;}
 MDJVU_IMPLEMENT void mdjvu_set_verbose(mdjvu_compression_options_t opt, int v)
     {opt->verbose = v;}
+MDJVU_IMPLEMENT void mdjvu_set_no_prototypes(mdjvu_compression_options_t opt, int v)
+    {opt->no_prototypes = v;}
 
 MDJVU_IMPLEMENT void mdjvu_find_substitutions(mdjvu_image_t image,
                                               mdjvu_matcher_options_t options)
@@ -168,10 +172,20 @@ MDJVU_IMPLEMENT void mdjvu_compress_image(mdjvu_image_t image, mdjvu_compression
         }
     }
 
-    if (options->verbose) puts("finding prototypes");
-    mdjvu_find_prototypes(image);
-    if (options->verbose) printf(MDJVU_INT32_FORMAT" bitmaps have prototypes\n",
-                                 count_prototypes(image));
+    if (options->no_prototypes)
+    {
+        mdjvu_image_enable_prototypes(image);
+    }
+    else
+    {
+        if (options->verbose) puts("finding prototypes");
+        mdjvu_find_prototypes(image);
+        if (options->verbose)
+        {
+            printf(MDJVU_INT32_FORMAT" bitmaps have prototypes\n",
+                   count_prototypes(image));
+        }
+    }
 
     if (!opt)
         mdjvu_compression_options_destroy(options);

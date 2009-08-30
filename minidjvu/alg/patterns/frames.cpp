@@ -105,6 +105,23 @@
 #include <string.h>
 #include <math.h>
 
+/* Stuff for not using malloc in C++
+ * (made by Leon Bottou; has no use in minidjvu,
+ * but left here for potential DjVuLibre compatibility)
+ */
+#ifdef __cplusplus
+# define MALLOC(Type)    new Type
+# define FREE(p)         delete p
+# define MALLOCV(Type,n) new Type[n]
+# define FREEV(p)        delete [] p
+#else
+# define MALLOC(Type)    ((Type*)malloc(sizeof(Type)))
+# define FREE(p)         do{if(p)free(p);}while(0)
+# define MALLOCV(Type,n) ((Type*)malloc(sizeof(Type)*(n)))
+# define FREEV(p)        do{if(p)free(p);}while(0)
+#endif
+
+
 /* This determines the gray level of the border (ratio of black).
  * Setting it to 1 will effectively eliminate grayshading.
  */
@@ -295,7 +312,7 @@ static int flay(byte **pixels, int w, int h, int rank, int **ranks)
 {
     int i, j, result = 0;
 
-    byte *buf = (byte *) malloc(w * h);
+    byte *buf = MALLOCV(byte, w * h);
 
     assert(pixels);
     assert(w);
@@ -329,21 +346,24 @@ static int flay(byte **pixels, int w, int h, int rank, int **ranks)
         }
     }
 
-    free(buf);
+    FREEV(buf);
     return result;
 }
 
 /* TODO: use less temporary buffers and silly copyings */
 MDJVU_IMPLEMENT void mdjvu_soften_pattern(byte **result, byte **pixels, int32 w, int32 h)/*{{{*/
 {
-    byte *r = (byte *) calloc(h + 2, w + 2);
-    byte **pointers = (byte **) malloc((h + 2) * sizeof(byte *));
-    int *ranks_buf = (int *) calloc(w * h, sizeof(int));
-    int **ranks = (int **) malloc(h * sizeof(int *));
+    byte *r = MALLOCV(byte, (w + 2) * (h + 2));
+    byte **pointers = MALLOCV(byte *, h + 2);
+    int *ranks_buf = MALLOCV(int, w * h);
+    int **ranks = MALLOCV(int *, h);
 
     int i, j, passes = 1;
     double level = 1, falloff;
     byte *colors;
+
+    memset(r, 0, (w + 2) * (h + 2));
+    memset(ranks_buf, 0, w * h * sizeof(int));
 
     for (i = 0; i < h + 2; i++)
         pointers[i] = r + (w + 2) * i + 1;
@@ -356,7 +376,7 @@ MDJVU_IMPLEMENT void mdjvu_soften_pattern(byte **result, byte **pixels, int32 w,
 
     while(flay(pointers + 1, w, h, passes, ranks)) passes++;
 
-    colors = (byte *) malloc(passes + 1);
+    colors = MALLOCV(byte, passes + 1);
 
     falloff = pow(BORDER_FALLOFF, 1./passes);
 
@@ -386,9 +406,9 @@ MDJVU_IMPLEMENT void mdjvu_soften_pattern(byte **result, byte **pixels, int32 w,
     }
     pointers--;
 
-    free(colors);
-    free(ranks);
-    free(ranks_buf);
-    free(r);
-    free(pointers);
+    FREEV(colors);
+    FREEV(ranks);
+    FREEV(ranks_buf);
+    FREEV(r);
+    FREEV(pointers);
 }/*}}}*/

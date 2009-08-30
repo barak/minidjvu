@@ -490,13 +490,15 @@ void ZPEncoder::encode(Bit bit, ZPBitContext &context) /*{{{*/
 
 inline bool ZPDecoder::next_byte(unsigned char &b)/*{{{*/
 {
+    if (!bytes_left) return false;
     int c = fgetc(file);
     if (c == EOF) return false;
+    bytes_left--;
     b = c;
     return true;
 }/*}}}*/
-ZPDecoder::ZPDecoder(FILE *f)/*{{{*/
-    : file(f), a(0), fence(0)
+ZPDecoder::ZPDecoder(FILE *f, int32 len)/*{{{*/
+    : file(f), a(0), fence(0), bytes_left(len)
 {
     open();
 }/*}}}*/

@@ -104,11 +104,11 @@ static mdjvu_bitmap_t decode_lib_shape/*{{{*/
     if (perr) *perr = mdjvu_get_error(mdjvu_error_corrupted_jb2); \
     return NULL; \
 }
-MDJVU_IMPLEMENT mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t file, mdjvu_error_t *perr)/*{{{*/
+MDJVU_IMPLEMENT mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t file, int32 length, mdjvu_error_t *perr)/*{{{*/
 {
     if (perr) *perr = NULL;
     FILE *f = (FILE *) file;
-    JB2Decoder jb2(f);
+    JB2Decoder jb2(f, length);
     ZPDecoder &zp = jb2.zp;
 
     int32 d = 0;
@@ -239,17 +239,3 @@ MDJVU_IMPLEMENT mdjvu_image_t mdjvu_file_load_jb2(mdjvu_file_t file, mdjvu_error
         } // switch
     } // while(1)
 }/*}}}*/
-
-MDJVU_IMPLEMENT mdjvu_image_t mdjvu_load_jb2(const char *path, mdjvu_error_t *perr)
-{
-    FILE *f = fopen(path, "rb");
-    if (perr) *perr = NULL;
-    if (!f)
-    {
-        if (perr) *perr = mdjvu_get_error(mdjvu_error_fopen_read);
-        return NULL;
-    }
-    mdjvu_image_t result = mdjvu_file_load_jb2((mdjvu_file_t) f, perr);
-    fclose(f);
-    return result;
-}
