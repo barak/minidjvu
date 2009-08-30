@@ -1,17 +1,19 @@
 USUAL INSTALLATION
 __________________
 
-Should work as usual:
+Check that development package of libtiff is installed.
+Run `make', then copy the `minidjvu' executable into place.
+Note: by default, 0.6 does not compile as a library.
 
-    ./configure
-    make
 
-Libtool executable wrapper `bin/minidjvu' should appear. Now,
 
-    make install
+BLOODSHED DEV-C++
+_________________
 
-will install the executable, the library and the man page.
-Installing headers is not yet supported (they are too unstable).
+In case if you want to compile it for Windows, there's a project
+file for Bloodshed Dev-C++. You will also need Libtiff for Windows,
+which may be found here:
+    http://gnuwin32.sourceforge.net/packages/tiff.htm
 
 
 
@@ -26,14 +28,8 @@ The release directory should be treated as an include directory
 The library is built from sources in `minidjvu' subdirectory.
 The program is built from sources in `src' subdirectory.
 
-To enable TIFF support, define HAVE_TIFF to 1, then link against libtiff.
-Don't forget to add libtiff include directory to the include search path.
-
-Libtiff for Windows may be found here:
-
-    http://gnuwin32.sourceforge.net/packages/tiff.htm
-
-Funnily, libtiff with its zlib and jpeg coders is much bigger than minidjvu.
+To enable TIFF support, define HAVE_TIFF to 1, add libtiff include directory
+to the include path, then link against libtiff.
 
 
 
@@ -80,5 +76,5 @@ make
 PORTING
 _______
 
-Browse through `minidjvu/base/0porting/0porting.h' to see if it needs changing.
+Browse through `minidjvu/base/0porting.h' to see if it needs changing.
 What next, I don't know :)

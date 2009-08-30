@@ -1,11 +1,9 @@
 minidjvu is an encoder/decoder of black-and-white DjVu pages.
+There's also a multipage encoder.
 
-
-
-It supports lossy and lossless compression modes and, of course, decompression.
-There's also an experimental multipage encoder.
 
 Besides DjVu, minidjvu understands PBM, Windows BMP and TIFF (through libtiff).
+
 
 When applied in lossy mode to an existing DjVu file, minidjvu can usually
 shrink it by about 5-10% of its size. That, of course, does not apply to files
@@ -13,17 +11,11 @@ created by minidjvu itself. So, minidjvu can nicely complement some commercial
 encoders (single-page only yet, alas).
 
 
-minidjvu is also a library that supports all the functionality.
-Under Windows, the library compiles into a DLL (unlike DjVuLibre).
-I hope this will make adding DjVu support into programs easier.
-
-This is yet an early release. The library interface is _unstable_.
-
-
 minidjvu is derived from DjVuLibre, the primary DjVu support library.
 DjVuLibre may be found at
     http://djvulibre.djvuzone.org
 
 
+Enjoy!
 
 Ilya Mezhirov

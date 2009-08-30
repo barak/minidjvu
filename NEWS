@@ -1,4 +1,16 @@
 ---
+0.6
+---
+    bugfix: new pattern matcher works multipagely
+    Letter averaging. Only single-page for now.
+        (I'm still not completely convinced that it's the Right Thing.)
+    pages-per-dict now defaults to 5.
+    Directory layout changed.
+    Configure scripts missing. I wonder whether they really should be back.
+    (All that's because I have to use Windows due to hardware crash.)
+
+
+---
 0.5
 ---
     Improved pattern matcher.

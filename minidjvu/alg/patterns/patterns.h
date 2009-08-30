@@ -1,59 +1,5 @@
-/* minidjvu - library for handling bilevel images with DjVuBitonal support
- *
+/*
  * patterns.h - matching patterns
- *
- * Copyright (C) 2005  Ilya Mezhirov
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * 
- * minidjvu is derived from DjVuLibre (http://djvu.sourceforge.net)
- * All over DjVuLibre there is a patent alert from LizardTech
- * which I guess I should reproduce (don't ask me what does this mean):
- * 
- *  ------------------------------------------------------------------
- * | DjVu (r) Reference Library (v. 3.5)
- * | Copyright (c) 1999-2001 LizardTech, Inc. All Rights Reserved.
- * | The DjVu Reference Library is protected by U.S. Pat. No.
- * | 6,058,214 and patents pending.
- * |
- * | This software is subject to, and may be distributed under, the
- * | GNU General Public License, Version 2. The license should have
- * | accompanied the software or you may obtain a copy of the license
- * | from the Free Software Foundation at http://www.fsf.org .
- * |
- * | The computer code originally released by LizardTech under this
- * | license and unmodified by other parties is deemed "the LIZARDTECH
- * | ORIGINAL CODE."  Subject to any third party intellectual property
- * | claims, LizardTech grants recipient a worldwide, royalty-free, 
- * | non-exclusive license to make, use, sell, or otherwise dispose of 
- * | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
- * | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
- * | General Public License.   This grant only confers the right to 
- * | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
- * | the extent such infringement is reasonably necessary to enable 
- * | recipient to make, have made, practice, sell, or otherwise dispose 
- * | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
- * | any greater extent that may be necessary to utilize further 
- * | modifications or combinations.
- * |
- * | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
- * | OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
- * | TO ANY WARRANTY OF NON-INFRINGEMENT, OR ANY IMPLIED WARRANTY OF
- * | MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
- * +------------------------------------------------------------------
  */
 
 #ifndef MDJVU_PATTERNS_H
@@ -65,9 +11,10 @@ typedef struct MinidjvuMatcherOptions *mdjvu_matcher_options_t;
 MDJVU_FUNCTION mdjvu_matcher_options_t mdjvu_matcher_options_create(void);
 MDJVU_FUNCTION void mdjvu_set_aggression(mdjvu_matcher_options_t, int level);
 
+/* "matcher methods" (bitmask, not enum) */
 #define MDJVU_MATCHER_DEFAULT 0
-#define MDJVU_MATCHER_PITH_2  1  /* use it like a bitmask, not enum */
-#define MDJVU_MATCHER_RAMPAGE 2  /* without pith2, makes (almost) no sense */
+#define MDJVU_MATCHER_PITH_2  1
+#define MDJVU_MATCHER_RAMPAGE 2
 
 /* turn method on (|=) */
 MDJVU_FUNCTION void mdjvu_use_matcher_method(mdjvu_matcher_options_t, int method);
@@ -77,6 +24,7 @@ MDJVU_FUNCTION void mdjvu_matcher_options_destroy(mdjvu_matcher_options_t);
 
 /* To get an image ready for comparisons, one have to `prepare' it.
  * A prepared image is called a `pattern' here.
+ * A pattern is mostly opaque except that its center may be retrieved.
  */
 
 
@@ -104,6 +52,9 @@ MDJVU_FUNCTION mdjvu_pattern_t mdjvu_pattern_create_from_array
 
 MDJVU_FUNCTION void mdjvu_pattern_destroy(mdjvu_pattern_t);
 
+
+/* get a center (in 1/MDJVU_CENTER_QUANT pixels; defined in the header for image) */
+MDJVU_FUNCTION void mdjvu_pattern_get_center(mdjvu_pattern_t, int32 *cx, int32 *cy);
 
 /* Compare patterns.
  * Returns
