@@ -1,3 +1,7 @@
+prefix=/usr/local
+exec_prefix=$(prefix)
+bindir=$(exec_prefix)/bin
+
 .PHONY: clean rebuild install
 
 
@@ -51,7 +55,8 @@ clean:
 rebuild: clean $(TARGET)
 
 install: $(TARGET)
-	cp $(TARGET) /usr/local/bin
+	mkdir --parents $(DESTDIR)$(bindir)
+	cp $(TARGET) $(DESTDIR)$(bindir)/
 
 $(OBJDIR)/%.o: %.c $(HEADERS) $(THISFILE)
 	@mkdir -p $(dir $@)
