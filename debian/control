@@ -1,0 +1,19 @@
+Source: minidjvu
+Section: graphics
+Priority: extra
+Maintainer: Barak A. Pearlmutter <bap@debian.org>
+Build-Depends: debhelper (>= 7.2.5), libtiff4-dev | libtiff-dev
+Homepage: http://minidjvu.sourceforge.net/
+Vcs-Git: git://git.debian.org/git/collab-maint/minidjvu.git
+Vcs-Browser: http://git.debian.org/?p=collab-maint/minidjvu.git
+Standards-Version: 3.8.3
+
+Package: minidjvu
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: djview4 | djview3 | djvu-viewer, djvulibre-bin, pdf2djvu
+Description: Monochrome DjVu multipage encoder, single page encoder/decoder
+ Minidjvu is a multipage DjVu encoder and single page encoder/decoder.
+ No colors or grayscale, just black and white.
+ In addition to the DjVu format, minidjvu reads and writes
+ PBM, Windows BMP, and TIFF.

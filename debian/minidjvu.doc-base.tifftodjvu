@@ -1,0 +1,9 @@
+Document: minidjvu-tifftodjvu
+Title: TIFF to DjVu
+Author: Ilya Mezhirov
+Abstract:  This is the minimalistic GUI wrapper for minidjvu and other programs.
+Section: Graphics
+
+Format: HTML
+Index: /usr/share/doc/minidjvu/tifftodjvu.html
+Files: /usr/share/doc/minidjvu/tifftodjvu.html

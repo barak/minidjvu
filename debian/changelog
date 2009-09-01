@@ -1,0 +1,5 @@
+minidjvu (0.7-1) unstable; urgency=low
+
+  * Initial Release (closes: #543678)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 01 Sep 2009 12:51:48 +0200
