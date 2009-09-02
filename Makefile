@@ -2,22 +2,30 @@ prefix=/usr/local
 exec_prefix=$(prefix)
 bindir=$(exec_prefix)/bin
 
-.PHONY: clean rebuild install
+.PHONY: all clean install
 
 
-CFLAGS:=-pipe -O3 -I. \
-        -Wall -Wshadow -pedantic-errors \
+CPPFLAGS += -D__STRICT_ANSI__ -DNDEBUG
+CPPFLAGS += -I.
+
+C_ALL_FLAGS = \
+	-Wall -Wshadow -pedantic-errors \
         -Wpointer-arith -Waggregate-return \
-        -Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align \
-        -D__STRICT_ANSI__ -DNDEBUG -DHAVE_TIFF
+        -Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align
 
-LDFLAGS:=-ltiff
+CFLAGS += -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
 
-C_OPTS:=-Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
+C_ALL_FLAGS += -O3
 
+CPPFLAGS += -DHAVE_TIFF
+LOADLIBES += -ltiff
 
-OBJDIR:=obj
-SUBDIRS:=src \
+CFLAGS += $(C_ALL_FLAGS)
+CXXFLAGS += $(C_ALL_FLAGS)
+
+LDFLAGS += -g
+
+SUBDIRS =src \
          minidjvu \
          minidjvu/base \
          minidjvu/alg \
@@ -25,43 +33,50 @@ SUBDIRS:=src \
          minidjvu/jb2 \
          minidjvu/formats
 
-THISFILE:=Makefile
-
-CSOURCES:=$(wildcard $(addsuffix /*.c,$(SUBDIRS)))
-CPPSOURCES:=$(wildcard $(addsuffix /*.cpp,$(SUBDIRS)))
-HEADERS:=$(wildcard $(addsuffix /*.h,$(SUBDIRS)))
-COBJECTS:=$(addprefix $(OBJDIR)/,$(CSOURCES:.c=.o))
-CPPOBJECTS:=$(addprefix $(OBJDIR)/,$(CPPSOURCES:.cpp=.o))
-OBJECTS:=$(COBJECTS) $(CPPOBJECTS)
-CC:=gcc
-CXX:=g++
+CSOURCES=$(wildcard $(addsuffix /*.c,$(SUBDIRS)))
+CPPSOURCES=$(wildcard $(addsuffix /*.cpp,$(SUBDIRS)))
+# HEADERS=$(wildcard $(addsuffix /*.h,$(SUBDIRS)))
+COBJECTS=$(CSOURCES:.c=.o)
+CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
+OBJECTS=$(COBJECTS) $(CPPOBJECTS)
 
 
 ifeq ($(shell uname -o),Cygwin)
-    TARGET:=bin/minidjvu.exe
+    EXEC_SUFFIX=.exe
 else
-    TARGET:=bin/minidjvu
+    EXEC_SUFFIX=
 endif
 
+TARGET_STEM=src/minidjvu
+TARGET=$(TARGET_STEM)$(EXEC_SUFFIX)
+
+all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	@mkdir -p $(dir $@)
-	$(CXX) $(LDFLAGS) $^ -o $@
+
+
+# We are using the below explicit rule for $(TARGET) instead of
+# the following:
+
+ # force use of C++ compiler as linker even though immediate source is C
+ # $(TARGET): CC=$(CXX)
+
+# because the $(CC) would be dynamically scoped, thereby messing up the
+# compiler used for C files in the dependencies.
+
+$(TARGET): $(TARGET_STEM).o
+	$(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 
 clean:
-	rm -f $(OBJECTS)
-
-rebuild: clean $(TARGET)
+	rm -f $(OBJECTS) $(TARGET)
 
 install: $(TARGET)
 	mkdir --parents $(DESTDIR)$(bindir)
 	cp $(TARGET) $(DESTDIR)$(bindir)/
 
-$(OBJDIR)/%.o: %.c $(HEADERS) $(THISFILE)
-	@mkdir -p $(dir $@)
-	$(CC) $(C_OPTS) $(CFLAGS) -c $< -o $@
-
-$(OBJDIR)/%.o: %.cpp $(HEADERS) $(THISFILE)
-	@mkdir -p $(dir $@)
-	$(CXX) $(CFLAGS) -c $< -o $@
+# ensure the touching a .h file will rebuild appropriately
+override CFLAGS += -MMD
+override CXXFLAGS += -MMD
+DFILES = $(OBJECTS:.o=.d)
+-include $(DFILES)
