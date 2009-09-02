@@ -6,11 +6,13 @@
 #include "minidjvu.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #define THRESHOLD 21
 
-static const int32 maxint = ~(1 << 31);
-static const int32 bigint = ~(1 << 31) / 100 - 1;
+static const int32 maxint = INT32_MAX;
+/* bigint is unused? */
+/* static const int32 bigint = INT32_MAX / 100 - 1; */
 
 /* THIS THING IS THE PRIMARY BOTTLENECK FOR LOSSLESS COMPRESSION
  * TODO: OPTIMIZE IT!

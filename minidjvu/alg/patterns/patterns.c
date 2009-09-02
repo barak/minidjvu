@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <stdint.h>
 
 
 #define TIMES_TO_THIN 1
@@ -106,7 +107,7 @@ MDJVU_IMPLEMENT void mdjvu_matcher_options_destroy(mdjvu_matcher_options_t opt)
 /* ========================================================================== */
 
 /* FIXME: maxint is maxint32 */
-static const int32 maxint = ~(1L << (sizeof(int32) * 8 - 1));
+static const int32 maxint = INT32_MAX;
 typedef unsigned char byte;
 
 typedef struct ComparableImageData
