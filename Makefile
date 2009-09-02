@@ -2,16 +2,15 @@ prefix=/usr/local
 exec_prefix=$(prefix)
 bindir=$(exec_prefix)/bin
 
-.PHONY: all clean install
-
+.PHONY: all clean install install-strip uninstall
 
 CPPFLAGS += -D__STRICT_ANSI__ -DNDEBUG
 CPPFLAGS += -I.
 
 C_ALL_FLAGS = \
 	-Wall -Wshadow -pedantic-errors \
-        -Wpointer-arith -Waggregate-return \
-        -Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align
+	-Wpointer-arith -Waggregate-return \
+	-Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align
 
 CFLAGS += -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
 
@@ -25,21 +24,17 @@ CXXFLAGS += $(C_ALL_FLAGS)
 
 LDFLAGS += -g
 
-SUBDIRS =src \
-         minidjvu \
-         minidjvu/base \
-         minidjvu/alg \
-         minidjvu/alg/patterns \
-         minidjvu/jb2 \
-         minidjvu/formats
+SUBDIRS=src \
+	minidjvu \
+	minidjvu/base \
+	minidjvu/alg \
+	minidjvu/alg/patterns \
+	minidjvu/jb2 \
+	minidjvu/formats
 
 CSOURCES=$(wildcard $(addsuffix /*.c,$(SUBDIRS)))
 CPPSOURCES=$(wildcard $(addsuffix /*.cpp,$(SUBDIRS)))
-# HEADERS=$(wildcard $(addsuffix /*.h,$(SUBDIRS)))
-COBJECTS=$(CSOURCES:.c=.o)
-CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
-OBJECTS=$(COBJECTS) $(CPPOBJECTS)
-
+OBJECTS=$(CSOURCES:.c=.o) $(CPPSOURCES:.cpp=.o)
 
 ifeq ($(shell uname -o),Cygwin)
     EXEC_SUFFIX=.exe
@@ -54,28 +49,27 @@ all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 
-
-# We are using the below explicit rule for $(TARGET) instead of
-# the following:
-
- # force use of C++ compiler as linker even though immediate source is C
- # $(TARGET): CC=$(CXX)
-
-# because the $(CC) would be dynamically scoped, thereby messing up the
-# compiler used for C files in the dependencies.
-
-$(TARGET): $(TARGET_STEM).o
-	$(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
+# force linkage as C++
+$(TARGET): LINK.o=$(LINK.cc)
 
 
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	$(RM) $(OBJECTS) $(TARGET)
+
+
+INSTALL=install
+INSTALL_PROGRAM=$(INSTALL)
 
 install: $(TARGET)
-	mkdir --parents $(DESTDIR)$(bindir)
-	cp $(TARGET) $(DESTDIR)$(bindir)/
+	$(INSTALL_PROGRAM) -D $(TARGET) $(DESTDIR)$(bindir)/$(notdir $(TARGET))
 
-# ensure the touching a .h file will rebuild appropriately
+install-strip:
+	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' install
+
+uninstall:
+	$(RM) $(DESTDIR)$(bindir)/$(notdir $(TARGET))
+
+# ensure that touching a .h file rebuilds appropriately
 override CFLAGS += -MMD
 override CXXFLAGS += -MMD
 DFILES = $(OBJECTS:.o=.d)
