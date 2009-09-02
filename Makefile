@@ -10,7 +10,7 @@ CPPFLAGS += -I.
 C_ALL_FLAGS = \
 	-Wall -Wshadow -pedantic-errors \
 	-Wpointer-arith -Waggregate-return \
-	-Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align
+	-Wlong-long -Wredundant-decls -Wcast-qual -Wcast-align
 
 CFLAGS += -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
 
