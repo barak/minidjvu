@@ -1,0 +1,5 @@
+This is the source directory for `minidjvu' executable.
+The sources for the minidjvu library are in "minidjvu/".
+
+(This funny directory layout is to support eventual installing
+ of minidjvu/ headers into /usr/include)

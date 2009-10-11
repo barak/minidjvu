@@ -1,0 +1,96 @@
+---
+0.8
+---
+    Patter matching algorithm is adjusted to prevent some undesired
+        substitutions (for example, quite different shapes sometimes were unified
+        if minidjvu could somewhow link them with a chunk of intermediate forms).
+    bugfix: specifying aggression level above 100 actually resulted in producing
+        larger files.
+    Letter averaging now works also in multipage mode.
+    minidjvu now produces multipage DJVU documents (either bundled or indirect)
+        when working in multipage mode.
+    New file naming convention for multipage mode: pages are now generated with the
+        same base names as the original images, just the extension is changed to
+        djvu. A numerical suffix is added to the base name in case of a name clash.
+        So the 'pattern' parameter is gone: instead the same command line syntax is used 
+        both for single page and multipage mode.
+    Localization via gettext (currently doesn't work under Windows) implemented
+        and a Russian man page added.
+    Configure scripts rewritten from scratch and added to the source tree.
+    The minidjvu library has been separated from the executable (once again).
+        However under Windows (mingw32) a single statically linked binary is generated
+        by default.
+
+---
+0.7
+---
+    bugfix: no more attempts to substitute pictures on multipage compression
+    bugfix: no longer writes full paths to INCL chunks
+    Memory leaks (hopefully) eliminated.
+    Slightly increased aggression.
+    A javascripted page illustrating using the most common options;
+        under Windows, that will be a GUI (not too pretty, but better than nothing).
+
+
+---
+0.6
+---
+    bugfix: new pattern matcher works multipagely
+    Letter averaging. Only single-page for now.
+        (I'm still not completely convinced that it's the Right Thing.)
+    pages-per-dict now defaults to 5.
+    Directory layout changed.
+    Configure scripts missing. I wonder whether they really should be back.
+    (All that's because I have to use Windows due to hardware crash.)
+
+
+---
+0.5
+---
+    Improved pattern matcher.
+
+
+---
+0.4
+---
+
+    bugfix: no more "some weird error happened" messages on color TIFFs
+    Binaries are built in bin/ now, where they should be
+    Experimental multipage compression (cannot bundle pages yet, however)
+    
+
+----
+0.33
+----
+
+    bugfix: no more crashes on pages with gray background
+    bugfix: configure script now works with gcc3 (renamed all to C++)
+
+
+---
+0.3
+---
+
+    Lossy compression
+    New "erosion" algorithm (gains about 10% in file size)
+    TIFF support (through libtiff)
+    Command-line interface improved
+    man page added
+
+
+---
+0.2
+---
+
+    Added lossless compression (runs slow)
+    Added "smooth" filter (gains about 5% in file size)
+    Added minimal error-handling
+    Documentation is now nonzero!
+
+
+---
+0.1
+---
+
+    Initial release.
+    Supports only decompression of black-and-white single-page DjVu files.

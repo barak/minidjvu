@@ -1,0 +1,82 @@
+USUAL INSTALLATION
+__________________
+
+Check that development package of libtiff is installed.
+Run "make". Then, "make install" will copy bin/minidjvu into /usr/local/bin.
+
+
+
+BLOODSHED DEV-C++
+_________________
+
+In case if you want to compile it for Windows, there's a project
+file for Bloodshed Dev-C++. You will also need Libtiff for Windows,
+which may be found here:
+    http://gnuwin32.sourceforge.net/packages/tiff.htm
+
+
+
+CUSTOM COMPILATION
+__________________
+
+If you want to compile it all manually, read this.
+
+The release directory should be treated as an include directory
+(usually -I or /I option). That applies both to the library and the program.
+
+The library is built from sources in `minidjvu' subdirectory.
+The program is built from sources in `src' subdirectory.
+
+To enable TIFF support, define HAVE_TIFF to 1, add libtiff include directory
+to the include path, then link against libtiff.
+
+
+
+OTHERWISE
+_________
+
+Under Linux, you can always try something like
+
+    g++ -I. `find -name "*.c*"` -O2 -o bin/minidjvu
+    
+or, if you want TIFF support,
+
+    g++ -DHAVE_TIFF=1 -I. `find -name "*.c*"` -O2 -ltiff -o bin/minidjvu
+
+Under MSVC, watch for those __declspec directives in
+`minidjvu/base/0porting/0porting.h' - if you wish a DLL, turn them on.
+
+
+
+COMPILING ON MAC
+________________
+
+That instruction was useful when there were configure scripts (are they
+really useful if they can't handle the Mac stuff?).
+
+/* This instructions were kindly sent to me by Alejandro David Weil.
+ * Apparently, there are some problems with Macs, but I don't know why.
+ */
+
+After some tries I got minidjvu built and running on mac os X panther.
+I had to make this:
+
+1. setup:
+export MACOSX_DEPLOYMENT_TARGET=10.3
+
+2. run configure in this way:
+LDFLAGS="-L/sw/lib" ./configure
+
+3.before compile, modify file libtool changing the allow_undefined_flag to:
+allow_undefined_flag="-undefined dynamic_lookup"
+
+4. now run:
+make 
+
+
+
+PORTING
+_______
+
+Browse through `minidjvu/base/0porting.h' to see if it needs changing.
+What next, I don't know :)

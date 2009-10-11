@@ -1,0 +1,10 @@
+JB2 is the bitonal compression algorithm of DjVu.
+
+
+With DjVuLibre, you can extract a raw JB2 chunk from a DjVu file by
+
+    djvuextract input.djvu Sjbz=output.jb2
+
+and assemble it back to DjVu with
+    
+    djvumake output.djvu Sjbz=input.jb2

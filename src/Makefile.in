@@ -1,0 +1,78 @@
+.PHONY: clean install
+
+prefix:=@prefix@
+exec_prefix:=@exec_prefix@
+libdir:=@libdir@
+datarootdir:=@datarootdir@
+srcdir:=@srcdir@
+top_builddir:=@top_builddir@
+LOCALEDIR:=@localedir@
+
+INCS:=@INCS@ -I${top_builddir} -I${srcdir}
+OPTS:=@OPTS@
+DEFS:=@DEFS@ -DLOCALEDIR=\"${LOCALEDIR}\"
+CFLAGS:=@CFLAGS@
+
+LDFLAGS:=@LDFLAGS@
+LIBS:=@LIBS@
+DLLFLAGS:=@DLLFLAGS@
+
+OBJDIR:=obj
+
+CSOURCES:=$(wildcard $(addsuffix /*.c,$(srcdir)))
+HEADERS:=$(wildcard $(addsuffix /*.h,$(top_builddir) $(srcdir)))
+COBJECTS:=$(addprefix $(OBJDIR)/,$(CSOURCES:.c=.o))
+OBJECTS:=$(COBJECTS)
+
+CC:=@CC@
+CXX:=@CXX@
+LIBTOOL:=@LIBTOOL@
+INSTALL:=@INSTALL@
+INSTALL_PROGRAM:=@INSTALL_PROGRAM@
+INSTALL_DATA:=@INSTALL_DATA@
+
+THISFILE:=Makefile
+APPNAME:=@target@
+APPPATH:=${top_builddir}/bin/${APPNAME}
+LIBNAME:=@mdjvulib@
+LIBPATH:=${top_builddir}/bin/${LIBNAME}
+
+@STATIC_YES@all: build-static
+
+@SHARED_YES@all: build-shared
+
+build-static: $(OBJECTS)
+	mkdir -p $(dir $(APPPATH))
+	$(CXX) ${DLLFLAGS} $(LDFLAGS) $^ -o $(APPPATH) $(LIBPATH) $(LIBS)
+	strip $(APPPATH)
+
+build-shared: $(OBJECTS)
+	mkdir -p $(dir $(APPPATH))
+	${LIBTOOL} --mode=link $(CXX) ${DLLFLAGS} $(LDFLAGS) $^ -o $(APPPATH) $(LIBPATH) $(LIBS)
+
+clean:
+	$(RM) $(OBJECTS)
+	$(RM) -r $(OBJDIR)
+
+distclean: clean
+	-find . -name Makefile -exec ${RM} {} \;
+
+@STATIC_YES@install: install-static
+
+@SHARED_YES@install: install-shared
+
+install-static:
+	${INSTALL} -d ${DESTDIR}$(prefix)/bin
+	${INSTALL_PROGRAM} $(APPPATH) ${DESTDIR}$(prefix)/bin
+
+install-shared:
+	${INSTALL} -d ${DESTDIR}$(prefix)/bin
+	${LIBTOOL} --mode=install ${INSTALL_PROGRAM} $(APPPATH) ${DESTDIR}$(prefix)/bin
+
+$(OBJDIR)/%.o: %.c $(HEADERS) $(THISFILE)
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(INCS) $(OPTS) $(DEFS) -c $< -o $@
+
+uninstall:
+	$(RM) ${DESTDIR}$(prefix)/bin/$(APPNAME)
+
