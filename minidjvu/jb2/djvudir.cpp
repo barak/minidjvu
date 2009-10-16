@@ -63,6 +63,7 @@ MDJVU_IMPLEMENT void mdjvu_write_dirm_bundled(char **elements, int * sizes,
     fseek((FILE *) f, offpos, SEEK_SET);
     for (i=0; i<n; i++)
         mdjvu_write_big_endian_int32((uint32) (offsets[i] + off), f);
+    free(offsets);
 
     fseek((FILE *) f, end, SEEK_SET);
 }

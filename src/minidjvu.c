@@ -236,7 +236,7 @@ static void sort_and_save_image(mdjvu_image_t image, const char *path)
     }
 }
 
-static mdjvu_bitmap_t load_bitmap(const char *path)
+static mdjvu_bitmap_t load_bitmap(const char *path, int tiff_idx)
 {
     mdjvu_error_t error;
     mdjvu_bitmap_t bitmap;
@@ -252,9 +252,9 @@ static mdjvu_bitmap_t load_bitmap(const char *path)
         if (!warnings)
             mdjvu_disable_tiff_warnings();
         if (dpi_specified)
-            bitmap = mdjvu_load_tiff(path, NULL, &error);
+            bitmap = mdjvu_load_tiff(path, NULL, &error, tiff_idx);
         else
-            bitmap = mdjvu_load_tiff(path, &dpi, &error);
+            bitmap = mdjvu_load_tiff(path, &dpi, &error, tiff_idx);
         if (verbose) printf(_("resolution is %d dpi\n"), dpi);
     }
     else if (decide_if_djvu(path))
@@ -385,7 +385,7 @@ static void encode(int argc, char **argv)
     if (verbose) printf(_("\nENCODING\n"));
     if (verbose) printf(_("________\n\n"));
 
-    bitmap = load_bitmap(argv[1]);
+    bitmap = load_bitmap(argv[1], 0);
 
     image = split_and_destroy(bitmap);
     sort_and_save_image(image, argv[2]);
@@ -401,7 +401,7 @@ static void filter(int argc, char **argv)
     if (verbose) printf(_("\nFILTERING\n"));
     if (verbose) printf(_("_________\n\n"));
 
-    bitmap = load_bitmap(argv[1]);
+    bitmap = load_bitmap(argv[1], 0);
     save_bitmap(bitmap, argv[2]);
     mdjvu_bitmap_destroy(bitmap);
 }
@@ -423,7 +423,7 @@ static const char *strip_dir(const char *path)
 }
 
 
-static void multipage_encode(int n, char **pages, char *outname)
+static void multipage_encode(int n, char **pages, char *outname, uint32 multipage_tiff)
 {
     mdjvu_image_t *images;
     mdjvu_image_t dict;
@@ -438,6 +438,8 @@ static void multipage_encode(int n, char **pages, char *outname)
     mdjvu_error_t error;
     int32 pages_compressed;
     FILE *f, *tf=NULL;
+
+    match = 1;
 
     if (!ends_with_ignore_case(outname, ".djv") && !ends_with_ignore_case(outname, ".djvu"))
     {
@@ -484,7 +486,10 @@ static void multipage_encode(int n, char **pages, char *outname)
 
         for (i = 0; i < pages_to_compress; i++)
         {
-            bitmap = load_bitmap(pages[pages_compressed + i]);
+            if (multipage_tiff)
+                bitmap = load_bitmap(pages[0], pages_compressed + i);
+            else
+                bitmap = load_bitmap(pages[pages_compressed + i], 0);
             images[i] = split_and_destroy(bitmap);
             if (report)
                 printf(_("Loading: %d of %d completed\n"), pages_compressed + i + 1, n);
@@ -492,7 +497,7 @@ static void multipage_encode(int n, char **pages, char *outname)
 
         dict = mdjvu_compress_multipage(pages_to_compress, images, options);
 
-        path = get_page_or_dict_name(elements, el, strip_dir(pages[pages_compressed]));
+        path = get_page_or_dict_name(elements, el, strip_dir(pages[multipage_tiff ? 0 : pages_compressed]));
         dict_name = MDJVU_MALLOCV(char, strlen(path) + strlen(dict_suffix) - 2);
         strcpy(dict_name, path);
         replace_suffix(dict_name, dict_suffix);
@@ -512,7 +517,7 @@ static void multipage_encode(int n, char **pages, char *outname)
         for (i = 0; i < pages_to_compress; i++)
         {
             if (i > 0)
-                path = get_page_or_dict_name(elements, el, strip_dir(pages[pages_compressed + i]));
+                path = get_page_or_dict_name(elements, el, strip_dir(pages[multipage_tiff ? 0 : pages_compressed + i]));
 
             if (verbose)
                 printf(_("saving page #%d into %s using dictionary %s\n"), pages_compressed + i + 1, path, dict_name);
@@ -664,7 +669,7 @@ static int process_options(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-    int arg_start;
+    int arg_start, tiff_cnt;
     const char *sanity_error_message;
 
     setlocale(LC_ALL, "");
@@ -692,8 +697,11 @@ int main(int argc, char **argv)
 
     if (argc > 3)
     {
-        match = 1;
-        multipage_encode(argc - 2, argv + 1, argv[argc - 1]);
+        multipage_encode(argc - 2, argv + 1, argv[argc - 1], 0);
+    }
+    else if (decide_if_tiff(argv[1]) && (tiff_cnt = mdjvu_get_tiff_page_count(argv[1])) > 1 )
+    {
+        multipage_encode(tiff_cnt, argv + 1, argv[argc - 1], 1);
     }
     else if (decide_if_djvu(argv[2]))
     {
