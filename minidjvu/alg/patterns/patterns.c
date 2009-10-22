@@ -10,11 +10,11 @@
 #include "mdjvucfg.h"
 #include "minidjvu.h"
 #include "bitmaps.h"
-#include "thinning.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 
 #define TIMES_TO_THIN 1
@@ -26,8 +26,8 @@
 
 typedef struct
 {
-    double pithdiff_threshold;
-    double softdiff_threshold;
+    double pithdiff1_threshold;
+    double pithdiff2_threshold;
     double shiftdiff1_threshold;
     double shiftdiff2_threshold;
     double shiftdiff3_threshold;
@@ -37,8 +37,8 @@ typedef struct
 
 /* These are hand-tweaked parameters of this classifier. */
 
-static const double pithdiff_veto_threshold        = 23;
-static const double softdiff_veto_threshold        = 100; /* that means off */
+static const double pithdiff1_veto_threshold       = 23;
+static const double pithdiff2_veto_threshold       = 4;
 static const double shiftdiff1_veto_threshold      = 1000;
 static const double shiftdiff2_veto_threshold      = 1500;
 static const double shiftdiff3_veto_threshold      = 2000;
@@ -55,8 +55,8 @@ static void interpolate(Options *opt, const double *v1, const double *v2,
 {
     double w1 = ((double)(r - x)) / (r - l); /* weights */
     double w2 = 1 - w1;
-    opt->pithdiff_threshold   = v1[0] * w1 + v2[0] * w2;
-    opt->softdiff_threshold   = v1[1] * w1 + v2[1] * w2;
+    opt->pithdiff1_threshold  = v1[0] * w1 + v2[0] * w2;
+    opt->pithdiff2_threshold  = v1[1] * w1 + v2[1] * w2;
     opt->shiftdiff1_threshold = v1[2] * w1 + v2[2] * w2;
     opt->shiftdiff2_threshold = v1[3] * w1 + v2[3] * w2;
     opt->shiftdiff3_threshold = v1[4] * w1 + v2[4] * w2;
@@ -69,18 +69,18 @@ static void interpolate(Options *opt, const double *v1, const double *v2,
 
 MDJVU_IMPLEMENT void mdjvu_set_aggression(mdjvu_matcher_options_t opt, int level)
 {
-    const double set150[5] = {7, 15, 60,  80, 170};
-    const double set100[5] = {5, 13, 50,  70, 160};
-    const double   set0[5] = {0,  0,  0,   0,   0};
+    const double set200[5] = {9, 1.2, 70, 90, 180};
+    const double set120[5] = {5,  .2, 50, 70, 150};
+    const double   set0[5] = {0,   0,  0,  0,   0};
 
     if (level < 0) level = 0;
 
     ((Options *) opt)->aggression = level;
 
-    if (level > 100)
-        interpolate((Options *) opt, set100, set150, 100, 150, level);
+    if (level > 120)
+        interpolate((Options *) opt, set120, set200, 120, 200, level);
     else
-        interpolate((Options *) opt, set0, set150, 0, 100, level);
+        interpolate((Options *) opt, set0,   set120, 0,   120, level);
 }
 
 /* ========================================================================== */
@@ -106,7 +106,7 @@ MDJVU_IMPLEMENT void mdjvu_matcher_options_destroy(mdjvu_matcher_options_t opt)
 /* ========================================================================== */
 
 /* FIXME: maxint is maxint32 */
-static const int32 maxint = ~(1L << (sizeof(int32) * 8 - 1));
+static const int32 maxint = ~(1 << (sizeof(int32) * 8 - 1));
 typedef unsigned char byte;
 
 typedef struct ComparableImageData
@@ -154,7 +154,6 @@ static int simple_tests(Image *i1, Image *i2)
 
 
 #define USE_PITHDIFF 1
-#define USE_SOFTDIFF 1
 #define USE_SHIFTDIFF_1 1
 #define USE_SHIFTDIFF_2 1
 #define USE_SHIFTDIFF_3 1
@@ -334,7 +333,7 @@ static int32 pithdiff_distance(Image *i1, Image *i2, int32 ceiling)
 static int pithdiff_equivalence(Image *i1, Image *i2, double threshold, int32 dpi)
 {
     int32 perimeter = i1->width + i1->height + i2->width + i2->height;
-    int32 ceiling = (int32) (pithdiff_veto_threshold * dpi * perimeter / 100);
+    int32 ceiling = (int32) (pithdiff1_veto_threshold * dpi * perimeter / 100);
     int32 d = pithdiff_distance(i1, i2, ceiling);
     if (d == maxint) return -1;
     if (d < threshold * dpi * perimeter / 100) return 1;
@@ -344,58 +343,7 @@ static int pithdiff_equivalence(Image *i1, Image *i2, double threshold, int32 dp
 #endif /* if USE_PITHDIFF */
 
 /* inscribed framework penalty counting }}} */
-/* soft penalty counting {{{ */
 
-#if USE_SOFTDIFF
-
-/* This test scores penalty points for pixels that are different in both images.
- * Since every black pixel has a rating of importance,
- *     the penalty for a pair of corresponding pixels, one black, one white,
- *         is equal to the rating of the black pixel.
- */
-
-static int32 softdiff_compare_row(byte *row1, byte *row2, int32 n)
-{
-    int32 i, s = 0;
-    for (i = 0; i < n; i++)
-    {
-        if (!row1[i])
-            s += row2[i];
-        else if (!row2[i])
-            s += row1[i];
-    }
-    return s;
-}
-
-static int32 softdiff_compare_with_white(byte *row, int32 n)
-{
-    int32 i, s = 0;
-    for (i = 0; i < n; i++) s += row[i];
-    return s;
-}
-
-static int32 softdiff_distance(Image *i1, Image *i2, int32 ceiling)
-{
-    return distance_by_pixeldiff_functions(i1, i2,
-            &softdiff_compare_row,
-            &softdiff_compare_with_white,
-            &softdiff_compare_with_white,
-            ceiling);
-}
-
-static int softdiff_equivalence(Image *i1, Image *i2, double threshold, int32 dpi)
-{
-    int32 perimeter = i1->width + i1->height + i2->width + i2->height;
-    int32 ceiling = (int32) (softdiff_veto_threshold * dpi * perimeter / 100);
-    int32 d = softdiff_distance(i1, i2, ceiling);
-    if (d == maxint) return -1;
-    if (d < threshold * dpi * perimeter / 100) return 1;
-    return 0;
-}
-
-#endif /* if USE_SOFTDIFF */
-
-/* soft penalty counting }}} */
 /* shift signature comparison {{{ */
 
 /* Just finding the square of a normal Euclidean distance between vectors
@@ -475,31 +423,70 @@ MDJVU_IMPLEMENT void mdjvu_pattern_get_center(mdjvu_pattern_t p, int32 *cx, int3
     *cy = ((Image *) p)->mass_center_y;
 }
 
-
-/*static int at_least_one_black_of_3(byte *row, int x, int w_minus_one)
-{
-    return (x > 0                      && row[x - 1])
-        || (x >= 0 && x <= w_minus_one && row[x])
-        || (x < w_minus_one            && row[x + 1]);
-}
-
-static byte **fatten(byte **pixels, int w, int h)
+static void sweep(unsigned char **pixels, unsigned char **source, int w, int h)
 {
     int x, y;
-    int h_minus_one = h - 1;
-    byte **result = allocate_bitmap(w + 2, h + 2);
 
-    for (y = -1; y <= h; y++) for (x = -1; x <= w; x++)
+    for (y = 0; y < h; y++)
     {
-        if ((y > 0                      && at_least_one_black_of_3(pixels[y - 1], x, w))
-         || (y >= 0 && y <= h_minus_one && at_least_one_black_of_3(pixels[y    ], x, w))
-         || (y < h_minus_one            && at_least_one_black_of_3(pixels[y + 1], x, w)))
-        result[y + 1][x + 1] = 1;
+        unsigned char *row    = pixels[y];
+        unsigned char *srow   = source[y];
+        unsigned char *supper = source[y-1];
+        unsigned char *slower = source[y+1];
+
+        for (x = 0; x < w; x++)
+        {
+            row[x] = (  supper[x] |
+                        srow[x-1] | srow[x] | srow[x+1] |
+                        slower[x] );
+        }
+    }
+}
+
+static unsigned char **quick_thin(unsigned char **pixels, int w, int h, int N)
+{
+    unsigned char **aux = provide_margins(pixels, w, h, 1);
+    unsigned char **buf = allocate_bitmap_with_white_margins(w, h);
+
+    clear_bitmap(buf, w, h);
+    invert_bitmap(aux, w, h, 0);
+    
+    while (N--)
+    {
+        sweep(buf, aux, w, h);
+        assign_bitmap(aux, buf, w, h);
+    }
+    
+    invert_bitmap(buf, w, h, 0);
+
+    free_bitmap_with_margins(aux);
+    return buf;
+}
+
+static unsigned char **quick_thicken(unsigned char **pixels, int w, int h, int N)
+{
+    int r_w = w + N * 2;
+    int r_h = h + N * 2;
+    int y, x;
+    unsigned char **aux = allocate_bitmap_with_white_margins(r_w, r_h);
+    unsigned char **buf = allocate_bitmap_with_white_margins(r_w, r_h);
+
+    clear_bitmap(buf, r_w, r_h);
+    clear_bitmap(aux, r_w, r_h);
+    for (y = 0; y < h; y++) for (x = 0; x < w; x++)
+    {
+        aux[y + N][x + N] = pixels[y][x];
     }
 
-    return result;
-}*/
+    while (N--)
+    {
+        sweep(buf, aux, r_w, r_h);
+        assign_bitmap(aux, buf, r_w, r_h);
+    }
 
+    free_bitmap_with_margins(aux);
+    return buf;
+}
 
 MDJVU_IMPLEMENT mdjvu_pattern_t mdjvu_pattern_create_from_array(mdjvu_matcher_options_t m_opt, byte **pixels, int32 w, int32 h)/*{{{*/
 {
@@ -544,8 +531,8 @@ MDJVU_IMPLEMENT mdjvu_pattern_t mdjvu_pattern_create_from_array(mdjvu_matcher_op
 
     if (opt->method & MDJVU_MATCHER_PITH_2)
     {
-        img->pith2_inner = thin(pixels, w, h, TIMES_TO_THIN);
-        img->pith2_outer = thicken(pixels, w, h, TIMES_TO_THICKEN);
+        img->pith2_inner = quick_thin(pixels, w, h, TIMES_TO_THIN);
+        img->pith2_outer = quick_thicken(pixels, w, h, TIMES_TO_THICKEN);
         assert(img->pith2_inner);
         assert(img->pith2_outer);
     }
@@ -562,24 +549,24 @@ MDJVU_IMPLEMENT mdjvu_pattern_t mdjvu_pattern_create_from_array(mdjvu_matcher_op
 
 static int32 pith2_row_subset(byte *A, byte *B, int32 length)
 {
-    int32 i;
+    int32 i, s = 0;
     for (i = 0; i < length; i++)
     {
         if (A[i] & !B[i])
-            return 1;
+            s += 255;
     }
-    return 0;
+    return s;
 }
 
 static int32 pith2_row_has_black(byte *row, int32 length)
 {
-    int32 i;
+    int32 i, s = 0;
     for (i = 0; i < length; i++)
     {
         if (row[i])
-            return 1;
+            s += 255;
     }
-    return 0;
+    return s;
 }
 
 static int32 pith2_return_0(byte *A, int32 length)
@@ -587,12 +574,15 @@ static int32 pith2_return_0(byte *A, int32 length)
     return 0;
 }
 
-static int pith2_is_subset(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2)
+static int pith2_is_subset(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2, double threshold, int32 dpi)
 {
     Image *i1 = (Image *) ptr1;
     Image *i2 = (Image *) ptr2;
     Image ptr1_inner;
     Image ptr2_outer;
+    int32 perimeter = i1->width + i1->height + i2->width + i2->height;
+    int32 ceiling = (int32) (pithdiff2_veto_threshold * dpi * perimeter / 100);
+    int32 d = 0;
 
     ptr1_inner.pixels = i1->pith2_inner;
     assert(i1->pith2_inner);
@@ -603,28 +593,21 @@ static int pith2_is_subset(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2)
 
     ptr2_outer.pixels = i2->pith2_outer;
     assert(i2->pith2_outer);
-    ptr2_outer.width  = i2->width + 2;
-    ptr2_outer.height = i2->height + 2;
+    ptr2_outer.width  = i2->width  + TIMES_TO_THICKEN*2;
+    ptr2_outer.height = i2->height + TIMES_TO_THICKEN*2;
     ptr2_outer.mass_center_x = i2->mass_center_x + MDJVU_CENTER_QUANT;
     ptr2_outer.mass_center_y = i2->mass_center_y + MDJVU_CENTER_QUANT;
 
-
-    if (distance_by_pixeldiff_functions(&ptr1_inner, &ptr2_outer,
+    d = distance_by_pixeldiff_functions(&ptr1_inner, &ptr2_outer,
         &pith2_row_subset,
         &pith2_row_has_black,
         &pith2_return_0,
-        /* ceiling: */ 1))
-        return 0;
-    else
-        return 1;
+        ceiling);
+
+    if (d == maxint) return -1;
+    else if (d < threshold * dpi * perimeter / 100) return 1;
+    return 0;
 }
-
-static int pith2_test(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2)
-{
-    return (pith2_is_subset(ptr1, ptr2) && pith2_is_subset(ptr2, ptr1)) ? 1 : 0;
-}
-
-
 
 /* Requires `opt' to be non-NULL */
 static int compare_patterns(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2,/*{{{*/
@@ -657,8 +640,10 @@ static int compare_patterns(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2,/*{{{*/
         state |= i;
     #endif
 
-    if (!pith2_test(ptr1, ptr2))
-        return 0;
+    i = pith2_is_subset(ptr1, ptr2, opt->pithdiff2_threshold, dpi);
+    if (i < 1) return i;
+    i = pith2_is_subset(ptr2, ptr1, opt->pithdiff2_threshold, dpi);
+    if (i < 1) return i;
 
     if (opt->method & MDJVU_MATCHER_RAMPAGE)
         return 1;
@@ -666,13 +651,13 @@ static int compare_patterns(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2,/*{{{*/
     #if USE_PITHDIFF
         if (opt->aggression > 0)
         {
-            i = pithdiff_equivalence(i1, i2, opt->pithdiff_threshold, dpi);
+            i = pithdiff_equivalence(i1, i2, opt->pithdiff1_threshold, dpi);
             if (i == -1) return 0; /* pithdiff has no right to veto at upper level */
             state |= i;
         }
     #endif
 
-    #if USE_SOFTDIFF
+    #if 0
         if (opt->aggression > 0)
         {
             i = softdiff_equivalence(i1, i2, opt->softdiff_threshold, dpi);

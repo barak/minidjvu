@@ -1,4 +1,5 @@
 .\" Copyright (c) 2005  Ilya Mezhirov
+.\" Copyright (c) 2009  Alexey Kryukov
 .\" 
 .\" This is free documentation; you can redistribute it and/or
 .\" modify it under the terms of the GNU General Public License as
@@ -19,16 +20,16 @@
 .\" License along with this manual. Otherwise check the web site
 .\" of the Free Software Foundation at http://www.fsf.org.
 .\" 
-.TH "MINIDJVU" "1" "May 2006" "minidjvu-0.5" "minidjvu-0.5"
+.TH "MINIDJVU" "1" "July 2009" "minidjvu-0.8" "minidjvu-0.8"
 .SH "NAME"
 minidjvu - encode/decode black-and-white DjVu pages
 
 .SH "SYNOPSIS"
 .BI "minidjvu  [" "options" "] " "input_file" " " "output_file"
 
-There is a similar syntax for experimental multipage compression:
+There is a similar syntax for multipage compression:
     
-.BI "minidjvu  [" "options" "] " "input_files" " " "output_template"
+.BI "minidjvu  [" "options" "] " "input_files" " " "output_file"
 
 See
 .B "MULTIPAGE ENCODING" 
@@ -56,44 +57,30 @@ Specifying a bitmap-to-bitmap job is possible, but relatively useful only with
 .BR --smooth
 option.
 
-Note: 0.5 is an early release, the command-line interface may still change.
-That mostly applies to DjVu-to-DjVu and bitmap-to-bitmap behaviors.
-
 All options preceded by two hyphens can be used with one hyphen.
 This is done to make minidjvu interface more familiar for DjVuLibre users.
 
 .SH "MULTIPAGE ENCODING"
 
-In the 0.4 version, there's a preliminary multipage encoder which cannot bundle
-pages yet. When I have the time, I'll change this to producing a normal
-bundled DjVu.
+To activate the multipage mode either specify in your command line more than
+just one input file, or pass to minidjvu a single multipage tiff document. By default (if
+.BR --indirect
+is not specified) the compressed pages are stored into a single bundled
+document under the name provided in the command line.
 
-To use the encoder, specify more than one input file and a `template' instead
-of the output file name. A template is a file name that ends with some zeroes
-and extension. Here's the example:
-
-.BI "minidjvu a.tiff b.bmp c.djvu out0.djvu"
-
-This will produce out1.djvu, out2.djvu and out3.djvu, and also out1.iff
-(a dictionary). Multipage encoding implies -m (running pattern matcher).
-
-You can view the resulting pages, but they will appear detached.
-
-To bundle the pages, you'll need
-.B djvm
-from DjVuLibre. Use something like
-
-.BI "djvm -c result.djvu out*.djvu"
-
-and you'll get all the pages in one file.
-Do NOT give dictionaries to djvm, they'll be picked up automatically.
-
-Note two new options:
-.B --pages-per-dict
+There are several options referring to the multipage encoding process, namely
+.B --pages-per-dict,
+.B --indirect
 and
 .B --report.
 
 .SH "OPTIONS"
+.TP
+.BI "-A"
+.TP 
+.BI "--Averaging"
+Compute "average" representatives for shapes matching a pattern.
+
 .TP
 .BI "-a " "n"
 .TP 
@@ -142,16 +129,37 @@ Erosion makes no sense when the output is not DjVu.
 This option is turned on by
 .BR "--lossy".
 
+.TP
+.B "-i"
+.TP 
+.B "--indirect"
+
+Specifying this option in multipage mode causes minidjvu to generate an
+.I indirect
+multipage document, consisting from a single index file, several single-page
+DjVu files (one per each image passed to the encoder) and several shared
+dictionary files. Note that the index file is created under the name
+specified for the output file in the command line, while for each page
+the original input file name is preserved, with the extension being
+changed to ".djvu".
+
+This mode is useful for placing a large document to a Web server, or if you
+are going to postprocess the generated files (e. g. by adding a color
+background). In the later case you may then want to convert your indirect
+document to DjVu bundled, using the
+.B djvmcvt
+utility, supplied with DjVuLibre.
+
+
 .TP 
 .B "-l"
 .TP 
 .B "--lossy"
 Turn on all lossy options. Is equivalent to
-.BR --smooth
 .BR --clean
 .BR --erosion
-.BR "--match".
-
+.BR --match
+.BR --smooth.
 
 .TP
 .B "-m"
@@ -178,12 +186,10 @@ but produced files become much bigger.
 .B "-p"
 .TP 
 .B "--pages-per-dict"
-Specify how many pages to compress in one pass. The default is all.
-If it consumes too much memory, try
-.BR "-p 10"
-or
-.BR "-p 2".
-
+Specify how many pages to compress in one pass. The default is 10. If
+.BR "-p 0"
+is specified, minidjvu will attempt to process all pages at once, but be
+aware that this can take a lot of memory, especially on large books.
 
 .TP 
 .B "-r"
@@ -215,6 +221,13 @@ Print messages about various stages of the process.
 It's not very useful, but interesting to examine.
 
 .TP 
+.B "-X"
+.TP 
+.B "--Xtension"
+Specifies an extension for shared dictionary files (without a leading
+period). The default is "iff".
+
+.TP 
 .B "-w"
 .TP 
 .B "--warnings"
@@ -225,8 +238,5 @@ So the minidjvu default behavior is a workaround for libtiff default behavior.
 
 
 .SH BUGS
-Without
-.BR --dpi
-specified, resolution of re-encoded DjVu images is reset to 300 dpi.
 
 Multipage encoder does not work properly if pages have different resolution.

@@ -14,3 +14,16 @@
 #ifdef HAVE_CONFIG_H
     #include <config.h>
 #endif
+
+#ifndef _
+/* This is for other GNU distributions with internationalized messages.
+ * When compiling libc, the _ macro is predefined.
+ */
+#ifdef HAVE_GETTEXT
+    #include <libintl.h>
+    #define _(msgid)	gettext (msgid)
+#else
+    #define _(msgid)	(msgid)
+#endif
+#endif
+

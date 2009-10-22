@@ -48,7 +48,7 @@ MDJVU_FUNCTION int32 mdjvu_multipage_classify_patterns
 MDJVU_FUNCTION int32 mdjvu_multipage_classify_bitmaps
     (int32 npages, int32 total_npatterns, mdjvu_image_t *,
      int32 *result, mdjvu_matcher_options_t,
-     void (*report)(void *, int), void *param);
+     void (*report)(void *, int), void *param, int centers_needed);
 
 
 /* Decide what bitmaps will be put into the dictionary (by tag).

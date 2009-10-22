@@ -1,4 +1,29 @@
 ---
+0.8
+---
+    Patter matching algorithm is adjusted to prevent some undesired
+        substitutions (for example, quite different shapes sometimes were unified
+        if minidjvu could somewhow link them with a chunk of intermediate forms).
+    bugfix: specifying aggression level above 100 actually resulted in producing
+        larger files.
+    Letter averaging now works also in multipage mode.
+    minidjvu now produces multipage DJVU documents (either bundled or indirect)
+        when processing images in the multipage mode.
+    A new file naming convention for the multipage mode: pages are now generated with the
+        same base names as the original images, just the extension is changed to
+        'djvu'. A numerical suffix is added to the base name in case of a name clash.
+        So the 'pattern' parameter is gone: instead the same command line syntax is used 
+        both for single page and multipage mode.
+    Localization via gettext (currently doesn't work under Windows) implemented
+        and a Russian man page added.
+    Configure scripts rewritten from scratch and added to the source tree.
+    The minidjvu library has been separated from the executable (once again).
+        However under Windows (mingw32) a single statically linked binary is generated
+        by default.
+    Multipage TIFF files now directly supported.
+    The Windows installable package is now called just "minidjvu", as all "friends" are gone.
+
+---
 0.7
 ---
     bugfix: no more attempts to substitute pictures on multipage compression
