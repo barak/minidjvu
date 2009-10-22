@@ -3,7 +3,4 @@
 build clean install binary-arch binary-indep binary:
 	dh $@
 
-override_dh_auto_install:
-	dh_auto_install -- prefix=/usr
-
 .PHONY: build clean install binary-arch binary-indep binary
