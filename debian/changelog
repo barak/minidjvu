@@ -1,8 +1,9 @@
-minidjvu (0.7-2) unstable; urgency=low
+minidjvu (0.8-1) unstable; urgency=low
 
-  * Remove -Winline from Makefile default compilation flags to reduce noise
+  * New upstream version
+  * Minor portability tweak for maximal 32-bit signed integer
 
- -- Barak A. Pearlmutter <bap@debian.org>  Wed, 02 Sep 2009 13:41:50 +0200
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 22 Oct 2009 17:38:45 -0400
 
 minidjvu (0.7-1) unstable; urgency=low
 
