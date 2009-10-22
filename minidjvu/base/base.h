@@ -8,3 +8,4 @@
 #include <minidjvu/base/3graymap.h>
 #include <minidjvu/base/4bitmap.h>
 #include <minidjvu/base/5image.h>
+#include <minidjvu/base/6string.h>

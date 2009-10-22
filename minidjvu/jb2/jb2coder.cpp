@@ -30,6 +30,10 @@ JB2Coder::JB2Coder() :
 {
 }
 
+JB2Coder::~JB2Coder()
+{
+}
+
 void JB2Coder::reset_numcontexts()
 {
     record_type.reset();

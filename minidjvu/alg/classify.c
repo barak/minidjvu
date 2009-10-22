@@ -152,17 +152,17 @@ static void delete_all_classes(Classification *cl)
 
 /* Compares p with nodes from c until a meaningful result. */
 static int compare_to_class(mdjvu_pattern_t p, Class *c, int32 dpi,
-                            mdjvu_matcher_options_t options)
+                            mdjvu_matcher_options_t options, int flag)
 {
     int r = 0;
     ClassNode *n = c->first;
     while(n)
     {
         r = mdjvu_match_patterns(p, n->ptr, dpi, options);
-        if (r) break;
+        if (r == flag) return 1;
         n = n->next;
     }
-    return r;
+    return 0;
 }
 
 static void classify(Classification *cl, mdjvu_pattern_t p,
@@ -177,7 +177,8 @@ static void classify(Classification *cl, mdjvu_pattern_t p,
 
         if (class_of_this == c) continue;
         if (c->last_page < page - 1) continue; /* multipage optimization */
-        if (compare_to_class(p, c, dpi, options) != 1) continue;
+        if (compare_to_class(p, c, dpi, options, -1) ||
+            !compare_to_class(p, c, dpi, options, 1)) continue;
 
         if (class_of_this)
             class_of_this = merge(cl, class_of_this, c);
@@ -335,7 +336,7 @@ MDJVU_IMPLEMENT int32 mdjvu_multipage_classify_patterns
 MDJVU_IMPLEMENT int32 mdjvu_multipage_classify_bitmaps
     (int32 npages, int32 total_patterns_count, mdjvu_image_t *pages,
      int32 *result, mdjvu_matcher_options_t options,
-     void (*report)(void *, int), void *param)
+     void (*report)(void *, int), void *param, int centers_needed)
 {
     int32 max_tag, k, page;
     int32 *npatterns = (int32 *) malloc(npages * sizeof(int32));
@@ -371,6 +372,30 @@ MDJVU_IMPLEMENT int32 mdjvu_multipage_classify_bitmaps
     max_tag = mdjvu_multipage_classify_patterns
         (npages, total_patterns_count, npatterns,
          pointers, result, dpi, options, report, param);
+
+    if (centers_needed)
+    {
+        int32 patterns_processed = 0;
+        
+        for (page = 0; page < npages; page++)
+        {
+            mdjvu_image_t current_image = pages[page];
+            int32 n = mdjvu_image_get_bitmap_count(current_image);
+            int32 i;
+            mdjvu_image_enable_centers(current_image);
+            for (i = 0; i < n; i++)
+            {
+                int32 cx, cy;
+                mdjvu_bitmap_t bitmap = mdjvu_image_get_bitmap(current_image, i);
+                if (patterns[patterns_processed])
+                    mdjvu_pattern_get_center(patterns[patterns_processed], &cx, &cy);
+                else
+                    get_cheap_center(bitmap, &cx, &cy);
+                patterns_processed++;
+                mdjvu_image_set_center(current_image, bitmap, cx, cy); 
+            }
+        }
+    }
 
     for (k = 0; k < total_patterns_count; k++)
     {

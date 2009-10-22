@@ -1,0 +1,113 @@
+.PHONY: clean install
+
+SHELL:=@SHELL@
+LIBRARY_VERSION:=@LIBRARY_VERSION@
+
+prefix:=@prefix@
+exec_prefix:=@exec_prefix@
+libdir:=@libdir@
+datarootdir:=@datarootdir@
+srcdir:=@srcdir@
+top_builddir:=@top_builddir@
+LOCALEDIR:=@localedir@
+
+CC:=@CC@
+CXX:=@CXX@
+LIBTOOL:=@LIBTOOL@
+INSTALL:=@INSTALL@
+INSTALL_LIB:=@INSTALL_DATA@
+
+INCS:=@INCS@ -I${top_builddir} -I${srcdir}
+OPTS:=@OPTS@
+DEFS:=@DEFS@
+FLAGS:=@CFLAGS@
+CFLAGS:=${FLAGS} ${OPTS} ${INCS} ${DEFS}
+CXXFLAGS:=${FLAGS} ${INCS} ${DEFS}
+
+LDFLAGS:=@LDFLAGS@
+LIBS:=@LIBS@
+DLLFLAGS:=@DLLFLAGS@
+
+OBJDIR:=obj
+SUBDIRS:=$(srcdir) \
+         base \
+         alg \
+         alg/patterns \
+         jb2 \
+         formats
+
+THISFILE:=Makefile
+
+CSOURCES:=$(wildcard $(addsuffix /*.c,$(SUBDIRS)))
+CPPSOURCES:=$(wildcard $(addsuffix /*.cpp,$(SUBDIRS)))
+HEADERS:=$(wildcard $(addsuffix /*.h,$(top_builddir) $(SUBDIRS)))
+COBJECTS:=$(addprefix $(OBJDIR)/,$(CSOURCES:.c=.o))
+CPPOBJECTS:=$(addprefix $(OBJDIR)/,$(CPPSOURCES:.cpp=.o))
+CLOBJECTS:=$(addprefix $(OBJDIR)/,$(CSOURCES:.c=.lo))
+CPPLOBJECTS:=$(addprefix $(OBJDIR)/,$(CPPSOURCES:.cpp=.lo))
+OBJECTS:=$(COBJECTS) $(CPPOBJECTS)
+LOBJECTS:=$(CLOBJECTS) $(CPPLOBJECTS)
+
+LIBNAME:=@mdjvulib@
+LIBPATH:=${top_builddir}/bin/${LIBNAME}
+
+@STATIC_YES@all: build-static
+
+@SHARED_YES@all: build-shared
+
+build-static: $(OBJECTS)
+	mkdir -p $(dir $(LIBPATH))
+	ar cru $(LIBPATH) $^
+	ranlib $(LIBPATH)
+
+build-shared: $(LOBJECTS)
+	mkdir -p $(dir $(LIBPATH))
+	$(LIBTOOL) --mode=link $(CXX) $(CXXFLAGS) -c -no-undefined \
+		 -rpath ${libdir} -version-info ${LIBRARY_VERSION} $(DLLFLAGS) \
+		 ${OBJS} ${LDFLAGS} $^ -o $(LIBPATH) ${LIBS}
+
+@STATIC_YES@clean: clean-static
+
+@SHARED_YES@clean: clean-shared
+
+clean-static:
+	$(LIBTOOL) --mode=clean $(RM) $(OBJECTS)
+	$(RM) -r $(OBJDIR)
+
+clean-shared:
+	$(RM) $(OBJECTS)
+	$(RM) -r $(OBJDIR)
+
+distclean: clean
+	-find . -name Makefile -exec ${RM} {} \;
+
+@STATIC_YES@install:
+
+@SHARED_YES@install: install-shared
+
+install-shared:
+	$(LIBTOOL) --mode=install $(INSTALL_LIB) $(LIBPATH) $(DESTDIR)$(libdir)
+
+$(OBJDIR)/%.o: %.c $(HEADERS) $(THISFILE)
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.o: %.cpp $(HEADERS) $(THISFILE)
+	mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.lo: %.c $(HEADERS) $(THISFILE)
+	mkdir -p $(dir $@)
+	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.lo: %.cpp $(HEADERS) $(THISFILE)
+	mkdir -p $(dir $@)
+	$(LIBTOOL) --mode=compile $(CXX) $(CXXFLAGS) -c $< -o $@
+
+@STATIC_YES@uninstall:
+
+@SHARED_YES@uninstall: uninstall-shared
+
+uninstall-shared:
+	${LIBTOOL} --mode=uninstall $(RM) ${DESTDIR}$(libdir)/$(LIBNAME)
+

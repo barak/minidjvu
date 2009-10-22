@@ -15,7 +15,7 @@
 
 #if HAVE_TIFF
 
-static mdjvu_bitmap_t load_tiff(const char *path, int32 *presolution, mdjvu_error_t *perr)
+static mdjvu_bitmap_t load_tiff(const char *path, int32 *presolution, mdjvu_error_t *perr, uint32 idx)
 {
     uint16 photometric;
     uint32 w, h;
@@ -27,8 +27,14 @@ static mdjvu_bitmap_t load_tiff(const char *path, int32 *presolution, mdjvu_erro
     uint32 i;
 
     TIFF *tiff = TIFFOpen(path, "r");
+    for ( i=0; tiff != NULL && i<idx; i++ )
+    {
+        if (!TIFFReadDirectory(tiff))
+            break;
+    }
+
     *perr = NULL;
-    if (!tiff)
+    if (!tiff || i<idx)
     {
         *perr = mdjvu_get_error(mdjvu_error_fopen_read);
         return NULL;
@@ -114,12 +120,29 @@ static mdjvu_bitmap_t load_tiff(const char *path, int32 *presolution, mdjvu_erro
 
 #endif /* HAVE_TIFF */
 
-MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_load_tiff(const char *path, int32 *presolution, mdjvu_error_t *perr)
+MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_load_tiff(const char *path, int32 *presolution, mdjvu_error_t *perr, uint32 idx)
 {
     #if HAVE_TIFF
-        return load_tiff(path, presolution, perr);
+        return load_tiff(path, presolution, perr, idx);
     #else
         *perr = mdjvu_get_error(mdjvu_error_tiff_support_disabled);
         return NULL;
     #endif
 }
+
+MDJVU_IMPLEMENT uint32 mdjvu_get_tiff_page_count(const char *path)
+{
+    int dircount = 0;
+    TIFF* tif = TIFFOpen(path, "r");
+
+    /* a "directory" is a page in a multipage tiff */
+
+    if ( tif ) {
+        do {
+            dircount++;
+        } while ( TIFFReadDirectory(tif) );
+        TIFFClose(tif);
+    }
+    return dircount;
+}
+

@@ -199,7 +199,7 @@ inline void ZPEncoder::emit_byte(unsigned char b)/*{{{*/
 }/*}}}*/
 ZPEncoder::ZPEncoder(FILE *f)/*{{{*/
     : file(f), a(0), nrun(0), subend(0), buffer(0xffffff),
-      delay(25), byte(0), scount(0)
+      delay(25), byte(0), scount(0), closed(false)
 {
     assert(f);
 }/*}}}*/
@@ -235,7 +235,7 @@ void ZPEncoder::close()/*{{{*/
 }/*}}}*/
 ZPEncoder::~ZPEncoder()/*{{{*/
 {
-    close();
+    if (!closed) close();
 }/*}}}*/
 void ZPEncoder::outbit(Bit bit)/*{{{*/
 {
@@ -295,10 +295,11 @@ void ZPEncoder::zemit(Bit b)/*{{{*/
             nrun += 1;
         break;
 
-        //default:
-            // assert(0);
+        default:
+            assert(0);
     }
 }/*}}}*/
+
 inline void ZPEncoder::export_bits()/*{{{*/
 {
     zemit(1 - (subend >> 15));
@@ -328,6 +329,24 @@ void ZPEncoder::encode_lps(ZPBitContext &context, uint32 z)/*{{{*/
 
     while (a >= 0x8000) export_bits();
 }/*}}}*/
+void ZPEncoder::encode_mps_simple(unsigned int z)
+{
+    /* Code MPS */
+    a = z;
+    /* Export bits */
+    if (a >= 0x8000) export_bits();
+}
+
+void ZPEncoder::encode_lps_simple(unsigned int z)
+{
+    /* Code LPS */
+    z = 0x10000 - z;
+    subend += z;
+    a += z;
+    
+    /* Export bits */
+    while (a >= 0x8000) export_bits();
+}
 void ZPEncoder::encode(int32 n, ZPNumContext &context)/*{{{*/
 {
     bool negative =false;
@@ -405,12 +424,11 @@ void ZPEncoder::encode(int32 n, ZPNumContext &context)/*{{{*/
 void ZPEncoder::encode_without_context(Bit bit)/*{{{*/
 {
     assert(bit == 0 || bit == 1);
-    ZPBitContext dummy;
     uint32 z = 0x8000 + (a >> 1);
     if (bit)
-        encode_lps(dummy, z);
+        encode_lps_simple(z);
     else
-        encode_mps(dummy, z);
+        encode_mps_simple(z);
 }/*}}}*/
 void ZPEncoder::encode(Bit bit, ZPBitContext &context) /*{{{*/
 {

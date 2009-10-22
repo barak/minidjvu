@@ -93,6 +93,8 @@ class ZPEncoder
         void encode_without_context(Bit);
         void encode(Bit, ZPBitContext &);
         void encode(int32, ZPNumContext &);
+        void close();
+
     private:
         FILE *file;
         void emit_byte(unsigned char);
@@ -100,12 +102,13 @@ class ZPEncoder
         unsigned char delay, byte, scount;
         bool closed;
 
-        void close();
         void outbit(Bit);
         void zemit(Bit);
         void export_bits();
         void encode_mps(ZPBitContext &, uint32);
         void encode_lps(ZPBitContext &, uint32);
+        void encode_mps_simple(uint32);
+        void encode_lps_simple(uint32);
 };
 
 

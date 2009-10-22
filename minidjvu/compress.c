@@ -150,34 +150,34 @@ MDJVU_IMPLEMENT void mdjvu_compress_image(mdjvu_image_t image, mdjvu_compression
     else
         options = mdjvu_compression_options_create();
 
-    if (options->verbose) puts("deciding what pieces are letters");
+    if (options->verbose) puts(_("deciding what pieces are letters"));
     mdjvu_calculate_not_a_letter_flags(image);
 
-    if (options->verbose) puts("sorting blits");
+    if (options->verbose) puts(_("sorting blits"));
     mdjvu_sort_blits(image);
-    if (options->verbose) puts("sorting bitmaps");
+    if (options->verbose) puts(_("sorting bitmaps"));
     mdjvu_image_sort_bitmaps(image);
 
     if (options->matcher_options)
     {
-        if (options->verbose) puts("matching patterns");
+        if (options->verbose) puts(_("matching patterns"));
         find_substitutions(image, options);
         
-        if (options->verbose) puts("adjusting substitution coordinates");
+        if (options->verbose) puts(_("adjusting substitution coordinates"));
         mdjvu_adjust(image);
         
-        if (options->verbose) puts("removing unused bitmaps");
+        if (options->verbose) puts(_("removing unused bitmaps"));
         mdjvu_image_remove_unused_bitmaps(image);
         
         if (options->verbose)
         {
-            printf("the image now has "MDJVU_INT32_FORMAT" bitmaps\n",
+            printf(_("the image now has %d bitmaps\n"),
                    mdjvu_image_get_bitmap_count(image));
         }
         
         if (options->averaging)
         {
-           if (options->verbose) puts("sorting bitmaps (again)");
+           if (options->verbose) puts(_("sorting bitmaps (again)"));
            mdjvu_image_sort_bitmaps(image);
         }
     }
@@ -188,11 +188,11 @@ MDJVU_IMPLEMENT void mdjvu_compress_image(mdjvu_image_t image, mdjvu_compression
     }
     else
     {
-        if (options->verbose) puts("finding prototypes");
+        if (options->verbose) puts(_("finding prototypes"));
         mdjvu_find_prototypes(image);
         if (options->verbose)
         {
-            printf(MDJVU_INT32_FORMAT" bitmaps have prototypes\n",
+            printf(_("%d bitmaps have prototypes\n"),
                    count_prototypes(image));
         }
     }
@@ -284,7 +284,7 @@ static void report_classify(void *param, int page_completed)
     mdjvu_compression_options_t r = (mdjvu_compression_options_t) param;
     if (r->report)
     {
-        printf("Classification: %d of %d completed\n", r->report_start_page + page_completed,
+        printf(_("Classification: %d of %d completed\n"), r->report_start_page + page_completed,
                                                        r->report_total_pages);
     }
 }
@@ -294,7 +294,7 @@ static void report_prototypes(void *param, int page_completed)
     mdjvu_compression_options_t r = (mdjvu_compression_options_t) param;
     if (r->report)
     {
-        printf("Prototype search: %d of %d completed\n", r->report_start_page + page_completed,
+        printf(_("Prototype search: %d of %d completed\n"), r->report_start_page + page_completed,
                                                          r->report_total_pages);
     }
 }
@@ -315,21 +315,24 @@ MDJVU_FUNCTION mdjvu_image_t mdjvu_compress_multipage(int n, mdjvu_image_t *page
     {
         total_bitmaps_count += mdjvu_image_get_bitmap_count(pages[i]);
 
-        if (options->verbose) printf("deciding what pieces are letters in page #%d\n", i);
+        if (options->verbose) printf(_("deciding what pieces are letters in page #%d\n"), i);
         mdjvu_calculate_not_a_letter_flags(pages[i]);
 
-        if (options->verbose) printf("sorting letters in page #%d\n", i);
+        if (options->verbose) printf(_("sorting letters in page #%d\n"), i);
         mdjvu_sort_blits(pages[i]);
         mdjvu_image_sort_bitmaps(pages[i]);
+
+        if (!mdjvu_image_has_substitutions(pages[i]))
+            mdjvu_image_enable_substitutions(pages[i]);
     }
 
     tags = MDJVU_MALLOCV(int32, total_bitmaps_count);
-    if (options->report) printf("started classification\n");
+    if (options->report) printf(_("started classification\n"));
     max_tag = mdjvu_multipage_classify_bitmaps
         (n, total_bitmaps_count, pages, tags,
          ((struct MinidjvuCompressionOptions *) options)->matcher_options,
-         report_classify, options);
-    if (options->report) printf("finished classification\n");
+         report_classify, options, options->averaging);
+    if (options->report) printf(_("finished classification\n"));
 
     dictionary_flags = (unsigned char *) malloc((max_tag + 1));
     representatives = (mdjvu_bitmap_t *)
@@ -344,9 +347,15 @@ MDJVU_FUNCTION mdjvu_image_t mdjvu_compress_multipage(int n, mdjvu_image_t *page
                                max_tag, tags, dictionary_flags);
     MDJVU_FREEV(npatterns);
 
-    mdjvu_multipage_choose_representatives(n, pages, max_tag, tags, representatives);
+    if (!options->averaging)
+    {
+        mdjvu_multipage_choose_representatives(n, pages, max_tag, tags, representatives);
+        dictionary = get_dictionary(max_tag, representatives, dictionary_flags);
 
-    dictionary = get_dictionary(max_tag, representatives, dictionary_flags);
+    }
+    else
+        dictionary = mdjvu_multipage_choose_average_representatives(
+            n, pages, total_bitmaps_count, max_tag, tags, representatives, dictionary_flags);
 
     for (i = 0; i < n; i++)
         mdjvu_image_set_dictionary(pages[i], dictionary);
@@ -356,10 +365,10 @@ MDJVU_FUNCTION mdjvu_image_t mdjvu_compress_multipage(int n, mdjvu_image_t *page
     mdjvu_multipage_adjust(dictionary, n, pages);
     for (i = 0; i < n; i++)
         mdjvu_image_remove_unused_bitmaps(pages[i]);
-    if (options->report) printf("started prototype search\n");
+    if (options->report) printf(_("started prototype search\n"));
     mdjvu_multipage_find_prototypes(dictionary, n, pages,
                                     report_prototypes, options);
-    if (options->report) printf("finished prototype search\n");
+    if (options->report) printf(_("finished prototype search\n"));
     free(dictionary_flags);
     free(representatives);
     MDJVU_FREEV(tags);

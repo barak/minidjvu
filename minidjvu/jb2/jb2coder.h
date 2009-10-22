@@ -57,6 +57,7 @@ class JB2Coder
 
         ZPBitContext eventual_image_refinement, offset_type;
         JB2Coder();
+        ~JB2Coder();
 
     protected:
         ZPNumContext record_type;
