@@ -1,4 +1,14 @@
 *~
 *.o
 *.d
+/Makefile
+/bin/
+/config.h
+/config.log
+/config.status
+/minidjvu/Makefile
+/minidjvu/obj/
+/po/Makefile
+/po/ru.mo
+/src/Makefile
 /src/minidjvu
