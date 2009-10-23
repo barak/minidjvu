@@ -1,9 +1,11 @@
 minidjvu (0.8-1) unstable; urgency=low
 
-  * New upstream version
+  * New upstream version which
+    - addresses -p segfault (closes: #545285)
+    - generates shared library (closes: #545287)
   * Minor portability tweak for maximal 32-bit signed integer
 
- -- Barak A. Pearlmutter <bap@debian.org>  Thu, 22 Oct 2009 17:38:45 -0400
+ -- Barak A. Pearlmutter <bap@debian.org>  Fri, 23 Oct 2009 13:50:47 -0400
 
 minidjvu (0.7-1) unstable; urgency=low
 
