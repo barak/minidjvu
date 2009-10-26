@@ -10,10 +10,26 @@ Standards-Version: 3.8.3
 
 Package: minidjvu
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libminidjvu0 (>= ${binary:Version})
 Suggests: djview4 | djview3 | djvu-viewer, djvulibre-bin, pdf2djvu
 Description: Monochrome DjVu multipage encoder, single page encoder/decoder
  Minidjvu is a multipage DjVu encoder and single page encoder/decoder.
  No colors or grayscale, just black and white.
  In addition to the DjVu format, minidjvu reads and writes
  PBM, Windows BMP, and TIFF.
+
+Package: libminidjvu0
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Small DjVu encoder/decoder, shared library
+ MiniDjVu shared library, for DjVu format encoding and decoding.
+
+Package: libminidjvu-dev
+Architecture: any
+Section: libdevel
+Depends: ${shlibs:Depends}, ${misc:Depends}, libminidjvu0 (= ${binary:Version})
+Suggests: minidjvu
+Description: Small DjVu encoder/decoder, development files
+ MiniDjVu library development files, for DjVu format encoding and
+ decoding.

@@ -5,5 +5,5 @@ Abstract:  How to use minidjvu to decode a page in DjVu format
 Section: Graphics
 
 Format: HTML
-Index: /usr/share/doc/minidjvu/decode.html
-Files: /usr/share/doc/minidjvu/decode.html
+Index: /usr/share/doc/libminidjvu-dev/decode.html
+Files: /usr/share/doc/libminidjvu-dev/decode.html

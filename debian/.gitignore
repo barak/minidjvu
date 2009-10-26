@@ -1,4 +1,8 @@
-/files
+/*.debhelper
 /*.log
+/*.substvars
+/files
+/libminidjvu-dev/
+/libminidjvu0/
 /minidjvu/
-/minidjvu.substvars
+/tmp/
