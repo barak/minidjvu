@@ -17,6 +17,7 @@ RM:=@RM@
 INSTALL:=@INSTALL@
 INSTALL_PROGRAM:=@INSTALL_PROGRAM@
 INSTALL_DATA:=@INSTALL_DATA@
+GZIP:=@GZIP@
 
 @SET_MAKE@
 THISFILE:=Makefile
@@ -56,13 +57,13 @@ install-po:
 install-doc:
 	${INSTALL} -d ${DESTDIR}$(MANDIR)
 	${INSTALL_DATA} $(DOCDIR)/$(manpage).1 ${DESTDIR}$(MANDIR)
-	/usr/bin/gzip -nf -9 $(MANDIR)/$(manpage).1
+	${GZIP} -nf -9 ${DESTDIR}$(MANDIR)/$(manpage).1
 	for dir in $(DOCDIR)/*/; do \
 	  if [ -f $${dir}$(manpage).1 ]; then \
 	    LOCMANDIR=${DESTDIR}$(prefix)/share/man$${dir#$(DOCDIR)}/man1 &&\
 	    ${INSTALL} -d $${LOCMANDIR} &&\
 	    ${INSTALL_DATA} $${dir}$(manpage).1 $${LOCMANDIR} && \
-	    /usr/bin/gzip -nf -9 $${LOCMANDIR}/$(manpage).1; \
+	    ${GZIP} -nf -9 $${LOCMANDIR}/$(manpage).1; \
 	  fi; \
 	done
 
