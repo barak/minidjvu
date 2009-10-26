@@ -2,6 +2,7 @@ AC_PREREQ([2.63])
 AC_INIT(minidjvu, 0.8, alexios@thessalonica.org.ru)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADER(config.h:config/config.h.in)
+AC_CONFIG_MACRO_DIR([m4])
 AC_PREFIX_DEFAULT(/usr/local)
 
 LIBRARY_VERSION=`echo $PACKAGE_VERSION | sed -e 's/\./:/'`

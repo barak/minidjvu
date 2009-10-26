@@ -6,6 +6,7 @@
 /config.h
 /config.log
 /config.status
+/m4/
 /minidjvu/Makefile
 /minidjvu/obj/
 /po/Makefile
