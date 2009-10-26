@@ -9,6 +9,7 @@ manpage:=@PACKAGE_NAME@
 
 DOCDIR:=doc
 MANDIR:=$(prefix)/share/man/man1
+INCLUDEDIR:=$(prefix)/include
 SUBDIRS:=src \
          minidjvu \
          po
@@ -43,10 +44,18 @@ install: install-app
 
 install: install-doc
 
+install: install-include
+
 @PO_YES@install: install-po
 
 install-app:
 	cd src && ${MAKE} install
+
+install-include:
+	for f in minidjvu.h minidjvu/*.h minidjvu/*/*.h minidjvu/*/*/*.h; do \
+	  ${INSTALL} -d ${DESTDIR}${INCLUDEDIR}/$$(dirname $${f}) && \
+	  ${INSTALL_DATA} $${f} ${DESTDIR}${INCLUDEDIR}/$$(dirname $${f})/ ; \
+	done
 
 install-lib:
 	cd minidjvu && ${MAKE} install
