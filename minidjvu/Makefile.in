@@ -86,6 +86,7 @@ distclean: clean
 @SHARED_YES@install: install-shared
 
 install-shared:
+	${INSTALL} -d ${DESTDIR}${libdir}
 	$(LIBTOOL) --mode=install $(INSTALL_LIB) $(LIBPATH) $(DESTDIR)$(libdir)
 
 $(OBJDIR)/%.o: %.c $(HEADERS) $(THISFILE)
