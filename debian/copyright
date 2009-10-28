@@ -6,13 +6,15 @@ It was downloaded from:
 
     <http://sourceforge.net/projects/minidjvu/files/>
 
-Upstream Author:
+Upstream Authors:
 
     Ilya Mezhirov
+    Alexey Kryukov
 
 Copyright:
 
-    Copyright (C) 2006 Ilya Mezhirov
+    Copyright (C) 2006 Ilya Mezhirov (original releases; most code)
+    Copyright (C) 2009 Alexey Kryukov (some updates; v0.8 mods)
 
 License:
 
