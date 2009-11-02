@@ -1,2 +1,4 @@
 version=3
-http://sf.net/minidjvu/minidjvu-(.*)\.tar\.gz
+# http://sf.net/minidjvu/minidjvu-(.*)\.tar\.gz
+# http://sf.net/minidjvu/minidjvu-([\d\.]*)\.tar\.gz
+http://sf.net/minidjvu/minidjvu-(\d+\.\d)\.tar\.gz
