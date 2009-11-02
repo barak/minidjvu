@@ -56,12 +56,12 @@ fast_install=yes
 
 # The host system.
 host_alias=
-host=x86_64-unknown-linux-gnu
+host=x86_64-pc-linux-gnu
 host_os=linux-gnu
 
 # The build system.
-build_alias=
-build=x86_64-unknown-linux-gnu
+build_alias=x86_64-linux-gnu
+build=x86_64-pc-linux-gnu
 build_os=linux-gnu
 
 # A sed program that does not truncate output.
@@ -86,7 +86,7 @@ NM="/usr/bin/nm -B"
 LN_S="ln -s"
 
 # What is the maximum length of a command?
-max_cmd_len=1572864
+max_cmd_len=3458764513820540925
 
 # Object file suffix (normally "o").
 objext=o
@@ -132,7 +132,7 @@ old_postuninstall_cmds=""
 LTCC="gcc"
 
 # LTCC compiler flags.
-LTCFLAGS="-g -O2 -Wall -Wshadow -pedantic-errors -Wpointer-arith -Waggregate-return -Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align"
+LTCFLAGS="-g -pipe -O3 -Wall -Wshadow -pedantic-errors -Wpointer-arith -Waggregate-return -Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align"
 
 # Take the output of nm and produce a listing of raw symbols and C names.
 global_symbol_pipe="sed -n -e 's/^.*[	 ]\\([ABCDGIRSTW][ABCDGIRSTW]*\\)[	 ][	 ]*\\([_A-Za-z][_A-Za-z0-9]*\\)\$/\\1 \\2 \\2/p'"
@@ -361,7 +361,7 @@ hardcode_automatic=no
 inherit_rpath=no
 
 # Whether libtool must link a program against all its dependency libraries.
-link_all_deplibs=unknown
+link_all_deplibs=no
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
@@ -9020,7 +9020,7 @@ hardcode_automatic=no
 inherit_rpath=no
 
 # Whether libtool must link a program against all its dependency libraries.
-link_all_deplibs=unknown
+link_all_deplibs=no
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
