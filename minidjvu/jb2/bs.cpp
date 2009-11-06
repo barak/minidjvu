@@ -13,7 +13,14 @@
 
 // ========================================
 // --- Global Definitions
+
                         
+// Sorting tresholds
+enum { FREQMAX=4, CTXIDS=3 };
+// Limits on block sizes
+enum { MINBLOCK=10, MAXBLOCK=4096 };
+
+
 
 #ifdef OVERFLOW
 #undef OVERFLOW
@@ -66,8 +73,7 @@ private:
 
 // blocksort -- the main entry point
 
-static void 
-blocksort(unsigned char *data, int size, int &markerpos)
+static void blocksort(unsigned char *data, int size, int &markerpos)
 {
     _BSort bsort(data, size);
     bsort.run(markerpos);
@@ -96,8 +102,7 @@ _BSort::~_BSort()
 
 // GT -- compare suffixes using rank information
 
-inline int 
-_BSort::GT(int p1, int p2, int depth)
+inline int _BSort::GT(int p1, int p2, int depth)
 {
     int r1, r2;
     int twod = depth + depth;
@@ -138,8 +143,7 @@ _BSort::GT(int p1, int p2, int depth)
 // _BSort::ranksort -- 
 // -- a simple insertion sort based on GT
 
-void 
-_BSort::ranksort(int lo, int hi, int depth)
+void _BSort::ranksort(int lo, int hi, int depth)
 {
     int i,j;
     for (i=lo+1; i<=hi; i++)
@@ -155,8 +159,7 @@ _BSort::ranksort(int lo, int hi, int depth)
 
 // pivot -- return suitable pivot
 
-int
-_BSort::pivot3r(int *rr, int lo, int hi)
+int _BSort::pivot3r(int *rr, int lo, int hi)
 {
     int c1, c2, c3;
     if (hi-lo > 256)
@@ -188,14 +191,12 @@ _BSort::pivot3r(int *rr, int lo, int hi)
 //        The algorithm breaks into ranksort when size is 
 //        smaller than RANKSORT_THRESH
 
-static inline int
-mini(int a, int b) 
+static inline int mini(int a, int b) 
 {
     return (a<=b) ? a : b;
 }
 
-static inline void
-vswap(int i, int j, int n, unsigned int *x)
+static inline void vswap(int i, int j, int n, unsigned int *x)
 {
     while (n-- > 0) 
     {
@@ -203,8 +204,7 @@ vswap(int i, int j, int n, unsigned int *x)
     }
 }
 
-void 
-_BSort::quicksort3r(int lo, int hi, int depth)
+void _BSort::quicksort3r(int lo, int hi, int depth)
 {
     /* Initialize stack */
     int slo[QUICKSORT_STACK];
@@ -300,8 +300,7 @@ _BSort::quicksort3r(int lo, int hi, int depth)
 // GTD -- compare suffixes using data information 
 //    (up to depth PRESORT_DEPTH)
 
-inline int 
-_BSort::GTD(int p1, int p2, int depth)
+inline int _BSort::GTD(int p1, int p2, int depth)
 {
     unsigned char c1, c2;
     p1+=depth; p2+=depth;
@@ -323,8 +322,7 @@ _BSort::GTD(int p1, int p2, int depth)
 
 // pivot3d -- return suitable pivot
 
-unsigned char
-_BSort::pivot3d(unsigned char *rr, int lo, int hi)
+unsigned char _BSort::pivot3d(unsigned char *rr, int lo, int hi)
 {
     unsigned char c1, c2, c3;
     if (hi-lo > 256)
@@ -357,8 +355,7 @@ _BSort::pivot3d(unsigned char *rr, int lo, int hi)
 //        The algorithm breaks into ranksort when size is 
 //        smaller than PRESORT_THRESH
 
-void 
-_BSort::quicksort3d(int lo, int hi, int depth)
+void _BSort::quicksort3d(int lo, int hi, int depth)
 {
     /* Initialize stack */
     int slo[QUICKSORT_STACK];
@@ -491,8 +488,7 @@ _BSort::quicksort3d(int lo, int hi, int depth)
 
 // _BSort::radixsort8 -- 8 bit radix sort
 
-void 
-_BSort::radixsort8(void)
+void _BSort::radixsort8(void)
 {
     int i;
     // Initialize frequency array
@@ -525,8 +521,7 @@ _BSort::radixsort8(void)
 
 // _BSort::radixsort16 -- 16 bit radix sort
 
-void 
-_BSort::radixsort16(void)
+void _BSort::radixsort16(void)
 {
     int i;
     // Initialize frequency array
@@ -575,8 +570,7 @@ _BSort::radixsort16(void)
 
 // _BSort::run -- main sort loop
 
-void
-_BSort::run(int &markerpos)
+void _BSort::run(int &markerpos)
 {
     int lo, hi;
     assert(size>0);
@@ -671,8 +665,7 @@ _BSort::run(int &markerpos)
 // ========================================
 // -- Encoding
 
-static void
-encode_raw(ZPEncoder &zp, int bits, int x)
+static void encode_raw(ZPEncoder &zp, int bits, int x)
 {
     int n = 1;
     int m = (1<<bits);
@@ -685,8 +678,7 @@ encode_raw(ZPEncoder &zp, int bits, int x)
     }
 }
 
-static void
-encode_binary(ZPEncoder &zp, ZPBitContext *ctx, int bits, int x)
+static void encode_binary(ZPEncoder &zp, ZPBitContext *ctx, int bits, int x)
 {
     // Require 2^bits-1    contexts
     int n = 1;
@@ -701,8 +693,7 @@ encode_binary(ZPEncoder &zp, ZPBitContext *ctx, int bits, int x)
     }
 }
 
-unsigned int
-BSEncoder::encode()
+unsigned int BSEncoder::encode()
 { 
     /////////////////////////////////
     ////////////    Block Sort Tranform
@@ -866,8 +857,7 @@ BSEncoder::~BSEncoder()
 // ========================================
 // -- ByteStream interface
 
-void 
-BSEncoder::flush()
+void BSEncoder::flush()
 {
     if (bptr>0)
     {
@@ -879,8 +869,7 @@ BSEncoder::flush()
     size = bptr = 0;
 }
 
-size_t 
-BSEncoder::write(void *buffer, size_t sz)
+size_t BSEncoder::write(void *buffer, size_t sz)
 {
     // Trivial checks
     if (sz == 0)
@@ -914,8 +903,7 @@ BSEncoder::write(void *buffer, size_t sz)
     return copied;
 }
 
-size_t 
-BSEncoder::writall(void *buffer, size_t wsize)
+size_t BSEncoder::writall(void *buffer, size_t wsize)
 {
     size_t total = 0;
     while (wsize > 0)
@@ -928,16 +916,14 @@ BSEncoder::writall(void *buffer, size_t wsize)
     return total;
 }
 
-void 
-BSEncoder::write8 (unsigned int card)
+void BSEncoder::write8 (unsigned int card)
 {
     unsigned char c[1];
     c[0] = (card) & 0xff;
     write((void*)c, sizeof(c));
 }
 
-void 
-BSEncoder::write16(unsigned int card)
+void BSEncoder::write16(unsigned int card)
 {
     unsigned char c[2];
     c[0] = (card>>8) & 0xff;
@@ -945,8 +931,7 @@ BSEncoder::write16(unsigned int card)
     writall((void*)c, sizeof(c));
 }
 
-void 
-BSEncoder::write24(unsigned int card)
+void BSEncoder::write24(unsigned int card)
 {
     unsigned char c[3];
     c[0] = (card>>16) & 0xff;
@@ -955,8 +940,7 @@ BSEncoder::write24(unsigned int card)
     writall((void*)c, sizeof(c));
 }
 
-void 
-BSEncoder::write32(unsigned int card)
+void BSEncoder::write32(unsigned int card)
 {
     unsigned char c[4];
     c[0] = (card>>24) & 0xff;

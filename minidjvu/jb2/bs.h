@@ -8,15 +8,9 @@
 class BSEncoder
 {
     public:
-        BSEncoder(FILE *,const int blocksize);
+        BSEncoder(FILE *, int blocksize = 1024);
         ~BSEncoder();
         
-	// Limits on block sizes
-  	enum { MINBLOCK=10, MAXBLOCK=4096 };
-
-        // Sorting tresholds
-  	enum { FREQMAX=4, CTXIDS=3 };
-
         long tell(void) const;
         void flush(void);
         void close(void);
@@ -27,11 +21,10 @@ class BSEncoder
         void write24 (unsigned int card);
         void write32 (unsigned int card);
         
-    protected:
+    private:
         size_t writall(void *buffer, size_t size);
         unsigned int encode(void);
 
-    private:
         // Data
         long            offset;
         int             bptr;

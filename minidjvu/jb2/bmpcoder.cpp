@@ -19,6 +19,10 @@ JB2BitmapCoder::JB2BitmapCoder(ZPMemoryWatcher *w) :
 {
 }
 
+JB2BitmapCoder::~JB2BitmapCoder()
+{
+}
+
 void JB2BitmapCoder::reset_numcontexts()
 {
     symbol_width.reset();

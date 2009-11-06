@@ -22,7 +22,7 @@ class JB2BitmapCoder
             symbol_height_difference;
         JB2BitmapCoder(ZPMemoryWatcher *w = NULL);
 
-        virtual ~JB2BitmapCoder() {}
+        virtual ~JB2BitmapCoder();
 
         void code_row_directly(int32 n, unsigned char *up2,
                                         unsigned char *up1,

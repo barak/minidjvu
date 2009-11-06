@@ -29,7 +29,7 @@ MDJVU_IMPLEMENT void mdjvu_write_dirm_bundled(char **elements, int * sizes,
     }
     
     {
-        BSEncoder bse((FILE *) f,1024);
+        BSEncoder bse((FILE *) f);
         // Encode file sizes and calculate offsets
         bse.write24(sizes[0]);
         for (i=1; i<n; i++) 
@@ -72,7 +72,7 @@ MDJVU_IMPLEMENT void mdjvu_write_dirm_indirect(char **elements, int * sizes,
     int n, mdjvu_file_t f, mdjvu_error_t *perr)
 {
     int i, flag;
-    BSEncoder bse((FILE *) f,1024);
+    BSEncoder bse((FILE *) f);
     
     // version number
     fputc(1, (FILE *) f);
