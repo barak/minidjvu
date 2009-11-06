@@ -1,9 +1,9 @@
 ---
 0.8
 ---
-    Patter matching algorithm is adjusted to prevent some undesired
+    Pattern matching algorithm is adjusted to prevent some undesired
         substitutions (for example, quite different shapes sometimes were unified
-        if minidjvu could somewhow link them with a chunk of intermediate forms).
+        if minidjvu could somehow link them with a chunk of intermediate forms).
     bugfix: specifying aggression level above 100 actually resulted in producing
         larger files.
     Letter averaging now works also in multipage mode.
