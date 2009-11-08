@@ -1,5 +1,4 @@
 This is the collection of algorithms that together do the job.
-The code is distributed very unevenly, from 1K in clean/ to 60K in jb2/.
 Here is the quick list of them;
     they are listed in the order they are naturally used to compress.
 
