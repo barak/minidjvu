@@ -8,7 +8,7 @@ srcdir:=@srcdir@
 top_builddir:=@top_builddir@
 LOCALEDIR:=@localedir@
 
-INCS:=@INCS@ -I${top_builddir} -I${srcdir}
+INCS:=@INCS@ -I${top_builddir} -I${top_builddir}/include
 OPTS:=@OPTS@
 DEFS:=@DEFS@ -DLOCALEDIR=\"${LOCALEDIR}\"
 CFLAGS:=@CFLAGS@

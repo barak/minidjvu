@@ -14188,7 +14188,7 @@ fi
 
 CFLAGS="$CFLAGS -Wall -Wshadow"
 CFLAGS="$CFLAGS -pedantic-errors -Wpointer-arith -Waggregate-return"
-CFLAGS="$CFLAGS -Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align"
+CFLAGS="$CFLAGS -Wlong-long -Wredundant-decls -Wcast-qual -Wcast-align"
 DEFS="$DEFS -D__STRICT_ANSI__ -DNDEBUG"
 OPTS="-Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations"
 
@@ -14343,7 +14343,7 @@ done
 
 ac_config_files="$ac_config_files Makefile"
 
-ac_config_files="$ac_config_files minidjvu/Makefile"
+ac_config_files="$ac_config_files src/Makefile"
 
 ac_config_files="$ac_config_files tools/Makefile"
 
@@ -15390,7 +15390,7 @@ do
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h:config/config.h.in" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "minidjvu/Makefile") CONFIG_FILES="$CONFIG_FILES minidjvu/Makefile" ;;
+    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "tools/Makefile") CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;
     "po/Makefile") CONFIG_FILES="$CONFIG_FILES po/Makefile" ;;
 

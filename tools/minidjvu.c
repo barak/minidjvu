@@ -3,7 +3,7 @@
  */
 
 #include <minidjvu/minidjvu.h>
-#include "../src/base/mdjvucfg.h" // for i18n
+#include "../src/base/mdjvucfg.h" /* for i18n, HAVE_TIFF */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -669,7 +669,10 @@ static int process_options(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-    int arg_start, tiff_cnt;
+    int arg_start;
+#ifdef HAVE_TIFF
+    int tiff_cnt;
+#endif
     const char *sanity_error_message;
 
     setlocale(LC_ALL, "");
@@ -699,12 +702,12 @@ int main(int argc, char **argv)
     {
         multipage_encode(argc - 2, argv + 1, argv[argc - 1], 0);
     }
-    #ifdef HAVE_TIFF
+#ifdef HAVE_TIFF
     else if (decide_if_tiff(argv[1]) && (tiff_cnt = mdjvu_get_tiff_page_count(argv[1])) > 1 )
     {
         multipage_encode(tiff_cnt, argv + 1, argv[argc - 1], 1);
     }
-    #endif
+#endif
     else if (decide_if_djvu(argv[2]))
     {
         encode(argc, argv);

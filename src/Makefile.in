@@ -17,7 +17,7 @@ LIBTOOL:=@LIBTOOL@
 INSTALL:=@INSTALL@
 INSTALL_LIB:=@INSTALL_DATA@
 
-INCS:=@INCS@ -I${top_builddir} -I${srcdir}
+INCS:=@INCS@ -I${top_builddir} -I${top_builddir}/include
 OPTS:=@OPTS@
 DEFS:=@DEFS@
 FLAGS:=@CFLAGS@
@@ -32,9 +32,10 @@ OBJDIR:=obj
 SUBDIRS:=$(srcdir) \
          base \
          alg \
-         alg/patterns \
+         djvu \
+         image-io \
          jb2 \
-         formats
+         matcher
 
 THISFILE:=Makefile
 

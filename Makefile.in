@@ -11,8 +11,8 @@ DOCDIR:=doc
 MANDIR:=$(prefix)/share/man/man1
 INCLUDEDIR:=$(prefix)/include
 SUBDIRS:=src \
-         minidjvu \
-         po
+         po \
+         tools
 
 RM:=@RM@
 INSTALL:=@INSTALL@
@@ -30,10 +30,10 @@ all: build-app
 @PO_YES@all: build-po
 
 build-lib:
-	cd minidjvu && ${MAKE}
+	cd src && ${MAKE}
 
 build-app:
-	cd src && ${MAKE}
+	cd tools && ${MAKE}
 
 build-po:
 	cd po && ${MAKE}
@@ -49,16 +49,18 @@ install: install-include
 @PO_YES@install: install-po
 
 install-app:
-	cd src && ${MAKE} install
+	cd tools && ${MAKE} install
 
 install-include:
-	for f in minidjvu.h minidjvu/*.h minidjvu/*/*.h minidjvu/*/*/*.h; do \
+	cd include && { \
+	for f in minidjvu/*.h minidjvu/*/*.h; do \
 	  ${INSTALL} -d ${DESTDIR}${INCLUDEDIR}/$$(dirname $${f}) && \
 	  ${INSTALL_DATA} $${f} ${DESTDIR}${INCLUDEDIR}/$$(dirname $${f})/ ; \
-	done
+	done \
+        }
 
 install-lib:
-	cd minidjvu && ${MAKE} install
+	cd src && ${MAKE} install
 
 install-po:
 	cd po && ${MAKE} install
