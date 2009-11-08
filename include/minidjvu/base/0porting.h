@@ -32,10 +32,22 @@
 
 
 #ifndef MDJVU_USE_TIFFIO /* kluge not to typedef twice when using tiffio.h */
-    typedef int int32;
-    typedef unsigned int uint32;
-    typedef unsigned short uint16;
-    typedef short int16;
+    #ifdef HAVE_STDINT_H
+        #include <stdint.h>
+        typedef int32_t int32;
+        typedef uint32_t uint32;
+        typedef int16_t int16;
+        typedef uint16_t uint16;
+    #else
+        typedef int int32;
+        typedef unsigned int uint32;
+        typedef unsigned short uint16;
+        typedef short int16;
+    #endif
+#endif
+
+#ifndef HAVE_STDINT_H
+    #define INT32_MAX 0x7FFFFFFF
 #endif
 
 #define MDJVU_INT32_FORMAT "%d"

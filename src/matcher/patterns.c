@@ -105,8 +105,6 @@ MDJVU_IMPLEMENT void mdjvu_matcher_options_destroy(mdjvu_matcher_options_t opt)
 
 /* ========================================================================== */
 
-/* FIXME: maxint is maxint32 */
-static const int32 maxint = ~(1 << (sizeof(int32) * 8 - 1));
 typedef unsigned char byte;
 
 typedef struct ComparableImageData
@@ -188,7 +186,7 @@ static int32 distance_by_pixeldiff_functions_by_shift(Image *i1, Image *i2,
     int32 overlap_length = max_overlap_x_plus_1 - min_overlap_x;
     int32 score = 0;
 
-    if (overlap_length <= 0) return maxint;
+    if (overlap_length <= 0) return INT32_MAX;
 
     for (i = min_y; i < max_y_plus_1; i++)
     {
@@ -236,7 +234,7 @@ static int32 distance_by_pixeldiff_functions_by_shift(Image *i1, Image *i2,
             }
         }
 
-        if (score >= ceiling) return maxint;
+        if (score >= ceiling) return INT32_MAX;
     }
     return score;
 }
@@ -335,7 +333,7 @@ static int pithdiff_equivalence(Image *i1, Image *i2, double threshold, int32 dp
     int32 perimeter = i1->width + i1->height + i2->width + i2->height;
     int32 ceiling = (int32) (pithdiff1_veto_threshold * dpi * perimeter / 100);
     int32 d = pithdiff_distance(i1, i2, ceiling);
-    if (d == maxint) return -1;
+    if (d == INT32_MAX) return -1;
     if (d < threshold * dpi * perimeter / 100) return 1;
     return 0;
 }
@@ -604,7 +602,7 @@ static int pith2_is_subset(mdjvu_pattern_t ptr1, mdjvu_pattern_t ptr2, double th
         &pith2_return_0,
         ceiling);
 
-    if (d == maxint) return -1;
+    if (d == INT32_MAX) return -1;
     else if (d < threshold * dpi * perimeter / 100) return 1;
     return 0;
 }

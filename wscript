@@ -40,7 +40,7 @@ def configure(conf):
 
 def build(bld):
     bld.new_task_gen(
-        features = 'cc cxx cstatilib', # cshlib
+        features = 'cc cxx cstaticlib', # cshlib
         source = bld.glob('src/*/*.c') + bld.glob('src/*/*.cpp'),
         target = 'minidjvu',
         includes = '# include',
@@ -51,11 +51,11 @@ def build(bld):
     bld.new_task_gen(
         features = 'cc cxx cprogram',
         source = 'tools/minidjvu.c',
-        target = 'minidjvu',
+            target = 'minidjvu',
         includes = '# include',
         install_path = '${PREFIX}/bin',
         uselib = 'M TIFF',
-        uselib_local = "minidjvu"
+        uselib_local = 'minidjvu'
     )
     
     bld.install_files('${PREFIX}/include/minidjvu',

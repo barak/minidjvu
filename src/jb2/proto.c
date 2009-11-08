@@ -9,8 +9,7 @@
 
 #define THRESHOLD 21
 
-static const int32 maxint = ~(1 << 31);
-static const int32 bigint = ~(1 << 31) / 100 - 1;
+static const int32 bigint = INT32_MAX / 100 - 1;
 
 /* THIS THING IS THE PRIMARY BOTTLENECK FOR LOSSLESS COMPRESSION
  * TODO: OPTIMIZE IT!
@@ -31,8 +30,8 @@ static int diff(mdjvu_bitmap_t image,
     unsigned char *ir;
     unsigned char *pr;
 
-    if (abs(iw - pw) > 2) return maxint;
-    if (abs(ih - ph) > 2) return maxint;
+    if (abs(iw - pw) > 2) return INT32_MAX;
+    if (abs(ih - ph) > 2) return INT32_MAX;
 
     ir = (unsigned char *) malloc(n);
     pr = (unsigned char *) malloc(n);
