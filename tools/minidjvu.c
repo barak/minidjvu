@@ -30,7 +30,7 @@ int report = 0;
 int no_prototypes = 0;
 int warnings = 0;
 int indirect = 0;
-char* dict_suffix = NULL;
+const char* dict_suffix = NULL;
 
 /* ========================================================================= */
 

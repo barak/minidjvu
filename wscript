@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-from Options import options
 from glob import glob
 
 
@@ -32,10 +31,7 @@ def configure(conf):
         -Wpointer-arith -Waggregate-return -Wlong-long 
         -Wredundant-decls -Wcast-qual -Wcast-align 
     '''.split())
-
     conf.env.append_value('CXXFLAGS', common_cflags)
-
-
 
 
 def build(bld):
@@ -43,7 +39,7 @@ def build(bld):
         features = 'cc cxx cstaticlib', # cshlib
         source = bld.glob('src/*/*.c') + bld.glob('src/*/*.cpp'),
         target = 'minidjvu',
-        includes = '# include',
+        includes = '# include', # '#' is where config.h is generated
         install_path = '${PREFIX}/lib',
         uselib = 'M TIFF'
     )
@@ -51,13 +47,14 @@ def build(bld):
     bld.new_task_gen(
         features = 'cc cxx cprogram',
         source = 'tools/minidjvu.c',
-            target = 'minidjvu',
+        target = 'minidjvu',
         includes = '# include',
         install_path = '${PREFIX}/bin',
         uselib = 'M TIFF',
         uselib_local = 'minidjvu'
     )
-    
+   
+    # Installing headers 
     bld.install_files('${PREFIX}/include/minidjvu',
                        bld.glob('include/minidjvu/*.h'))
 
