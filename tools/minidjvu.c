@@ -82,7 +82,7 @@ static char *get_page_or_dict_name(char **elements, int cnt, const char *fname)
 
         for (i=same; i<cnt; i++)
         {
-            if (ends_with_ignore_case(elements[i],".djvu"))
+            if (mdjvu_ends_with_ignore_case(elements[i],".djvu"))
             {
                 res = sscanf(elements[i],pattern,&idx);
                 if (res && idx > previdx) previdx = idx;
@@ -161,19 +161,19 @@ static void show_usage_and_exit(void)           /* {{{ */
 
 static int decide_if_bmp(const char *path)
 {
-    return ends_with_ignore_case(path, ".bmp");
+    return mdjvu_ends_with_ignore_case(path, ".bmp");
 }
 
 static int decide_if_djvu(const char *path)
 {
-    return ends_with_ignore_case(path, ".djvu")
-        || ends_with_ignore_case(path, ".djv");
+    return mdjvu_ends_with_ignore_case(path, ".djvu")
+        || mdjvu_ends_with_ignore_case(path, ".djv");
 }
 
 static int decide_if_tiff(const char *path)
 {
-    return ends_with_ignore_case(path, ".tiff")
-        || ends_with_ignore_case(path, ".tif");
+    return mdjvu_ends_with_ignore_case(path, ".tiff")
+        || mdjvu_ends_with_ignore_case(path, ".tif");
 }
 
 /* ========================================================================= */
@@ -441,7 +441,7 @@ static void multipage_encode(int n, char **pages, char *outname, uint32 multipag
 
     match = 1;
 
-    if (!ends_with_ignore_case(outname, ".djv") && !ends_with_ignore_case(outname, ".djvu"))
+    if (!decide_if_djvu(outname))
     {
         fprintf(stderr, _("when encoding many pages, output file must be DjVu\n"));
         exit(1);

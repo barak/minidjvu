@@ -210,6 +210,6 @@ AC_CHECK_FUNCS([memset pow setlocale strcspn strrchr])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([minidjvu/Makefile])
-AC_CONFIG_FILES([src/Makefile])
+AC_CONFIG_FILES([tools/Makefile])
 AC_CONFIG_FILES([po/Makefile])
 AC_OUTPUT

@@ -14345,7 +14345,7 @@ ac_config_files="$ac_config_files Makefile"
 
 ac_config_files="$ac_config_files minidjvu/Makefile"
 
-ac_config_files="$ac_config_files src/Makefile"
+ac_config_files="$ac_config_files tools/Makefile"
 
 ac_config_files="$ac_config_files po/Makefile"
 
@@ -15391,7 +15391,7 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "minidjvu/Makefile") CONFIG_FILES="$CONFIG_FILES minidjvu/Makefile" ;;
-    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
+    "tools/Makefile") CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;
     "po/Makefile") CONFIG_FILES="$CONFIG_FILES po/Makefile" ;;
 
   *) as_fn_error "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

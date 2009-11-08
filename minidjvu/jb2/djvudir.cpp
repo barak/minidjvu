@@ -43,7 +43,7 @@ MDJVU_IMPLEMENT void mdjvu_write_dirm_bundled(char **elements, int * sizes,
         // if this is a DJVU page (1) or a shared file (0))
         for (i=0; i<n; i++)
         {
-            flag = ends_with_ignore_case(elements[i],".djvu") ? 1 : 0;
+            flag = mdjvu_ends_with_ignore_case(elements[i],".djvu") ? 1 : 0;
             bse.write8(flag);
         }
     
@@ -87,7 +87,7 @@ MDJVU_IMPLEMENT void mdjvu_write_dirm_indirect(char **elements, int * sizes,
     // if this is a DJVU page (1) or a shared file (0))
     for (i=0; i<n; i++)
     {
-        flag = ends_with_ignore_case(elements[i],".djvu") ? 1 : 0;
+        flag = mdjvu_ends_with_ignore_case(elements[i],".djvu") ? 1 : 0;
         bse.write8(flag);
     }
 
