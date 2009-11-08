@@ -13,3 +13,5 @@
 /po/ru.mo
 /src/Makefile
 /src/minidjvu
+/src/obj/
+/tools/Makefile
