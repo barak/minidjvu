@@ -2,8 +2,8 @@
  * proto.c - searching for prototypes
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 #include <string.h>
 

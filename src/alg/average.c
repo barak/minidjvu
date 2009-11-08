@@ -2,8 +2,8 @@
  * average.c - computing average bitmap
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>

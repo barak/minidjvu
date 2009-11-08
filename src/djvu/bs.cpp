@@ -3,12 +3,13 @@
  * based on the Burrows-Wheeler (or "block sorting") transform.
  */
 
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
 #include "bs.h"
 
 // ========================================

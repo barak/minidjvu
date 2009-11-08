@@ -2,14 +2,14 @@
  * tiff.c - just a couple of functions that are neither loading nor saving
  */
 
-#include "mdjvucfg.h"
+#include "../base/mdjvucfg.h"
 
 #if HAVE_TIFF
     #include <tiffio.h>
     #define MDJVU_USE_TIFFIO
 #endif
 
-#include "minidjvu.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 
 MDJVU_IMPLEMENT int mdjvu_have_tiff_support(void)

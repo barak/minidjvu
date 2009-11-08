@@ -2,8 +2,8 @@
  * 1error.c - error handling
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 
 MDJVU_IMPLEMENT const char *mdjvu_get_error_message(mdjvu_error_t error)
 {

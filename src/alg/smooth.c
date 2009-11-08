@@ -2,8 +2,8 @@
  * smooth.c - pre-filtering bitmap before splitting
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

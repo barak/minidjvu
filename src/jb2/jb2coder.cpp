@@ -2,7 +2,7 @@
  * jb2coder.cpp - coding character positions and JB2 records
  */
 
-#include "mdjvucfg.h"
+#include "../base/mdjvucfg.h"
 #include "jb2coder.h"
 
 // JB2Coder implementation {{{

@@ -2,8 +2,8 @@
  * pbm.c - loading and saving in PBM ("portable bitmap") format
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdio.h>
 
 static void skip_to_the_end_of_line(FILE *file)

@@ -4,15 +4,16 @@
 
 /* algorithms are listed in the approximate order they're applied */
 
-#include <minidjvu/alg/render.h>
-#include <minidjvu/alg/smooth.h>
-#include <minidjvu/alg/split.h>
-#include <minidjvu/alg/clean.h>
-#include <minidjvu/alg/nosubst.h>
-#include <minidjvu/alg/blitsort.h>
-#include <minidjvu/alg/patterns/patterns.h>
-#include <minidjvu/alg/classify.h>
-#include <minidjvu/alg/average.h>
-#include <minidjvu/alg/adjust_y.h>
-#include <minidjvu/alg/erosion.h>
-#include <minidjvu/alg/delegate.h>
+#include "../matcher.h"
+#include "render.h"
+#include "smooth.h"
+#include "split.h"
+#include "clean.h"
+#include "nosubst.h"
+#include "blitsort.h"
+#include "classify.h"
+#include "average.h"
+#include "adjust_y.h"
+#include "erosion.h"
+#include "delegate.h"
+#include "compress.h"

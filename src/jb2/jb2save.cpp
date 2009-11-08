@@ -2,8 +2,8 @@
  * jb2save.cpp - saving JB2 raw streams
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include "jb2coder.h"
 #include <stdlib.h>
 

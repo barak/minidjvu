@@ -2,8 +2,8 @@
  * adjust_y.c - adjust y coordinates of blits so the text won't look bumpy
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 #include <assert.h>
 

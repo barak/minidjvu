@@ -6,8 +6,8 @@
  * Z-coder was stripped.
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 #include "zp.h"
 

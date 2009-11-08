@@ -2,8 +2,8 @@
  * 0porting.c - checking sanity of typedefs
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdio.h>
 #include <stdlib.h>
 

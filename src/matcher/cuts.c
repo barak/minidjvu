@@ -10,8 +10,8 @@
  * The position of each cut is normalized into 0..255 and put into signature.
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <assert.h>
 
 

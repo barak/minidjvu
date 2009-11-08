@@ -2,8 +2,8 @@
  * djvuinfo.c - dealing with DjVu INFO chunk
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 
 #define DEFAULT_VERSION_STAMP 24
 #define DEFAULT_RESOLUTION 300 /* used only if unknown */

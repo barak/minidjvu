@@ -2,8 +2,8 @@
  * delegate.c - choosing a representative over a class of letters
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

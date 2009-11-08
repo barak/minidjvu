@@ -2,8 +2,8 @@
  * render.c - rendering a split image into a bitmap
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 #include <string.h>
 

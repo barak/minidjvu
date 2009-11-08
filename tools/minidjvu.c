@@ -2,8 +2,8 @@
  * minidjvu.c - an example of using the library
  */
 
-#include <minidjvu.h>
-#include <mdjvucfg.h>
+#include <minidjvu/minidjvu.h>
+#include "../src/base/mdjvucfg.h" // for i18n
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -699,10 +699,12 @@ int main(int argc, char **argv)
     {
         multipage_encode(argc - 2, argv + 1, argv[argc - 1], 0);
     }
+    #ifdef HAVE_TIFF
     else if (decide_if_tiff(argv[1]) && (tiff_cnt = mdjvu_get_tiff_page_count(argv[1])) > 1 )
     {
         multipage_encode(tiff_cnt, argv + 1, argv[argc - 1], 1);
     }
+    #endif
     else if (decide_if_djvu(argv[2]))
     {
         encode(argc, argv);

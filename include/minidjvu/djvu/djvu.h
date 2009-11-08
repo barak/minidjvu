@@ -2,6 +2,11 @@
  * djvu.h - functions to load from single-page DjVuBitonal files
  */
 
+#ifndef MDJVU_DJVU_H
+#define MDJVU_DJVU_H
+
+#include "iff.h"
+
 MDJVU_FUNCTION int mdjvu_locate_jb2_chunk(mdjvu_file_t file, int32 *plength, mdjvu_error_t *);
 
 /*
@@ -43,3 +48,5 @@ MDJVU_FUNCTION void mdjvu_write_info_chunk(mdjvu_file_t, mdjvu_image_t image);
  */
 MDJVU_FUNCTION void mdjvu_read_info_chunk(mdjvu_file_t,
                                           int32 *w, int32 *h, int32 *dpi);
+
+#endif

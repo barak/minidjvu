@@ -2,14 +2,14 @@
  * tiffsave.c - saving TIFF bitmaps
  */
 
-#include "mdjvucfg.h"
+#include "../base/mdjvucfg.h"
 
 #if HAVE_TIFF
     #include <tiffio.h>
     #define MDJVU_USE_TIFFIO
 #endif
 
-#include "minidjvu.h"
+#include <minidjvu/minidjvu.h>
 
 #if HAVE_TIFF
 

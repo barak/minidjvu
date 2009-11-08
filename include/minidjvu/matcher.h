@@ -1,9 +1,9 @@
 /*
- * patterns.h - matching patterns
+ * matcher.h - matching patterns
  */
 
-#ifndef MDJVU_PATTERNS_H
-#define MDJVU_PATTERNS_H
+#ifndef MDJVU_MATCHER_H
+#define MDJVU_MATCHER_H
 
 
 typedef struct MinidjvuMatcherOptions *mdjvu_matcher_options_t;

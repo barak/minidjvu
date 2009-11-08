@@ -2,8 +2,8 @@
  * split.c - splitting bitmaps to letters
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>

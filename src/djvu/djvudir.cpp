@@ -2,8 +2,8 @@
  * djvusave.c - saving DjVuBitonal pages
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include "bs.h"
 #include <stdlib.h>
 #include <stdio.h>

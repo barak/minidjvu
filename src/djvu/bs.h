@@ -3,7 +3,7 @@
  * based on the Burrows-Wheeler (or "block sorting") transform.
  */
 
-#include "zp.h"
+#include "../jb2/zp.h"
 
 class BSEncoder
 {

@@ -2,8 +2,8 @@
  * version.c - a placeholder for a compiled-in version stamp
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 
 MDJVU_IMPLEMENT const char *mdjvu_get_version()
 {

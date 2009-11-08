@@ -2,8 +2,8 @@
  * jb2load.cpp - loading JB2 files by interpreting them record-by-record
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 #include <string.h>
 #include "zp.h"

@@ -5,8 +5,8 @@
 /* The algorithm is taken from DjVuLibre with minor (stupid) changes. */
 
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 
 

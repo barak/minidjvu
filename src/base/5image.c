@@ -2,8 +2,8 @@
  * 5image.c - manipulating split images, the main data structure of minidjvu
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>

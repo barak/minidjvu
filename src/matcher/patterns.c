@@ -7,8 +7,8 @@
  * And this has absolutely nothing to do with choosing a cross-coding prototype.
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include "bitmaps.h"
 #include <stdlib.h>
 #include <stdio.h>

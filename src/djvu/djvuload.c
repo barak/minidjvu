@@ -2,8 +2,8 @@
  * djvuload.c - functions to load from single-page DjVuBitonal files
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 #include <stdio.h>
 

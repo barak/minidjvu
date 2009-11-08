@@ -3,8 +3,8 @@
  */
 
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

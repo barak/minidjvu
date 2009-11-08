@@ -2,7 +2,7 @@
  * bmpcoder.cpp - encoding/decoding bitmaps (DjVu 2 specification, 8.5.9-10)
  */
 
-#include "mdjvucfg.h"
+#include "../base/mdjvucfg.h"
 #include "bmpcoder.h"
 #include <stdlib.h>
 #include <string.h>

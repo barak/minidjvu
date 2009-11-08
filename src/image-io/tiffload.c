@@ -2,14 +2,14 @@
  * tiffload.c - loading TIFF bitmaps
  */
 
-#include "mdjvucfg.h"
+#include "../base/mdjvucfg.h"
 
 #if HAVE_TIFF
     #include <tiffio.h>
     #define MDJVU_USE_TIFFIO
 #endif
+#include <minidjvu/minidjvu.h>
 
-#include "minidjvu.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -118,18 +118,6 @@ static mdjvu_bitmap_t load_tiff(const char *path, int32 *presolution, mdjvu_erro
     return result;
 }
 
-#endif /* HAVE_TIFF */
-
-MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_load_tiff(const char *path, int32 *presolution, mdjvu_error_t *perr, uint32 idx)
-{
-    #if HAVE_TIFF
-        return load_tiff(path, presolution, perr, idx);
-    #else
-        *perr = mdjvu_get_error(mdjvu_error_tiff_support_disabled);
-        return NULL;
-    #endif
-}
-
 MDJVU_IMPLEMENT uint32 mdjvu_get_tiff_page_count(const char *path)
 {
     int dircount = 0;
@@ -146,3 +134,14 @@ MDJVU_IMPLEMENT uint32 mdjvu_get_tiff_page_count(const char *path)
     return dircount;
 }
 
+#endif /* HAVE_TIFF */
+
+MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_load_tiff(const char *path, int32 *presolution, mdjvu_error_t *perr, uint32 idx)
+{
+    #if HAVE_TIFF
+        return load_tiff(path, presolution, perr, idx);
+    #else
+        *perr = mdjvu_get_error(mdjvu_error_tiff_support_disabled);
+        return NULL;
+    #endif
+}

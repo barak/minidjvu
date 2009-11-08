@@ -2,8 +2,8 @@
  * clean.c - removing small flyspecks
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdlib.h>
 
 /*

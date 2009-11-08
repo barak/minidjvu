@@ -2,8 +2,8 @@
  * 2io.c - a stdio wrapper
  */
 
-#include "mdjvucfg.h"
-#include "minidjvu.h"
+#include "../base/mdjvucfg.h"
+#include <minidjvu/minidjvu.h>
 #include <stdio.h>
 
 MDJVU_IMPLEMENT mdjvu_file_t mdjvu_fopen(const char *path, const char *mode)
