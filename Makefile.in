@@ -59,12 +59,6 @@ install-include:
 	done \
         }
 
-install-include:
-	for f in minidjvu.h minidjvu/*.h minidjvu/*/*.h minidjvu/*/*/*.h; do \
-	  ${INSTALL} -d ${DESTDIR}${INCLUDEDIR}/$$(dirname $${f}) && \
-	  ${INSTALL_DATA} $${f} ${DESTDIR}${INCLUDEDIR}/$$(dirname $${f})/ ; \
-	done
-
 install-lib:
 	cd src && ${MAKE} install
 
