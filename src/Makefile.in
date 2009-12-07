@@ -19,7 +19,7 @@ INSTALL_LIB:=@INSTALL_DATA@
 
 INCS:=@INCS@ -I${top_builddir} -I${top_builddir}/include
 OPTS:=@OPTS@
-DEFS:=@DEFS@
+DEFS:=@DEFS@ -DLOCALEDIR=\"${LOCALEDIR}\"
 FLAGS:=@CFLAGS@
 CFLAGS:=${FLAGS} ${OPTS} ${INCS} ${DEFS}
 CXXFLAGS:=${FLAGS} ${INCS} ${DEFS}

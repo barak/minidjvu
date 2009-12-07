@@ -25,6 +25,7 @@ MDJVU_IMPLEMENT mdjvu_compression_options_t mdjvu_compression_options_create()
 {
     mdjvu_compression_options_t opt = (mdjvu_compression_options_t)
         malloc(sizeof(struct MinidjvuCompressionOptions));
+    mdjvu_init();
     opt->clean = 0;
     opt->verbose = 0;
     opt->report = 0;

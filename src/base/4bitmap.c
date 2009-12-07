@@ -27,6 +27,7 @@ int32 alive_bitmap_counter = 0;
 MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_bitmap_create(int32 width, int32 height)
 {
     Bitmap *b = (Bitmap *) malloc(sizeof(Bitmap));
+    mdjvu_init();
     #ifndef NDEBUG
         alive_bitmap_counter++;
     #endif

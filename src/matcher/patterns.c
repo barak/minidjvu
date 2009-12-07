@@ -88,6 +88,7 @@ MDJVU_IMPLEMENT void mdjvu_set_aggression(mdjvu_matcher_options_t opt, int level
 MDJVU_IMPLEMENT mdjvu_matcher_options_t mdjvu_matcher_options_create(void)
 {
     mdjvu_matcher_options_t options = (mdjvu_matcher_options_t) MALLOC1(Options);
+    mdjvu_init();
     mdjvu_set_aggression(options, 100);
     ((Options *) options)->method = 0;
     return options;
@@ -376,6 +377,7 @@ static int shiftdiff_equivalence(byte *s1, byte *s2, double falloff, double veto
 #ifndef NO_MINIDJVU
 mdjvu_pattern_t mdjvu_pattern_create(mdjvu_matcher_options_t opt, mdjvu_bitmap_t bitmap)
 {
+    /* not calling mdjvu_init() since we already have a bitmap */
     int32 w = mdjvu_bitmap_get_width(bitmap);
     int32 h = mdjvu_bitmap_get_height(bitmap);
     mdjvu_pattern_t pattern;
@@ -491,6 +493,8 @@ MDJVU_IMPLEMENT mdjvu_pattern_t mdjvu_pattern_create_from_array(mdjvu_matcher_op
     Options *opt = (Options *) m_opt;
     int32 i, mass;
     Image *img = MALLOC1(Image);
+
+    mdjvu_init();
 
     img->width = w;
     img->height = h;

@@ -673,7 +673,6 @@ int main(int argc, char **argv)
 #ifdef HAVE_TIFF
     int tiff_cnt;
 #endif
-    const char *sanity_error_message;
 
     setlocale(LC_ALL, "");
 #ifdef HAVE_GETTEXT
@@ -681,13 +680,6 @@ int main(int argc, char **argv)
     textdomain("minidjvu");
 #endif
 
-    /* check sizeof(int32) == 4 and such gibberish */
-    sanity_error_message = mdjvu_check_sanity();
-    if (sanity_error_message)
-    {
-        fprintf(stderr, "%s\n", sanity_error_message);
-        exit(1);
-    }
 
     arg_start = process_options(argc, argv);
     if ( dict_suffix == NULL ) dict_suffix = "iff";

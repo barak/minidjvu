@@ -13,6 +13,7 @@
 mdjvu_split_options_t mdjvu_split_options_create(void)
 {
     int32 *p = (int32 *) malloc(sizeof(int32));
+    mdjvu_init();
     *p = 0;
     return (mdjvu_split_options_t) p;
 }

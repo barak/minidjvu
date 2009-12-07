@@ -1,7 +1,5 @@
 #! /usr/bin/env python
 
-from glob import glob
-
 
 VERSION = '0.9'
 APPNAME = 'minidjvu'
@@ -54,10 +52,7 @@ def build(bld):
         uselib_local = 'minidjvu'
     )
    
-    # Installing headers 
-    bld.install_files('${PREFIX}/include/minidjvu',
-                       bld.glob('include/minidjvu/*.h'))
-
-    for i in 'alg base djvu image-io'.split():
-        bld.install_files('${PREFIX}/include/minidjvu/' + i,
-                           bld.glob('include/minidjvu/%s/*.h' % i))
+    headers = bld.glob('include/minidjvu/*.h') + \
+              bld.glob('include/minidjvu/*/*.h')
+    for i in headers:
+        bld.install_files('${PREFIX}/' + i, i)

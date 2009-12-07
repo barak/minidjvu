@@ -151,6 +151,9 @@ MDJVU_IMPLEMENT mdjvu_image_t mdjvu_image_create(int32 width, int32 height)
 {
     int i;
     Image *image = (Image *) malloc(sizeof(Image));
+    
+    mdjvu_init();
+
     image->width = width;
     image->height = height;
 
