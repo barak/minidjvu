@@ -1,5 +1,8 @@
 .PHONY: clean install
 
+SHELL:=@SHELL@
+LIBRARY_VERSION:=@LIBRARY_VERSION@
+
 prefix:=@prefix@
 exec_prefix:=@exec_prefix@
 libdir:=@libdir@
@@ -8,32 +11,44 @@ srcdir:=@srcdir@
 top_builddir:=@top_builddir@
 LOCALEDIR:=@localedir@
 
-INCS:=@INCS@ -I${top_builddir} -I${srcdir}
+CC:=@CC@
+CXX:=@CXX@
+LIBTOOL:=@LIBTOOL@
+INSTALL:=@INSTALL@
+INSTALL_LIB:=@INSTALL_DATA@
+
+INCS:=@INCS@ -I${top_builddir} -I${top_builddir}/include
 OPTS:=@OPTS@
 DEFS:=@DEFS@ -DLOCALEDIR=\"${LOCALEDIR}\"
-CFLAGS:=@CFLAGS@
+FLAGS:=@CFLAGS@
+CFLAGS:=${FLAGS} ${OPTS} ${INCS} ${DEFS}
+CXXFLAGS:=${FLAGS} ${INCS} ${DEFS}
 
 LDFLAGS:=@LDFLAGS@
 LIBS:=@LIBS@
 DLLFLAGS:=@DLLFLAGS@
 
 OBJDIR:=obj
-
-CSOURCES:=$(wildcard $(addsuffix /*.c,$(srcdir)))
-HEADERS:=$(wildcard $(addsuffix /*.h,$(top_builddir) $(srcdir)))
-COBJECTS:=$(addprefix $(OBJDIR)/,$(CSOURCES:.c=.o))
-OBJECTS:=$(COBJECTS)
-
-CC:=@CC@
-CXX:=@CXX@
-LIBTOOL:=@LIBTOOL@
-INSTALL:=@INSTALL@
-INSTALL_PROGRAM:=@INSTALL_PROGRAM@
-INSTALL_DATA:=@INSTALL_DATA@
+SUBDIRS:=$(srcdir) \
+         base \
+         alg \
+         djvu \
+         image-io \
+         jb2 \
+         matcher
 
 THISFILE:=Makefile
-APPNAME:=@target@
-APPPATH:=${top_builddir}/bin/${APPNAME}
+
+CSOURCES:=$(wildcard $(addsuffix /*.c,$(SUBDIRS)))
+CPPSOURCES:=$(wildcard $(addsuffix /*.cpp,$(SUBDIRS)))
+HEADERS:=$(wildcard $(addsuffix /*.h,$(top_builddir) $(SUBDIRS)))
+COBJECTS:=$(addprefix $(OBJDIR)/,$(CSOURCES:.c=.o))
+CPPOBJECTS:=$(addprefix $(OBJDIR)/,$(CPPSOURCES:.cpp=.o))
+CLOBJECTS:=$(addprefix $(OBJDIR)/,$(CSOURCES:.c=.lo))
+CPPLOBJECTS:=$(addprefix $(OBJDIR)/,$(CPPSOURCES:.cpp=.lo))
+OBJECTS:=$(COBJECTS) $(CPPOBJECTS)
+LOBJECTS:=$(CLOBJECTS) $(CPPLOBJECTS)
+
 LIBNAME:=@mdjvulib@
 LIBPATH:=${top_builddir}/bin/${LIBNAME}
 
@@ -42,37 +57,59 @@ LIBPATH:=${top_builddir}/bin/${LIBNAME}
 @SHARED_YES@all: build-shared
 
 build-static: $(OBJECTS)
-	mkdir -p $(dir $(APPPATH))
-	$(CXX) ${DLLFLAGS} $(LDFLAGS) $^ -o $(APPPATH) $(LIBPATH) $(LIBS)
-	strip $(APPPATH)
+	mkdir -p $(dir $(LIBPATH))
+	ar cru $(LIBPATH) $^
+	ranlib $(LIBPATH)
 
-build-shared: $(OBJECTS)
-	mkdir -p $(dir $(APPPATH))
-	${LIBTOOL} --mode=link $(CXX) ${DLLFLAGS} $(LDFLAGS) $^ -o $(APPPATH) $(LIBPATH) $(LIBS)
+build-shared: $(LOBJECTS)
+	mkdir -p $(dir $(LIBPATH))
+	$(LIBTOOL) --mode=link $(CXX) $(CXXFLAGS) -c -no-undefined \
+		 -rpath ${libdir} -version-info ${LIBRARY_VERSION} $(DLLFLAGS) \
+		 ${OBJS} ${LDFLAGS} $^ -o $(LIBPATH) ${LIBS}
 
-clean:
+@STATIC_YES@clean: clean-static
+
+@SHARED_YES@clean: clean-shared
+
+clean-static:
+	$(LIBTOOL) --mode=clean $(RM) $(OBJECTS)
+	$(RM) -r $(OBJDIR)
+
+clean-shared:
 	$(RM) $(OBJECTS)
 	$(RM) -r $(OBJDIR)
 
 distclean: clean
 	-find . -name Makefile -exec ${RM} {} \;
 
-@STATIC_YES@install: install-static
+@STATIC_YES@install:
 
 @SHARED_YES@install: install-shared
 
-install-static:
-	${INSTALL} -d ${DESTDIR}$(prefix)/bin
-	${INSTALL_PROGRAM} $(APPPATH) ${DESTDIR}$(prefix)/bin
-
 install-shared:
-	${INSTALL} -d ${DESTDIR}$(prefix)/bin
-	${LIBTOOL} --mode=install ${INSTALL_PROGRAM} $(APPPATH) ${DESTDIR}$(prefix)/bin
+	${INSTALL} -d ${DESTDIR}${libdir}
+	$(LIBTOOL) --mode=install $(INSTALL_LIB) $(LIBPATH) $(DESTDIR)$(libdir)
 
 $(OBJDIR)/%.o: %.c $(HEADERS) $(THISFILE)
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(INCS) $(OPTS) $(DEFS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
-uninstall:
-	$(RM) ${DESTDIR}$(prefix)/bin/$(APPNAME)
+$(OBJDIR)/%.o: %.cpp $(HEADERS) $(THISFILE)
+	mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.lo: %.c $(HEADERS) $(THISFILE)
+	mkdir -p $(dir $@)
+	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.lo: %.cpp $(HEADERS) $(THISFILE)
+	mkdir -p $(dir $@)
+	$(LIBTOOL) --mode=compile $(CXX) $(CXXFLAGS) -c $< -o $@
+
+@STATIC_YES@uninstall:
+
+@SHARED_YES@uninstall: uninstall-shared
+
+uninstall-shared:
+	${LIBTOOL} --mode=uninstall $(RM) ${DESTDIR}$(libdir)/$(LIBNAME)
 

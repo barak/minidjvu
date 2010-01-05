@@ -199,7 +199,7 @@ AC_TYPE_SIZE_T
 
 CFLAGS="$CFLAGS -Wall -Wshadow"
 CFLAGS="$CFLAGS -pedantic-errors -Wpointer-arith -Waggregate-return"
-CFLAGS="$CFLAGS -Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align"
+CFLAGS="$CFLAGS -Wlong-long -Wredundant-decls -Wcast-qual -Wcast-align"
 DEFS="$DEFS -D__STRICT_ANSI__ -DNDEBUG"
 OPTS="-Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations"
 
@@ -209,7 +209,7 @@ AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset pow setlocale strcspn strrchr])
 
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([minidjvu/Makefile])
 AC_CONFIG_FILES([src/Makefile])
+AC_CONFIG_FILES([tools/Makefile])
 AC_CONFIG_FILES([po/Makefile])
 AC_OUTPUT

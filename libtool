@@ -1,8 +1,8 @@
-#! /bin/bash
+#! /bin/sh
 
 # libtool - Provide generalized library-building support services.
 # Generated automatically by config.status () 
-# Libtool was configured on host zool:
+# Libtool was configured on host bo:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 #
 #   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005,
@@ -56,12 +56,12 @@ fast_install=yes
 
 # The host system.
 host_alias=
-host=x86_64-pc-linux-gnu
+host=x86_64-unknown-linux-gnu
 host_os=linux-gnu
 
 # The build system.
-build_alias=x86_64-linux-gnu
-build=x86_64-pc-linux-gnu
+build_alias=
+build=x86_64-unknown-linux-gnu
 build_os=linux-gnu
 
 # A sed program that does not truncate output.
@@ -86,7 +86,7 @@ NM="/usr/bin/nm -B"
 LN_S="ln -s"
 
 # What is the maximum length of a command?
-max_cmd_len=3458764513820540925
+max_cmd_len=1572864
 
 # Object file suffix (normally "o").
 objext=o
@@ -132,7 +132,7 @@ old_postuninstall_cmds=""
 LTCC="gcc"
 
 # LTCC compiler flags.
-LTCFLAGS="-g -pipe -O3 -Wall -Wshadow -pedantic-errors -Wpointer-arith -Waggregate-return -Wlong-long -Winline -Wredundant-decls -Wcast-qual -Wcast-align"
+LTCFLAGS="-g -pipe -O3 -Wall -Wshadow -pedantic-errors -Wpointer-arith -Waggregate-return -Wlong-long -Wredundant-decls -Wcast-qual -Wcast-align"
 
 # Take the output of nm and produce a listing of raw symbols and C names.
 global_symbol_pipe="sed -n -e 's/^.*[	 ]\\([ABCDGIRSTW][ABCDGIRSTW]*\\)[	 ][	 ]*\\([_A-Za-z][_A-Za-z0-9]*\\)\$/\\1 \\2 \\2/p'"
@@ -150,7 +150,7 @@ global_symbol_to_c_name_address_lib_prefix="sed -n -e 's/^: \\([^ ]*\\) \$/  {\\
 objdir=.libs
 
 # Shell to use when invoking shell scripts.
-SHELL="/bin/bash"
+SHELL="/bin/sh"
 
 # An echo program that does not interpret backslashes.
 ECHO="echo"
@@ -234,10 +234,10 @@ finish_eval=""
 hardcode_into_libs=yes
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="/usr/lib/gcc/x86_64-linux-gnu/4.3.4 /usr/lib /lib /usr/lib/x86_64-linux-gnu"
+sys_lib_search_path_spec="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2 /usr/lib /lib"
 
 # Run-time system search path for libraries.
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/atlas /usr/local/lib /usr/local/lib32 /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu "
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/libfakeroot /opt/qt/lib /opt/kde/lib "
 
 # Whether dlopen is supported.
 dlopen_support=unknown
@@ -361,7 +361,7 @@ hardcode_automatic=no
 inherit_rpath=no
 
 # Whether libtool must link a program against all its dependency libraries.
-link_all_deplibs=no
+link_all_deplibs=unknown
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
@@ -470,7 +470,7 @@ compiler_lib_search_path=""
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool) 2.2.6 Debian-2.2.6a-4
+#       $progname:		(GNU libtool) 2.2.6
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -478,7 +478,7 @@ compiler_lib_search_path=""
 
 PROGRAM=ltmain.sh
 PACKAGE=libtool
-VERSION="2.2.6 Debian-2.2.6a-4"
+VERSION=2.2.6
 TIMESTAMP=""
 package_revision=1.3012
 
@@ -521,15 +521,15 @@ $lt_unset CDPATH
 
 : ${CP="cp -f"}
 : ${ECHO="echo"}
-: ${EGREP="/bin/grep -E"}
-: ${FGREP="/bin/grep -F"}
-: ${GREP="/bin/grep"}
+: ${EGREP="/usr/bin/grep -E"}
+: ${FGREP="/usr/bin/grep -F"}
+: ${GREP="/usr/bin/grep"}
 : ${LN_S="ln -s"}
 : ${MAKE="make"}
 : ${MKDIR="mkdir"}
 : ${MV="mv -f"}
 : ${RM="rm -f"}
-: ${SED="/bin/sed"}
+: ${SED="/opt/local/bin/gsed"}
 : ${SHELL="${CONFIG_SHELL-/bin/sh}"}
 : ${Xsed="$SED -e 1s/^X//"}
 
@@ -5534,10 +5534,7 @@ func_mode_link ()
 	case $pass in
 	dlopen) libs="$dlfiles" ;;
 	dlpreopen) libs="$dlprefiles" ;;
-	link)
-	  libs="$deplibs %DEPLIBS%"
-	  test "X$link_all_deplibs" != Xno && libs="$libs $dependency_libs"
-	  ;;
+	link) libs="$deplibs %DEPLIBS% $dependency_libs" ;;
 	esac
       fi
       if test "$linkmode,$pass" = "lib,dlpreopen"; then
@@ -5848,19 +5845,19 @@ func_mode_link ()
 	    # It is a libtool convenience library, so add in its objects.
 	    convenience="$convenience $ladir/$objdir/$old_library"
 	    old_convenience="$old_convenience $ladir/$objdir/$old_library"
-	    tmp_libs=
-	    for deplib in $dependency_libs; do
-	      deplibs="$deplib $deplibs"
-	      if $opt_duplicate_deps ; then
-		case "$tmp_libs " in
-		*" $deplib "*) specialdeplibs="$specialdeplibs $deplib" ;;
-		esac
-	      fi
-	      tmp_libs="$tmp_libs $deplib"
-	    done
 	  elif test "$linkmode" != prog && test "$linkmode" != lib; then
 	    func_fatal_error "\`$lib' is not a convenience library"
 	  fi
+	  tmp_libs=
+	  for deplib in $dependency_libs; do
+	    deplibs="$deplib $deplibs"
+	    if $opt_duplicate_deps ; then
+	      case "$tmp_libs " in
+	      *" $deplib "*) specialdeplibs="$specialdeplibs $deplib" ;;
+	      esac
+	    fi
+	    tmp_libs="$tmp_libs $deplib"
+	  done
 	  continue
 	fi # $pass = conv
 
@@ -6397,7 +6394,6 @@ func_mode_link ()
 	  if test "$link_all_deplibs" != no; then
 	    # Add the search paths of all dependency libraries
 	    for deplib in $dependency_libs; do
-	      path=
 	      case $deplib in
 	      -L*) path="$deplib" ;;
 	      *.la)
@@ -6710,9 +6706,6 @@ func_mode_link ()
 	    age="$number_minor"
 	    revision="$number_minor"
 	    lt_irix_increment=no
-	    ;;
-	  *)
-	    func_fatal_configuration "$modename: unknown library version type \`$version_type'"
 	    ;;
 	  esac
 	  ;;
@@ -9020,7 +9013,7 @@ hardcode_automatic=no
 inherit_rpath=no
 
 # Whether libtool must link a program against all its dependency libraries.
-link_all_deplibs=no
+link_all_deplibs=unknown
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
@@ -9047,17 +9040,17 @@ file_list_spec=""
 hardcode_action=immediate
 
 # The directories searched by this compiler when creating a shared library.
-compiler_lib_search_dirs="/usr/lib/gcc/x86_64-linux-gnu/4.3.4 /usr/lib/gcc/x86_64-linux-gnu/4.3.4 /usr/lib/gcc/x86_64-linux-gnu/4.3.4/../../../../lib /lib/../lib /usr/lib/../lib /usr/lib/gcc/x86_64-linux-gnu/4.3.4/../../.. /usr/lib/x86_64-linux-gnu"
+compiler_lib_search_dirs="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2 /usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2 /usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2/../../../../lib /lib/../lib /usr/lib/../lib /usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2/../../.."
 
 # Dependencies to place before and after the objects being linked to
 # create a shared library.
-predep_objects="/usr/lib/gcc/x86_64-linux-gnu/4.3.4/../../../../lib/crti.o /usr/lib/gcc/x86_64-linux-gnu/4.3.4/crtbeginS.o"
-postdep_objects="/usr/lib/gcc/x86_64-linux-gnu/4.3.4/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/4.3.4/../../../../lib/crtn.o"
+predep_objects="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2/../../../../lib/crti.o /usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2/crtbeginS.o"
+postdep_objects="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2/crtendS.o /usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2/../../../../lib/crtn.o"
 predeps=""
 postdeps="-lstdc++ -lm -lgcc_s -lc -lgcc_s"
 
 # The library search path used internally by the compiler when linking
 # a shared library.
-compiler_lib_search_path="-L/usr/lib/gcc/x86_64-linux-gnu/4.3.4 -L/usr/lib/gcc/x86_64-linux-gnu/4.3.4 -L/usr/lib/gcc/x86_64-linux-gnu/4.3.4/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/4.3.4/../../.. -L/usr/lib/x86_64-linux-gnu"
+compiler_lib_search_path="-L/usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2 -L/usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2 -L/usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-unknown-linux-gnu/4.4.2/../../.."
 
 # ### END LIBTOOL TAG CONFIG: CXX

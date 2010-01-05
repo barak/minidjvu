@@ -1,5 +1,10 @@
-This is the source directory for `minidjvu' executable.
-The sources for the minidjvu library are in "minidjvu/".
+This is the source directory for the minidjvu library.
 
-(This funny directory layout is to support eventual installing
- of minidjvu/ headers into /usr/include)
+It contains the following subdirectories:
+
+    base     - basic things like bitmaps; all the other code uses the base.
+    alg      - various image processing algoritms
+    image-io - support for some common file formats: PBM, BMP, TIFF
+    jb2      - JB2 format support (DjVu stores bitonal images in JB2)
+    djvu     - DjVu format support (excluding JB2)
+    matcher  - the pattern matcher
