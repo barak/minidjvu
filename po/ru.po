@@ -330,7 +330,7 @@ msgstr "Сохранение: выполнено %d из %d\n"
 #: minidjvu.c:624
 #, c-format
 msgid "bad --pages-per-dict value\n"
-msgstr "неподходящее значение --pages-per-dict value\n"
+msgstr "неподходящее значение --pages-per-dict\n"
 
 #: minidjvu.c:636
 #, c-format
