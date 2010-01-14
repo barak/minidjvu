@@ -625,7 +625,7 @@ static int process_options(int argc, char **argv)
             i++;
             if (i == argc) show_usage_and_exit();
             pages_per_dict = atoi(argv[i]);
-            if (pages_per_dict <= 0)
+            if (pages_per_dict < 0)
             {
                 fprintf(stderr, _("bad --pages-per-dict value\n"));
                 exit(2);
