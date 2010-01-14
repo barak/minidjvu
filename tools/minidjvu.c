@@ -428,8 +428,9 @@ static void multipage_encode(int n, char **pages, char *outname, uint32 multipag
     mdjvu_image_t *images;
     mdjvu_image_t dict;
     int i, el = 0;
-    int ndicts = (n % pages_per_dict > 0) ? (int) fabs( n/pages_per_dict) + 1:
-                                            (int) fabs( n/pages_per_dict);
+    int ndicts = (pages_per_dict <= 0)? 1 : 
+                                        (n % pages_per_dict > 0) ?  (int) fabs(n/pages_per_dict) + 1:
+                                                                    (int) fabs(n/pages_per_dict);
     char *dict_name, *path;
     char **elements = MDJVU_MALLOCV(char *, n + ndicts);
     int  *sizes     = MDJVU_MALLOCV(int, n + ndicts);
