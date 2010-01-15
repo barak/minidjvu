@@ -2,8 +2,9 @@ minidjvu (0.8-4) unstable; urgency=low
 
   * Track ongoing upstream changes
   * Add SVN repo to debian/copyright and debian/control
+  * Upstream fix allowing -p 0 per documentation (closes: #561694)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Sun, 08 Nov 2009 12:47:33 -0500
+ -- Barak A. Pearlmutter <bap@debian.org>  Fri, 15 Jan 2010 08:49:01 +0100
 
 minidjvu (0.8-3) unstable; urgency=low
 
