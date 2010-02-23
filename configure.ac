@@ -83,6 +83,8 @@ fi
 AC_PROG_MAKE_SET
 AC_PROG_CXX
 AC_PROG_CC
+AC_PROG_RANLIB
+AC_PROG_AWK
 LT_INIT
 AC_PROG_INSTALL
 AC_PATH_PROG(GZIP, gzip)
@@ -178,7 +180,7 @@ if test "$gettext" != 'no'; then
     fi
 fi
 
-AC_CHECK_HEADERS([locale.h stdlib.h string.h])
+AC_CHECK_HEADERS([libintl.h locale.h stdint.h stdlib.h string.h])
 
 AC_SUBST(target)
 AC_SUBST(mdjvulib)
@@ -196,6 +198,11 @@ AC_SUBST(SHARED_YES)
 AC_HEADER_STDBOOL
 AC_C_INLINE
 AC_TYPE_SIZE_T
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_SIZE_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
 
 CFLAGS="$CFLAGS -Wall -Wshadow"
 CFLAGS="$CFLAGS -pedantic-errors -Wpointer-arith -Waggregate-return"
