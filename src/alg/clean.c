@@ -23,8 +23,8 @@ MDJVU_IMPLEMENT void mdjvu_clean(mdjvu_image_t image)
     {
         mdjvu_bitmap_t bitmap = mdjvu_image_get_blit_bitmap(image, i);
         int32 mass = mdjvu_image_get_mass(image, bitmap);
-        /* Don't cleanup blits which were produced as a result of splitting larger
-        /* shapes (such as horizontal rulers) */
+        /* Don't cleanup blits which were produced as a result of
+           splitting larger shapes (such as horizontal rulers) */
         int32 big  = mdjvu_image_get_suspiciously_big_flag(image, bitmap);
         if (mass <= tinysize && !big)
             mdjvu_image_set_blit_bitmap(image, i, NULL);

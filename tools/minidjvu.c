@@ -38,8 +38,8 @@ const char* dict_suffix = NULL;
 
 static int get_ext_delim_pos(const char *fname)
 {
-    int pos = strcspn(fname,".");
-    int last = 0;
+    size_t pos = strcspn(fname,".");
+    size_t last = 0;
     
     while (last + pos != strlen(fname))
     {
