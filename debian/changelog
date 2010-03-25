@@ -1,9 +1,10 @@
-minidjvu (0.8.svn.2010.01.15-2) UNRELEASED; urgency=low
+minidjvu (0.8.svn.2010.01.15-2) unstable; urgency=low
 
   * rev deb std
   * silence autoscan
+  * Switch to dpkg-source 3.0 (git) format
 
- -- Barak A. Pearlmutter <bap@debian.org>  Tue, 23 Feb 2010 13:02:49 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 25 Mar 2010 18:56:39 +0000
 
 minidjvu (0.8.svn.2010.01.15-1) unstable; urgency=low
 
