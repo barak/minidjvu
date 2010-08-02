@@ -1,4 +1,9 @@
 ---
+0.9
+---
+    Relicensed to GPL3+.
+
+---
 0.8
 ---
     Pattern matching algorithm is adjusted to prevent some undesired
