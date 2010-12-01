@@ -4,9 +4,10 @@ minidjvu (0.8.svn.2010.05.06-1) UNRELEASED; urgency=low
   * bump standards version (debian/control)
   * refresh autoconf stuff (config/, libtool)
   * dh --parallel
+  * parallel build patch to upstream (Makefile.in)
   * dh 8
 
- -- Barak A. Pearlmutter <bap@debian.org>  Wed, 01 Dec 2010 12:57:44 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 01 Dec 2010 13:25:51 +0000
 
 minidjvu (0.8.svn.2010.01.15-2) unstable; urgency=low
 
