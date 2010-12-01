@@ -30,13 +30,13 @@ all: build-app
 @PO_YES@all: build-po
 
 build-lib:
-	cd src && ${MAKE}
+	${MAKE} -C src
 
 build-app:
-	cd tools && ${MAKE}
+	${MAKE} -C tools
 
 build-po:
-	cd po && ${MAKE}
+	${MAKE} -C po
 
 @SHARED_YES@install: install-lib
 
@@ -49,7 +49,7 @@ install: install-include
 @PO_YES@install: install-po
 
 install-app:
-	cd tools && ${MAKE} install
+	${MAKE} -C tools install
 
 install-include:
 	cd include && { \
@@ -60,10 +60,10 @@ install-include:
         }
 
 install-lib:
-	cd src && ${MAKE} install
+	${MAKE} -C src install
 
 install-po:
-	cd po && ${MAKE} install
+	${MAKE} -C po install
 
 install-doc:
 	${INSTALL} -d ${DESTDIR}$(MANDIR)
@@ -79,15 +79,15 @@ install-doc:
 	done
 
 clean:
-	for d in ${SUBDIRS}; do ( cd $$d && ${MAKE} $@ ); done
+	for d in ${SUBDIRS}; do ${MAKE} -C $$d $@; done
 
 distclean:
-	for d in ${SUBDIRS}; do ( cd $$d && ${MAKE} $@ ); done
+	for d in ${SUBDIRS}; do ${MAKE} -C $$d $@; done
 	-find . -name Makefile -exec ${RM} {} \;
 	-${RM} config.h config.log config.status
 
 uninstall:
-	for d in ${SUBDIRS}; do ( cd $$d && ${MAKE} $@ ); done
+	for d in ${SUBDIRS}; do ${MAKE} -C $$d $@; done
 	${RM} ${DESTDIR}$(MANDIR)/$(manpage).1.gz
 	for dir in $(DOCDIR)/*/; do \
 	  if [ -f $${dir}$(manpage).1 ]; then \
