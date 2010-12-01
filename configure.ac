@@ -1,4 +1,4 @@
-AC_PREREQ(2.64)
+AC_PREREQ([2.67])
 AC_INIT([minidjvu],[0.8],[alexios@thessalonica.org.ru])
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADER(config.h:config/config.h.in)

@@ -2,7 +2,7 @@
 
 # libtool - Provide generalized library-building support services.
 # Generated automatically by config.status () 
-# Libtool was configured on host meatus:
+# Libtool was configured on host zool:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 #
 #   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005,
@@ -132,7 +132,7 @@ old_postuninstall_cmds=""
 LTCC="gcc"
 
 # LTCC compiler flags.
-LTCFLAGS="-g -O2 -Wall -Wshadow -pedantic-errors -Wpointer-arith -Waggregate-return -Wlong-long -Wredundant-decls -Wcast-qual -Wcast-align"
+LTCFLAGS="-g -pipe -O3 -Wall -Wshadow -pedantic-errors -Wpointer-arith -Waggregate-return -Wlong-long -Wredundant-decls -Wcast-qual -Wcast-align"
 
 # Take the output of nm and produce a listing of raw symbols and C names.
 global_symbol_pipe="sed -n -e 's/^.*[	 ]\\([ABCDGIRSTW][ABCDGIRSTW]*\\)[	 ][	 ]*\\([_A-Za-z][_A-Za-z0-9]*\\)\$/\\1 \\2 \\2/p'"
@@ -234,10 +234,10 @@ finish_eval=""
 hardcode_into_libs=yes
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="/usr/lib/gcc/x86_64-linux-gnu/4.4.4 /usr/lib /lib /usr/lib/x86_64-linux-gnu"
+sys_lib_search_path_spec="/usr/lib/gcc/x86_64-linux-gnu/4.4.5 /usr/lib /lib"
 
 # Run-time system search path for libraries.
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/atlas /usr/local/lib /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu "
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib/atlas /usr/local/lib /usr/local/lib32 /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu "
 
 # Whether dlopen is supported.
 dlopen_support=unknown
@@ -9047,17 +9047,17 @@ file_list_spec=""
 hardcode_action=immediate
 
 # The directories searched by this compiler when creating a shared library.
-compiler_lib_search_dirs="/usr/lib/gcc/x86_64-linux-gnu/4.4.4 /usr/lib/gcc/x86_64-linux-gnu/4.4.4 /usr/lib/gcc/x86_64-linux-gnu/4.4.4/../../../../lib /lib/../lib /usr/lib/../lib /usr/lib/gcc/x86_64-linux-gnu/4.4.4/../../.. /usr/lib/x86_64-linux-gnu"
+compiler_lib_search_dirs="/usr/lib/gcc/x86_64-linux-gnu/4.4.5 /usr/lib/gcc/x86_64-linux-gnu/4.4.5 /usr/lib/gcc/x86_64-linux-gnu/4.4.5/../../../../lib /lib/../lib /usr/lib/../lib /usr/lib/gcc/x86_64-linux-gnu/4.4.5/../../.."
 
 # Dependencies to place before and after the objects being linked to
 # create a shared library.
-predep_objects="/usr/lib/gcc/x86_64-linux-gnu/4.4.4/../../../../lib/crti.o /usr/lib/gcc/x86_64-linux-gnu/4.4.4/crtbeginS.o"
-postdep_objects="/usr/lib/gcc/x86_64-linux-gnu/4.4.4/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/4.4.4/../../../../lib/crtn.o"
+predep_objects="/usr/lib/gcc/x86_64-linux-gnu/4.4.5/../../../../lib/crti.o /usr/lib/gcc/x86_64-linux-gnu/4.4.5/crtbeginS.o"
+postdep_objects="/usr/lib/gcc/x86_64-linux-gnu/4.4.5/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/4.4.5/../../../../lib/crtn.o"
 predeps=""
 postdeps="-lstdc++ -lm -lgcc_s -lc -lgcc_s"
 
 # The library search path used internally by the compiler when linking
 # a shared library.
-compiler_lib_search_path="-L/usr/lib/gcc/x86_64-linux-gnu/4.4.4 -L/usr/lib/gcc/x86_64-linux-gnu/4.4.4 -L/usr/lib/gcc/x86_64-linux-gnu/4.4.4/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/4.4.4/../../.. -L/usr/lib/x86_64-linux-gnu"
+compiler_lib_search_path="-L/usr/lib/gcc/x86_64-linux-gnu/4.4.5 -L/usr/lib/gcc/x86_64-linux-gnu/4.4.5 -L/usr/lib/gcc/x86_64-linux-gnu/4.4.5/../../../../lib -L/lib/../lib -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/4.4.5/../../.."
 
 # ### END LIBTOOL TAG CONFIG: CXX
