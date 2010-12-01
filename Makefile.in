@@ -32,7 +32,7 @@ all: build-app
 build-lib:
 	${MAKE} -C src
 
-build-app:
+build-app: build-lib
 	${MAKE} -C tools
 
 build-po:
