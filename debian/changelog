@@ -1,4 +1,4 @@
-minidjvu (0.8.svn.2010.05.06-1) UNRELEASED; urgency=low
+minidjvu (0.8.svn.2010.05.06-1) unstable; urgency=low
 
   * Track ongoing upstream changes, as new upstream version
   * bump standards version (debian/control)
@@ -6,8 +6,11 @@ minidjvu (0.8.svn.2010.05.06-1) UNRELEASED; urgency=low
   * dh --parallel
   * parallel build patch to upstream (Makefile.in)
   * dh 8
+  * Integrate super-helpful ubuntu debian/libminidjvu-dev.install patch
+    to, thanks to Andreas Moog <amoog@ubuntu.com>: Don't install libtool
+    la-file per Policy 10.2 (closes: #621449)
 
- -- Barak A. Pearlmutter <bap@debian.org>  Wed, 01 Dec 2010 13:25:51 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Sat, 16 Apr 2011 18:41:25 +0100
 
 minidjvu (0.8.svn.2010.01.15-2) unstable; urgency=low
 
