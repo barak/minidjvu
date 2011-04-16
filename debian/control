@@ -1,7 +1,8 @@
 Source: minidjvu
 Section: graphics
 Priority: extra
-Maintainer: Barak A. Pearlmutter <bap@debian.org>
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Build-Depends: debhelper (>= 7), libtiff4-dev | libtiff-dev
 Homepage: http://minidjvu.sourceforge.net/
 Vcs-Git: git://git.debian.org/git/collab-maint/minidjvu.git

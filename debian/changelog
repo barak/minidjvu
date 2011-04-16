@@ -1,3 +1,10 @@
+minidjvu (0.8.svn.2010.01.15-2ubuntu1) natty; urgency=low
+
+  * debian/libminidjvu-dev.install: Don't install libtool la-file
+    (Policy 10.2)
+
+ -- Andreas Moog <amoog@ubuntu.com>  Thu, 07 Apr 2011 04:19:01 +0200
+
 minidjvu (0.8.svn.2010.01.15-2) unstable; urgency=low
 
   * rev deb std
