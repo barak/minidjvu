@@ -1,6 +1,4 @@
 #!/usr/bin/make -f
 
-build clean install binary-arch binary-indep binary:
+%:
 	dh $@ --parallel
-
-.PHONY: build clean install binary-arch binary-indep binary
