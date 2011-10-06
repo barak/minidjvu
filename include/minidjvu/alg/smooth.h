@@ -4,7 +4,7 @@
 
 
 /*
- * `smooth' is applied to a bitmap even before it's splitted.
+ * `smooth' is applied to a bitmap even before it is split.
  * 
  * Right now, the algorithm flips pixels which are surrounded
  * by at least 3 of 4 neighboring pixels of another color.

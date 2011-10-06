@@ -360,7 +360,7 @@ static mdjvu_image_t split_and_destroy(mdjvu_bitmap_t bitmap)
     mdjvu_bitmap_destroy(bitmap);
     if (verbose)
     {
-        printf(_("the splitted image has %d pieces\n"),
+        printf(_("the split image has %d pieces\n"),
                 mdjvu_image_get_blit_count(image));
     }
     if (clean)

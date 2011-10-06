@@ -239,7 +239,7 @@ msgstr "разбивка битового изображение на участ
 
 #: minidjvu.c:361
 #, c-format
-msgid "the splitted image has %d pieces\n"
+msgid "the split image has %d pieces\n"
 msgstr "после разбиения картинка состоит из %d участков\n"
 
 #: minidjvu.c:366
