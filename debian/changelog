@@ -1,3 +1,13 @@
+minidjvu (0.8.svn.2010.05.06-2) unstable; urgency=low
+
+  * remove unneeded AC_PROG_RANLIB from configure.ac
+  * single debian patch source option (closes: #643218)
+  * bump debian standards version
+  * correct spelling by not using the non-word "splitted"
+  * silence lintian regarding debian/rules targets
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Thu, 06 Oct 2011 16:35:29 +0100
+
 minidjvu (0.8.svn.2010.05.06-1) unstable; urgency=low
 
   * Track ongoing upstream changes, as new upstream version
