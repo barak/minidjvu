@@ -1,3 +1,4 @@
-usr/lib/libminidjvu.a
-usr/lib/libminidjvu.so
+#! /usr/bin/dh-exec
+usr/lib/${DEB_HOST_MULTIARCH}/libminidjvu.a
+usr/lib/${DEB_HOST_MULTIARCH}/libminidjvu.so
 usr/include
