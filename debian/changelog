@@ -1,3 +1,12 @@
+minidjvu (0.8.svn.2010.05.06+dfsg-1) unstable; urgency=low
+
+  * support multiarch
+  * ack silly NMU (silly because the waf file was unused, and because
+    there is a difference between "sourceless" and "source in odd format")
+  * revamp autotools and engage automake for robustness
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 13 Nov 2012 12:18:29 +0000
+
 minidjvu (0.8.svn.2010.05.06+dfsg-0.1) unstable; urgency=medium
 
   * Non-maintainer upload.
