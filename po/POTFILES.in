@@ -1,0 +1,5 @@
+# List of source files which contain translatable strings.
+src/alg/compress.c
+src/base/1error.c
+src/base/mdjvucfg.h
+tools/minidjvu.c
