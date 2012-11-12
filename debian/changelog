@@ -1,3 +1,10 @@
+minidjvu (0.8.svn.2010.05.06+dfsg-0.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Remove sourceless waf binary from upstream tarball (closes: #654491).
+
+ -- Michael Gilbert <mgilbert@debian.org>  Mon, 12 Nov 2012 03:03:15 +0000
+
 minidjvu (0.8.svn.2010.05.06-2) unstable; urgency=low
 
   * remove unneeded AC_PROG_RANLIB from configure.ac
