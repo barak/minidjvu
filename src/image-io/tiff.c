@@ -4,7 +4,7 @@
 
 #include "../base/mdjvucfg.h"
 
-#if HAVE_TIFF
+#ifdef HAVE_LIBTIFF
     #include <tiffio.h>
     #define MDJVU_USE_TIFFIO
 #endif
@@ -14,7 +14,7 @@
 
 MDJVU_IMPLEMENT int mdjvu_have_tiff_support(void)
 {
-    #if HAVE_TIFF
+    #ifdef HAVE_LIBTIFF
         return 1;
     #else
         return 0;
@@ -23,7 +23,7 @@ MDJVU_IMPLEMENT int mdjvu_have_tiff_support(void)
 
 MDJVU_IMPLEMENT void mdjvu_disable_tiff_warnings(void)
 {
-    #if HAVE_TIFF
+    #ifdef HAVE_LIBTIFF
         TIFFSetWarningHandler(NULL);
     #endif
 }

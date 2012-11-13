@@ -4,7 +4,7 @@
 
 #include "../base/mdjvucfg.h"
 
-#if HAVE_TIFF
+#ifdef HAVE_LIBTIFF
     #include <tiffio.h>
     #define MDJVU_USE_TIFFIO
 #endif
@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if HAVE_TIFF
+#ifdef HAVE_LIBTIFF
 
 static mdjvu_bitmap_t load_tiff(const char *path, int32 *presolution, mdjvu_error_t *perr, uint32 idx)
 {
@@ -134,11 +134,11 @@ MDJVU_IMPLEMENT uint32 mdjvu_get_tiff_page_count(const char *path)
     return dircount;
 }
 
-#endif /* HAVE_TIFF */
+#endif /* HAVE_LIBTIFF */
 
 MDJVU_IMPLEMENT mdjvu_bitmap_t mdjvu_load_tiff(const char *path, int32 *presolution, mdjvu_error_t *perr, uint32 idx)
 {
-    #if HAVE_TIFF
+    #ifdef HAVE_LIBTIFF
         return load_tiff(path, presolution, perr, idx);
     #else
         *perr = mdjvu_get_error(mdjvu_error_tiff_support_disabled);

@@ -14,7 +14,7 @@ def configure(conf):
     conf.check(header_name='math.h')
     conf.check(lib='m')
 
-    conf.check(header_name='tiffio.h', define_name='HAVE_TIFF')
+    conf.check(header_name='tiffio.h', define_name='HAVE_LIBTIFF')
     conf.check(lib='tiff')
 
     conf.check(header_name='libintl.h', define_name='HAVE_I18N')

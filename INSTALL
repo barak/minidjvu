@@ -27,7 +27,7 @@ The release directory should be treated as an include directory
 The library is built from sources in `minidjvu' subdirectory.
 The program is built from sources in `src' subdirectory.
 
-To enable TIFF support, define HAVE_TIFF to 1, add libtiff include directory
+To enable TIFF support, define HAVE_LIBTIFF to 1, add libtiff include directory
 to the include path, then link against libtiff.
 
 
@@ -41,7 +41,7 @@ Under Linux, you can always try something like
     
 or, if you want TIFF support,
 
-    g++ -DHAVE_TIFF=1 -I. `find -name "*.c*"` -O2 -ltiff -o bin/minidjvu
+    g++ -DHAVE_LIBTIFF=1 -I. `find -name "*.c*"` -O2 -ltiff -o bin/minidjvu
 
 Under MSVC, watch for those __declspec directives in
 `minidjvu/base/0porting/0porting.h' - if you wish a DLL, turn them on.

@@ -4,14 +4,14 @@
 
 #include "../base/mdjvucfg.h"
 
-#if HAVE_TIFF
+#ifdef HAVE_LIBTIFF
     #include <tiffio.h>
     #define MDJVU_USE_TIFFIO
 #endif
 
 #include <minidjvu/minidjvu.h>
 
-#if HAVE_TIFF
+#ifdef HAVE_LIBTIFF
 
 #ifndef COMPRESSION_PACKBITS
     #define COMPRESSION_PACKBITS 32771
@@ -64,11 +64,11 @@ static int save_tiff(mdjvu_bitmap_t bitmap, const char *path, mdjvu_error_t *per
     return 1;
 }
 
-#endif /* HAVE_TIFF */
+#endif /* HAVE_LIBTIFF */
 
 MDJVU_IMPLEMENT int mdjvu_save_tiff(mdjvu_bitmap_t bitmap, const char *path, mdjvu_error_t *perr)
 {
-    #if HAVE_TIFF
+    #ifdef HAVE_LIBTIFF
         return save_tiff(bitmap, path, perr);
     #else
         *perr = mdjvu_get_error(mdjvu_error_tiff_support_disabled);
