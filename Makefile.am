@@ -32,5 +32,3 @@ bin_PROGRAMS = minidjvu
 minidjvu_SOURCES = tools/minidjvu.c
 
 minidjvu_LDADD = libminidjvu.la
-
-EXTRA_DIST = config/config.rpath
