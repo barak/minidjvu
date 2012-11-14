@@ -1,8 +1,14 @@
-USUAL INSTALLATION
+USUAL AUTOTOOLS-BASED INSTALLATION
 __________________
 
 Check that development package of libtiff is installed.
-Run "make". Then, "make install" will copy bin/minidjvu into /usr/local/bin.
+Run:
+ autoreconf --install
+ ./configure
+ make
+ make install
+Will install minidjvu executable into /usr/local/bin/, as well as
+various support files, documentation, development files, etc.
 
 
 
