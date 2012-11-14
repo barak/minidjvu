@@ -6,215 +6,402 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Minidjvu 0.8\n"
-"Report-Msgid-Bugs-To: Alexey Kryukov <alexios@thessalonica.org.ru>\n"
-"POT-Creation-Date: 2009-06-27 14:05+0400\n"
+"Report-Msgid-Bugs-To: alexios@thessalonica.org.ru\n"
+"POT-Creation-Date: 2012-11-14 07:53+0000\n"
 "PO-Revision-Date: 2009-06-27 14:05+0400\n"
 "Last-Translator: Alexey Kryukov <alexios@thessalonica.org.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Poedit-Language: Russian\n"
 "X-Poedit-Country: RUSSIAN FEDERATION\n"
 
-#: minidjvu.c:92
+#: src/alg/compress.c:154
+msgid "deciding what pieces are letters"
+msgstr "выясняем, какие из участков являются буквами"
+
+#: src/alg/compress.c:157
+msgid "sorting blits"
+msgstr "сортировка блитов"
+
+#: src/alg/compress.c:159
+msgid "sorting bitmaps"
+msgstr "сортировка картинок"
+
+#: src/alg/compress.c:164
+msgid "matching patterns"
+msgstr "сопоставление с образцами"
+
+#: src/alg/compress.c:167
+msgid "adjusting substitution coordinates"
+msgstr "уточняются координаты подстановки"
+
+#: src/alg/compress.c:170
+msgid "removing unused bitmaps"
+msgstr "удаление неиспользуемых картинок"
+
+#: src/alg/compress.c:175
+#, c-format
+msgid "the image now has %d bitmaps\n"
+msgstr "теперь изображение содержит %d картинок\n"
+
+#: src/alg/compress.c:181
+msgid "sorting bitmaps (again)"
+msgstr "повторная сортировка картинок"
+
+#: src/alg/compress.c:192
+msgid "finding prototypes"
+msgstr "поиск прототипов"
+
+#: src/alg/compress.c:196
+#, c-format
+msgid "%d bitmaps have prototypes\n"
+msgstr "%d картинок имеют прототипы\n"
+
+#: src/alg/compress.c:288
+#, c-format
+msgid "Classification: %d of %d completed\n"
+msgstr "Классификация: выполнено %d из %d\n"
+
+#: src/alg/compress.c:298
+#, c-format
+msgid "Prototype search: %d of %d completed\n"
+msgstr "Поиск прототипов: выполнено %d из %d\n"
+
+#: src/alg/compress.c:319
+#, c-format
+msgid "deciding what pieces are letters in page #%d\n"
+msgstr "выясняем, какие из участков на странице #%d являются буквами\n"
+
+#: src/alg/compress.c:322
+#, c-format
+msgid "sorting letters in page #%d\n"
+msgstr "сортировка букв на странице #%d\n"
+
+#: src/alg/compress.c:331
+#, c-format
+msgid "started classification\n"
+msgstr "начинается классификация\n"
+
+#: src/alg/compress.c:336
+#, c-format
+msgid "finished classification\n"
+msgstr "классификация окончена\n"
+
+#: src/alg/compress.c:369
+#, c-format
+msgid "started prototype search\n"
+msgstr "начинается поиск прототипов\n"
+
+#: src/alg/compress.c:372
+#, c-format
+msgid "finished prototype search\n"
+msgstr "поиск прототипов окончен\n"
+
+#: src/base/1error.c:18
+msgid "unable to write to file"
+msgstr "запись в файл невозможна"
+
+#: src/base/1error.c:20
+msgid "unable to read from file"
+msgstr "чтение из файла невозможно"
+
+#: src/base/1error.c:22
+msgid "I/O error"
+msgstr "ошибка ввода/вывода"
+
+#: src/base/1error.c:24
+msgid "bad PBM file"
+msgstr "неподходящий файл PBM"
+
+#: src/base/1error.c:26
+msgid "bad Windows BMP file (perhaps it has non-bitonal data)"
+msgstr "неподходящий файл BMP (вероятно, изображение не является монохромным)"
+
+#: src/base/1error.c:28
+msgid "bad DjVu file"
+msgstr "неподходящий файл DjVu"
+
+#: src/base/1error.c:30
+msgid "bad bilevel data in DjVu file"
+msgstr "неподходящий формат монохромного изображения в файле DjVu"
+
+#: src/base/1error.c:32
+msgid "bad TIFF file (perhaps it has non-bitonal data)"
+msgstr "неподходящий файл TIFF (вероятно, изображение не является монохромным)"
+
+#: src/base/1error.c:34
+msgid "unsupported type of DjVu file"
+msgstr "эта разновидность файлов DjVu не поддерживается"
+
+#: src/base/1error.c:36
+msgid "bilevel data not found in DjVu file"
+msgstr "монохромное изображение не найдено в файле DjVu"
+
+#: src/base/1error.c:38
+msgid "somehow prototype references recursed"
+msgstr "ссылки на прототип находятся в циклической зависимости"
+
+#: src/base/1error.c:40
+msgid "minidjvu was compiled without TIFF support"
+msgstr "minidjvu собран без поддержки TIFF"
+
+#: src/base/1error.c:42
+msgid "minidjvu was compiled without PNG support"
+msgstr "minidjvu собран без поддержки PNG"
+
+#: src/base/1error.c:45
+msgid "some weird error happened, probably caused by a bug in minidjvu"
+msgstr ""
+"Произошла непонятная ошибка. Скорее всего, она вызвана ошибкой в коде "
+"minidjvu."
+
+#: tools/minidjvu.c:93
 #, c-format
 msgid "Cannot generate a unique name for %s\n"
 msgstr "Не удалось создать уникальное имя для %s\n"
 
-#: minidjvu.c:115
-#, c-format
-
+#: tools/minidjvu.c:116
 msgid "encode/decode bitonal DjVu files"
 msgstr "кодирование и расшифровка монохромных DJVU-файлов"
 
-#: minidjvu.c:119
+#: tools/minidjvu.c:119
+#, c-format
+msgid "minidjvu - %s\n"
+msgstr ""
+
+#: tools/minidjvu.c:120
 #, c-format
 msgid "Warning: program and library version mismatch:\n"
 msgstr "Предупреждение: версии программы и библиотеки не совпадают:\n"
 
-#: minidjvu.c:120
-#, c-format
-msgid  "    program version %s, library version %s.\n"
+#: tools/minidjvu.c:121
+#, fuzzy, c-format
+msgid ""
+"    program version %s, library version %s.\n"
+"\n"
 msgstr "    версия программы %s, версия библиотеки %s.\n"
 
-#: minidjvu.c:128
+#: tools/minidjvu.c:129
 #, c-format
 msgid "Usage:\n"
 msgstr "Использование:\n"
 
-#: minidjvu.c:129
+#: tools/minidjvu.c:130
 #, c-format
 msgid "single page encoding/decoding:\n"
 msgstr "кодирование или расшифровка одиночной страницы:\n"
 
-#: minidjvu.c:131
+#: tools/minidjvu.c:131
+#, c-format
+msgid "    minidjvu [options] <input file> <output file>\n"
+msgstr ""
+
+#: tools/minidjvu.c:132
 #, c-format
 msgid "multiple pages encoding:\n"
 msgstr "многостраничное кодирование:\n"
 
-#: minidjvu.c:133
+#: tools/minidjvu.c:133
+#, c-format
+msgid "    minidjvu [options] <input file> ... <output file>\n"
+msgstr ""
+
+#: tools/minidjvu.c:134
 #, c-format
 msgid "Formats supported:\n"
 msgstr "Поддерживаемые форматы:\n"
 
-#: minidjvu.c:135
+#: tools/minidjvu.c:136
 #, c-format
-msgid  "    DjVu (single-page bitonal), PBM, Windows BMP"
+msgid "    DjVu (single-page bitonal), PBM, Windows BMP"
 msgstr "    DjVu (одностраничный монохромный), PBM, Windows BMP"
 
-#: minidjvu.c:137
+#: tools/minidjvu.c:138
 #, c-format
 msgid ", TIFF.\n"
 msgstr ", TIFF.\n"
 
-#: minidjvu.c:139
+#: tools/minidjvu.c:140
 #, c-format
 msgid "; TIFF support is OFF.\n"
 msgstr "; поддержка TIFF отключена.\n"
 
-#: minidjvu.c:141
+#: tools/minidjvu.c:142
 #, c-format
 msgid "Options:\n"
 msgstr "Параметры:\n"
 
-#: minidjvu.c:142
+#: tools/minidjvu.c:143
 #, c-format
-msgid  "    -A, --Averaging:               compute \"average\" representatives\n"
-msgstr "    -A, --Averaging:               вычислять усредненные варианты представления символов\n"
+msgid ""
+"    -A, --Averaging:               compute \"average\" representatives\n"
+msgstr ""
+"    -A, --Averaging:               вычислять усредненные варианты "
+"представления символов\n"
 
-#: minidjvu.c:143
+#: tools/minidjvu.c:144
 #, c-format
-msgid  "    -a <n>, --aggression <n>:      set aggression level (default 100)\n"
-msgstr "    -a <n>, --aggression <n>:      установить уровень агрессии (по умолчанию 100)\n"
+msgid "    -a <n>, --aggression <n>:      set aggression level (default 100)\n"
+msgstr ""
+"    -a <n>, --aggression <n>:      установить уровень агрессии (по умолчанию "
+"100)\n"
 
-#: minidjvu.c:144
+#: tools/minidjvu.c:145
 #, c-format
-msgid  "    -c, --clean                    remove small black pieces\n"
+msgid "    -c, --clean                    remove small black pieces\n"
 msgstr "    -c, --clean                    удалять небольшие черные пятна\n"
 
-#: minidjvu.c:145
+#: tools/minidjvu.c:146
 #, c-format
-msgid  "    -d <n> --dpi <n>:              set resolution in dots per inch\n"
-msgstr "    -d <n> --dpi <n>:              установить разрешение в точках на дюйм\n"
+msgid "    -d <n> --dpi <n>:              set resolution in dots per inch\n"
+msgstr ""
+"    -d <n> --dpi <n>:              установить разрешение в точках на дюйм\n"
 
-#: minidjvu.c:146
+#: tools/minidjvu.c:147
 #, c-format
-msgid  "    -e, --erosion                  sacrifice quality to gain in size\n"
-msgstr "    -e, --erosion                  пожертвовать качеством ради выигрыша в объеме\n"
+msgid "    -e, --erosion                  sacrifice quality to gain in size\n"
+msgstr ""
+"    -e, --erosion                  пожертвовать качеством ради выигрыша в "
+"объеме\n"
 
-#: minidjvu.c:147
+#: tools/minidjvu.c:148
 #, c-format
-msgid  "    -i, --indirect:                generate an indirect multipage document\n"
-msgstr "    -i, --indirect:                сохранять каждую страницу документа как отдельный файл\n"
+msgid ""
+"    -i, --indirect:                generate an indirect multipage document\n"
+msgstr ""
+"    -i, --indirect:                сохранять каждую страницу документа как "
+"отдельный файл\n"
 
-#: minidjvu.c:148
+#: tools/minidjvu.c:149
 #, c-format
-msgid  "    -l, --lossy:                   use all lossy options (-s -c -m -e -A)\n"
-msgstr "    -l, --lossy:                   включить все параметры сжатия с потерями (-s -c -m -e -A)\n"
+msgid ""
+"    -l, --lossy:                   use all lossy options (-s -c -m -e -A)\n"
+msgstr ""
+"    -l, --lossy:                   включить все параметры сжатия с потерями "
+"(-s -c -m -e -A)\n"
 
-#: minidjvu.c:149
+#: tools/minidjvu.c:150
 #, c-format
-msgid  "    -m, --match:                   match and substitute patterns\n"
-msgstr "    -m, --match:                   использовать сравнение и подстановку образцов\n"
+msgid "    -m, --match:                   match and substitute patterns\n"
+msgstr ""
+"    -m, --match:                   использовать сравнение и подстановку "
+"образцов\n"
 
-#: minidjvu.c:150
+#: tools/minidjvu.c:151
 #, c-format
-msgid  "    -n, --no-prototypes:           do not search for prototypes\n"
+msgid "    -n, --no-prototypes:           do not search for prototypes\n"
 msgstr "    -n, --no-prototypes:           отказаться от поиска прототипов\n"
 
-#: minidjvu.c:151
+#: tools/minidjvu.c:152
 #, c-format
-msgid  "    -p <n>, --pages-per-dict <n>:  pages per dictionary (default 10)\n"
-msgstr "    -p <n>, --pages-per-dict <n>:  количество страниц в словаре (по умолчанию 10)\n"
+msgid "    -p <n>, --pages-per-dict <n>:  pages per dictionary (default 10)\n"
+msgstr ""
+"    -p <n>, --pages-per-dict <n>:  количество страниц в словаре (по "
+"умолчанию 10)\n"
 
-#: minidjvu.c:152
+#: tools/minidjvu.c:153
 #, c-format
-msgid  "    -r, --report:                  report multipage coding progress\n"
-msgstr "    -r, --report:                  информировать о ходе многостраничного кодирования\n"
+msgid "    -r, --report:                  report multipage coding progress\n"
+msgstr ""
+"    -r, --report:                  информировать о ходе многостраничного "
+"кодирования\n"
 
-#: minidjvu.c:153
+#: tools/minidjvu.c:154
 #, c-format
-msgid  "    -s, --smooth:                  remove some badly looking pixels\n"
-msgstr "    -s, --smooth:                  удалять отдельные неудачные пиксели\n"
+msgid "    -s, --smooth:                  remove some badly looking pixels\n"
+msgstr ""
+"    -s, --smooth:                  удалять отдельные неудачные пиксели\n"
 
-#: minidjvu.c:154
+#: tools/minidjvu.c:155
 #, c-format
-msgid  "    -v, --verbose:                 print messages about everything\n"
+msgid "    -v, --verbose:                 print messages about everything\n"
 msgstr "    -v, --verbose:                 сообщать обо всех операциях\n"
 
-#: minidjvu.c:155
+#: tools/minidjvu.c:156
+#, fuzzy, c-format
+msgid ""
+"    -X, --Xtension:                file extension for shared dictionary "
+"files\n"
+msgstr ""
+"    -e, --erosion                  пожертвовать качеством ради выигрыша в "
+"объеме\n"
+
+#: tools/minidjvu.c:157
 #, c-format
-msgid  "    -w, --warnings:                do not suppress TIFF warnings\n"
+msgid "    -w, --warnings:                do not suppress TIFF warnings\n"
 msgstr "    -w, --warnings:                не подавлять предупреждения TIFF\n"
 
-#: minidjvu.c:156
+#: tools/minidjvu.c:158
 #, c-format
 msgid "See the man page for detailed description of each option.\n"
 msgstr "Подробное описание всех параметров содержится в руководстве man.\n"
 
-#: minidjvu.c:184
+#: tools/minidjvu.c:186
 #, c-format
 msgid "loading a DjVu page from `%s'\n"
 msgstr "загрузка страницы DjVu из файла `%s'\n"
 
-#: minidjvu.c:193
+#: tools/minidjvu.c:195
 #, c-format
 msgid "loaded; the page has %d bitmaps and %d blits\n"
 msgstr "загрузка завершена; страница содержит %d картинок и %d блитов\n"
 
-#: minidjvu.c:228
+#: tools/minidjvu.c:230
 #, c-format
 msgid "encoding to `%s'\n"
 msgstr "кодирование в файл `%s'\n"
 
-#: minidjvu.c:244
+#: tools/minidjvu.c:246
 #, c-format
 msgid "loading from Windows BMP file `%s'\n"
 msgstr "загрузка изображения из файла Windows BMP `%s'\n"
 
-#: minidjvu.c:249
+#: tools/minidjvu.c:251
 #, c-format
 msgid "loading from TIFF file `%s'\n"
 msgstr "загрузка изображения из файла TIFF `%s'\n"
 
-#: minidjvu.c:256
+#: tools/minidjvu.c:258
 #, c-format
 msgid "resolution is %d dpi\n"
 msgstr "разрешение составляет %d dpi\n"
 
-#: minidjvu.c:265 minidjvu.c:337
+#: tools/minidjvu.c:267 tools/minidjvu.c:339
 #, c-format
 msgid "bitmap %d x %d rendered\n"
 msgstr "загружено битовое изображение %d x %d\n"
 
-#: minidjvu.c:272
+#: tools/minidjvu.c:274
 #, c-format
 msgid "loading from PBM file `%s'\n"
 msgstr "загрузка изображения из файла PBM `%s'\n"
 
-#: minidjvu.c:284 minidjvu.c:344
+#: tools/minidjvu.c:286 tools/minidjvu.c:346
 #, c-format
 msgid "smoothing the bitmap\n"
 msgstr "сглаживание битового изображения\n"
 
-#: minidjvu.c:298
+#: tools/minidjvu.c:300
 #, c-format
 msgid "saving to Windows BMP file `%s'\n"
 msgstr "сохранение в файл Windows BMP `%s'\n"
 
-#: minidjvu.c:303
+#: tools/minidjvu.c:305
 #, c-format
 msgid "saving to TIFF file `%s'\n"
 msgstr "сохранение в файл TIFF `%s'\n"
 
-#: minidjvu.c:310
+#: tools/minidjvu.c:312
 #, c-format
 msgid "saving to PBM file `%s'\n"
 msgstr "сохранение в файл PBM `%s'\n"
 
-#: minidjvu.c:328
+#: tools/minidjvu.c:330
 #, c-format
 msgid ""
 "\n"
@@ -223,7 +410,7 @@ msgstr ""
 "\n"
 "РАСШИФРОВКА\n"
 
-#: minidjvu.c:329 minidjvu.c:384
+#: tools/minidjvu.c:331 tools/minidjvu.c:386
 #, c-format
 msgid ""
 "________\n"
@@ -232,27 +419,27 @@ msgstr ""
 "___________\n"
 "\n"
 
-#: minidjvu.c:356
+#: tools/minidjvu.c:358
 #, c-format
 msgid "splitting the bitmap into pieces\n"
 msgstr "разбивка битового изображение на участки\n"
 
-#: minidjvu.c:361
+#: tools/minidjvu.c:363
 #, c-format
 msgid "the split image has %d pieces\n"
 msgstr "после разбиения картинка состоит из %d участков\n"
 
-#: minidjvu.c:366
+#: tools/minidjvu.c:368
 #, c-format
 msgid "cleaning\n"
 msgstr "очистка\n"
 
-#: minidjvu.c:370
+#: tools/minidjvu.c:372
 #, c-format
 msgid "the cleaned image has %d pieces\n"
 msgstr "после очистки картинка состоит из %d участков\n"
 
-#: minidjvu.c:383
+#: tools/minidjvu.c:385
 #, c-format
 msgid ""
 "\n"
@@ -261,7 +448,7 @@ msgstr ""
 "\n"
 "КОДИРОВАНИЕ\n"
 
-#: minidjvu.c:399
+#: tools/minidjvu.c:401
 #, c-format
 msgid ""
 "\n"
@@ -270,7 +457,7 @@ msgstr ""
 "\n"
 "ФИЛЬТРОВКА\n"
 
-#: minidjvu.c:400
+#: tools/minidjvu.c:402
 #, c-format
 msgid ""
 "_________\n"
@@ -279,17 +466,19 @@ msgstr ""
 "__________\n"
 "\n"
 
-#: minidjvu.c:443
+#: tools/minidjvu.c:447
 #, c-format
 msgid "when encoding many pages, output file must be DjVu\n"
-msgstr "при многостраничном кодировании результирующий файл должен быть в формате DjVu\n"
+msgstr ""
+"при многостраничном кодировании результирующий файл должен быть в формате "
+"DjVu\n"
 
-#: minidjvu.c:451
+#: tools/minidjvu.c:455
 #, c-format
 msgid "Could not create a temporary file\n"
 msgstr "Не удалось создать временный файл\n"
 
-#: minidjvu.c:456
+#: tools/minidjvu.c:460
 #, c-format
 msgid ""
 "\n"
@@ -298,7 +487,7 @@ msgstr ""
 "\n"
 "МНОГОСТРАНИЧНОЕ КОДИРОВАНИЕ\n"
 
-#: minidjvu.c:457
+#: tools/minidjvu.c:461
 #, c-format
 msgid ""
 "__________________\n"
@@ -307,181 +496,42 @@ msgstr ""
 "___________________________\n"
 "\n"
 
-#: minidjvu.c:458
+#: tools/minidjvu.c:462
 #, c-format
 msgid "%d pages total\n"
 msgstr "всего %d страниц\n"
 
-#: minidjvu.c:489
+#: tools/minidjvu.c:496
 #, c-format
 msgid "Loading: %d of %d completed\n"
 msgstr "Загрузка: выполнено %d из %d\n"
 
-#: minidjvu.c:517
+#: tools/minidjvu.c:524
 #, c-format
 msgid "saving page #%d into %s using dictionary %s\n"
 msgstr "сохранение страницы #%d в файл %s с использованием словаря %s\n"
 
-#: minidjvu.c:531
+#: tools/minidjvu.c:538
 #, c-format
 msgid "Saving: %d of %d completed\n"
 msgstr "Сохранение: выполнено %d из %d\n"
 
-#: minidjvu.c:624
+#: tools/minidjvu.c:631
 #, c-format
 msgid "bad --pages-per-dict value\n"
 msgstr "неподходящее значение --pages-per-dict\n"
 
-#: minidjvu.c:636
+#: tools/minidjvu.c:643
 #, c-format
 msgid "bad resolution\n"
 msgstr "неподходящее разрешение\n"
 
-#: minidjvu.c:651
+#: tools/minidjvu.c:664
 #, c-format
 msgid "unknown option: %s\n"
 msgstr "неизвестный параметр: %s\n"
 
-#: minidjvu.c:699
+#: tools/minidjvu.c:719
 #, c-format
 msgid "alive_bitmap_counter = %d\n"
 msgstr "счетчик битовых изображений = %d\n"
-
-#: compress.c:153
-msgid "deciding what pieces are letters"
-msgstr "выясняем, какие из участков являются буквами"
-
-#: compress.c:156
-msgid "sorting blits"
-msgstr "сортировка блитов"
-
-#: compress.c:158
-msgid "sorting bitmaps"
-msgstr "сортировка картинок"
-
-#: compress.c:163
-msgid "matching patterns"
-msgstr "сопоставление с образцами"
-
-#: compress.c:166
-msgid "adjusting substitution coordinates"
-msgstr "уточняются координаты подстановки"
-
-#: compress.c:169
-msgid "removing unused bitmaps"
-msgstr "удаление неиспользуемых картинок"
-
-#: compress.c:174
-#, c-format
-msgid "the image now has %d bitmaps\n"
-msgstr "теперь изображение содержит %d картинок\n"
-
-#: compress.c:180
-msgid "sorting bitmaps (again)"
-msgstr "повторная сортировка картинок"
-
-#: compress.c:191
-msgid "finding prototypes"
-msgstr "поиск прототипов"
-
-#: compress.c:195
-#, c-format
-msgid "%d bitmaps have prototypes\n"
-msgstr "%d картинок имеют прототипы\n"
-
-#: compress.c:287
-#, c-format
-msgid "Classification: %d of %d completed\n"
-msgstr "Классификация: выполнено %d из %d\n"
-
-#: compress.c:297
-#, c-format
-msgid "Prototype search: %d of %d completed\n"
-msgstr "Поиск прототипов: выполнено %d из %d\n"
-
-#: compress.c:318
-#, c-format
-msgid "deciding what pieces are letters in page #%d\n"
-msgstr "выясняем, какие из участков на странице #%d являются буквами\n"
-
-#: compress.c:321
-#, c-format
-msgid "sorting letters in page #%d\n"
-msgstr "сортировка букв на странице #%d\n"
-
-#: compress.c:330
-#, c-format
-msgid "started classification\n"
-msgstr "начинается классификация\n"
-
-#: compress.c:335
-#, c-format
-msgid "finished classification\n"
-msgstr "классификация окончена\n"
-
-#: compress.c:368
-#, c-format
-msgid "started prototype search\n"
-msgstr "начинается поиск прототипов\n"
-
-#: compress.c:371
-#, c-format
-msgid "finished prototype search\n"
-msgstr "поиск прототипов окончен\n"
-
-#: 1error.c:18
-msgid "unable to write to file"
-msgstr "запись в файл невозможна"
-
-#: 1error.c:20
-msgid "unable to read from file"
-msgstr "чтение из файла невозможно"
-
-#: 1error.c:22
-msgid "I/O error"
-msgstr "ошибка ввода/вывода"
-
-#: 1error.c:24
-msgid "bad PBM file"
-msgstr "неподходящий файл PBM"
-
-#: 1error.c:26
-msgid "bad Windows BMP file (perhaps it has non-bitonal data)"
-msgstr "неподходящий файл BMP (вероятно, изображение не является монохромным)"
-
-#: 1error.c:28
-msgid "bad DjVu file"
-msgstr "неподходящий файл DjVu"
-
-#: 1error.c:30
-msgid "bad bilevel data in DjVu file"
-msgstr "неподходящий формат монохромного изображения в файле DjVu"
-
-#: 1error.c:32
-msgid "bad TIFF file (perhaps it has non-bitonal data)"
-msgstr "неподходящий файл TIFF (вероятно, изображение не является монохромным)"
-
-#: 1error.c:34
-msgid "unsupported type of DjVu file"
-msgstr "эта разновидность файлов DjVu не поддерживается"
-
-#: 1error.c:36
-msgid "bilevel data not found in DjVu file"
-msgstr "монохромное изображение не найдено в файле DjVu"
-
-#: 1error.c:38
-msgid "somehow prototype references recursed"
-msgstr "ссылки на прототип находятся в циклической зависимости"
-
-#: 1error.c:40
-msgid "minidjvu was compiled without TIFF support"
-msgstr "minidjvu собран без поддержки TIFF"
-
-#: 1error.c:42
-msgid "minidjvu was compiled without PNG support"
-msgstr "minidjvu собран без поддержки PNG"
-
-#: 1error.c:45
-msgid "some weird error happened, probably caused by a bug in minidjvu"
-msgstr "Произошла непонятная ошибка. Скорее всего, она вызвана ошибкой в коде minidjvu."
-
