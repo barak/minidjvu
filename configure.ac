@@ -44,12 +44,6 @@ AC_TYPE_SIZE_T
 AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 
-dnl CFLAGS="$CFLAGS -Wall -Wshadow"
-dnl CFLAGS="$CFLAGS -pedantic-errors -Wpointer-arith -Waggregate-return"
-dnl CFLAGS="$CFLAGS -Wlong-long -Wredundant-decls -Wcast-qual -Wcast-align"
-dnl DEFS="$DEFS -D__STRICT_ANSI__ -DNDEBUG"
-dnl OPTS="-Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations"
-
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
