@@ -23,6 +23,7 @@ Description: Monochrome DjVu multipage encoder, single page encoder/decoder
 Package: libminidjvu0
 Architecture: any
 Section: libs
+Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Small DjVu encoder/decoder, shared library
  MiniDjVu shared library, for DjVu format encoding and decoding.
