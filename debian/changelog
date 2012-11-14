@@ -1,3 +1,12 @@
+minidjvu (0.8.svn.2010.05.06+dfsg-2) unstable; urgency=low
+
+  * further update autotools, e.g., step off user-reserved vars
+  * remove more derived files from repo; installed by autoreconf
+  * bump debian standard version, no changes required
+  * add build dependency on autopoint, called by dh-autoreconf
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Wed, 14 Nov 2012 22:49:12 +0000
+
 minidjvu (0.8.svn.2010.05.06+dfsg-1) unstable; urgency=low
 
   * support multiarch
