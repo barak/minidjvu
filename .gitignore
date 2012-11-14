@@ -22,6 +22,7 @@
 /libtool
 /m4/*.m4
 /minidjvu
+/po/Makefile.in.in
 /po/Makevars.template
 /po/POTFILES
 /po/Rules-quot
@@ -32,6 +33,7 @@
 /po/minidjvu.pot
 /po/quot.sed
 /po/remove-potcdate.sed
+/po/remove-potcdate.sin
 /po/ru.gmo
 /po/stamp-po
 /stamp-h1
