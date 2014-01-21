@@ -1,3 +1,11 @@
+minidjvu (0.8.svn.2010.05.06+dfsg-3) unstable; urgency=low
+
+  * bump policy version
+  * update packaging repo URLs
+  * remove dependency alternatives libtiff{5,4}-dev (closes: #736031)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 21 Jan 2014 14:59:06 +0000
+
 minidjvu (0.8.svn.2010.05.06+dfsg-2) unstable; urgency=low
 
   * further update autotools, e.g., step off user-reserved vars
