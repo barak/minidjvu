@@ -1,3 +1,9 @@
+minidjvu (0.8.svn.2010.05.06+dfsg-4) unstable; urgency=medium
+
+  * include .pc file for pkg-config minidjvu in -dev package
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Fri, 23 May 2014 23:48:38 +0100
+
 minidjvu (0.8.svn.2010.05.06+dfsg-3) unstable; urgency=low
 
   * bump policy version
