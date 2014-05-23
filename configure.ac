@@ -5,11 +5,9 @@ AC_CONFIG_HEADER(config.h:config/config.h.in)
 AC_CONFIG_MACRO_DIR([m4])
 AC_PREFIX_DEFAULT(/usr/local)
 
-AM_INIT_AUTOMAKE([subdir-objects foreign])
+AM_INIT_AUTOMAKE([subdir-objects foreign -Wall])
 
 AC_LANG([C++])
-
-LT_INIT
 
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.18.1])
@@ -24,6 +22,9 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(RM, rm)
+AM_PROG_AR
+
+LT_INIT
 
 # Checks for libraries.
 
