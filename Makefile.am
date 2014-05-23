@@ -43,3 +43,21 @@ bin_PROGRAMS = minidjvu
 minidjvu_SOURCES = tools/minidjvu.c
 
 minidjvu_LDADD = libminidjvu.la
+
+minidjvu.pc:
+	echo 'prefix=$(prefix)'			>  $@
+	echo 'exec_prefix=$(exec_prefix)'	>> $@
+	echo 'includedir=$(includedir)'		>> $@
+	echo 'libdir=$(libdir)'			>> $@
+	echo					>> $@
+	echo 'Name: $(PACKAGE_TARNAME)'		>> $@
+	echo 'Description: $(PACKAGE_NAME)'	>> $@
+	echo 'URL: $(PACKAGE_URL)'		>> $@
+	echo 'Version: $(PACKAGE_VERSION)'	>> $@
+	echo 'Cflags: -I$(includedir)'		>> $@
+	echo 'Libs: -L$(libdir) -lminidjvu'	>> $@
+	echo 'Libs.private: $(LDFLAGS) $(LIBS)'	>> $@
+
+pkgconfig_DATA = minidjvu.pc
+
+MOSTLYCLEANFILES = $(pkgconfig_DATA)

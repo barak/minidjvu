@@ -22,6 +22,7 @@
 /libtool
 /m4/*.m4
 /minidjvu
+/minidjvu.pc
 /po/Makefile.in.in
 /po/Makevars.template
 /po/POTFILES
