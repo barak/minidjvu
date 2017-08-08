@@ -43,11 +43,11 @@ _________
 
 Under Linux, you can always try something like
 
-    g++ -I. `find -name "*.c*"` -O2 -o bin/minidjvu
+    g++ -Iinclude `find -name "*.c*"` -O2 -o minidjvu
     
 or, if you want TIFF support,
 
-    g++ -DHAVE_LIBTIFF=1 -I. `find -name "*.c*"` -O2 -ltiff -o bin/minidjvu
+    g++ -DHAVE_LIBTIFF=1 -Iinclude `find -name "*.c*"` -O2 -ltiff -o minidjvu
 
 Under MSVC, watch for those __declspec directives in
 `minidjvu/base/0porting/0porting.h' - if you wish a DLL, turn them on.

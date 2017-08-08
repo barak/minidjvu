@@ -18,17 +18,31 @@ static void smooth_row(unsigned char *r, /* result    */
     int32 i;
     for (i = 0; i < n; i++)
     {
-        int score = u[i] + l[i] + t[i-1] + t[i+1] - 2;
+	int score = u[i] + l[i] + t[i-1] + t[i+1];
 
-        /* if (score > 0)
-            r[i] = 1;
-        else */
-        /* clearing black pixels doesn't look cool, alas */
-
-        if (score < 0)
-            r[i] = 0;
-        else
-            r[i] = t[i];
+	if (t[i] == 0)
+	{
+	    /* Only turn white into black for a good reason. */
+	    r[i] = (score == 4);
+	}
+	else if (score == 0)
+	{
+	    /* Good reason to clear the pixel. */
+	    r[i] = 0;
+	}
+	else if (score == 1)
+	{
+	    /* Check for weak horizontal or vertical linking. */
+	    if (u[i] | l[i])
+		r[i] = (u[i-1] & l[i-1]) | (u[i+1] & l[i+1]);
+	    else
+		r[i] = (u[i-1] & u[i+1]) | (l[i-1] & l[i+1]);
+	}
+	else
+	{
+	    /* Keep it black. */
+	    r[i] = 1;
+	}
     }
 }
 

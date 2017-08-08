@@ -104,8 +104,8 @@ static mdjvu_bitmap_t load_tiff(const char *path, int32 *presolution, mdjvu_erro
         }
 
         /* clear the padding bits */
-        if (scanline_size & 7)
-            scanline[scanline_size - 1] &= ~(0xFF >> (scanline_size & 7));
+        if (w & 7)
+            scanline[scanline_size - 1] &= ~(0xFF >> (w & 7));
 
         memcpy(mdjvu_bitmap_access_packed_row(result, i),
                scanline,
