@@ -1,3 +1,16 @@
+minidjvu (0.8.svn.2010.05.06+dfsg-6) unstable; urgency=medium
+
+  * lintian priority-extra-is-replaced-by-priority-optional
+  * tiffload.c: fixed padding
+  * smooth.c: better smoothing rules
+  * INSTALL: change -I. to -Iinclude
+  * spelling fixes
+  * harden
+  * bump policy version
+  * debhelper 10
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Sat, 04 Nov 2017 17:31:00 +0000
+
 minidjvu (0.8.svn.2010.05.06+dfsg-5) unstable; urgency=medium
 
   * include dependency on pkg-config for its autoconf macros
