@@ -1,6 +1,6 @@
 Source: minidjvu
 Section: graphics
-Priority: extra
+Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
 Build-Depends: debhelper (>= 10),
 		dh-exec,
@@ -10,7 +10,7 @@ Build-Depends: debhelper (>= 10),
 Homepage: http://minidjvu.sourceforge.net/
 Vcs-Git: git://anonscm.debian.org/collab-maint/minidjvu.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/minidjvu.git
-Standards-Version: 4.0.1
+Standards-Version: 4.1.1
 
 Package: minidjvu
 Architecture: any
