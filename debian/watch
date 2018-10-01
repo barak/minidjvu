@@ -1,4 +1,4 @@
 version=3
 # snippet from http://wiki.debian.org/UnpackWaf
 opts=uversionmangle=s/^0\.33$/0.3.3/,dversionmangle=s/\+dfsg\d*$// \
- http://sf.net/minidjvu/minidjvu-(.*)\.tar\.gz
+ https://sf.net/minidjvu/minidjvu-(.*)\.tar\.gz
