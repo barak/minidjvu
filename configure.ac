@@ -38,6 +38,7 @@ AC_CHECK_LIB(tiff, TIFFOpen)
 AC_CHECK_HEADERS([libintl.h locale.h stdint.h stdlib.h string.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
+AC_SYS_LARGEFILE
 AC_HEADER_STDBOOL
 AC_C_INLINE
 AC_TYPE_SIZE_T
