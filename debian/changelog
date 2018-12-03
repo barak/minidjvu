@@ -13,8 +13,9 @@ minidjvu (0.8.svn.2010.05.06+dfsg-6) unstable; urgency=medium
   * bump policy version
   * debhelper 11
   * swizzle packaging repo to salsa
+  * large file support
 
- -- Barak A. Pearlmutter <bap@debian.org>  Mon, 03 Dec 2018 03:16:20 +0000
+ -- Barak A. Pearlmutter <bap@debian.org>  Mon, 03 Dec 2018 03:25:35 +0000
 
 minidjvu (0.8.svn.2010.05.06+dfsg-5) unstable; urgency=medium
 
