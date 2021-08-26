@@ -2,7 +2,7 @@ Source: minidjvu
 Section: graphics
 Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
-Build-Depends: debhelper (>= 13~),
+Build-Depends: debhelper-compat (= 13),
 		dh-exec,
 		autopoint,
 		pkg-config,
