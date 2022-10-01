@@ -27,6 +27,7 @@ Architecture: any
 Section: libs
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: same
 Description: Small DjVu encoder/decoder, shared library
  MiniDjVu shared library, for DjVu format encoding and decoding.
 
