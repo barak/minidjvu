@@ -2,7 +2,7 @@ Source: minidjvu
 Section: graphics
 Priority: optional
 Maintainer: Barak A. Pearlmutter <bap@debian.org>
-Build-Depends: debhelper (>= 11),
+Build-Depends: dpkg-dev (>= 1.22.5), debhelper (>= 11),
 		dh-exec,
 		autopoint,
 		pkg-config,
@@ -14,7 +14,7 @@ Standards-Version: 4.2.1
 
 Package: minidjvu
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libminidjvu0 (>= ${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}, libminidjvu0t64 (>= ${binary:Version})
 Suggests: djview4 | djview3 | djvu-viewer, djvulibre-bin, pdf2djvu
 Description: Monochrome DjVu multipage encoder, single page encoder/decoder
  Minidjvu is a multipage DjVu encoder and single page encoder/decoder.
@@ -22,7 +22,10 @@ Description: Monochrome DjVu multipage encoder, single page encoder/decoder
  In addition to the DjVu format, minidjvu reads and writes
  PBM, Windows BMP, and TIFF.
 
-Package: libminidjvu0
+Package: libminidjvu0t64
+Provides: ${t64:Provides}
+Replaces: libminidjvu0
+Breaks: libminidjvu0 (<< ${source:Version})
 Architecture: any
 Section: libs
 Pre-Depends: ${misc:Pre-Depends}
@@ -33,7 +36,7 @@ Description: Small DjVu encoder/decoder, shared library
 Package: libminidjvu-dev
 Architecture: any
 Section: libdevel
-Depends: ${shlibs:Depends}, ${misc:Depends}, libminidjvu0 (= ${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}, libminidjvu0t64 (= ${binary:Version})
 Suggests: minidjvu
 Description: Small DjVu encoder/decoder, development files
  MiniDjVu library development files, for DjVu format encoding and

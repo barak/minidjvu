@@ -1,3 +1,10 @@
+minidjvu (0.8.svn.2010.05.06+dfsg-6.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Rename libraries for 64-bit time_t transition.  Closes: #1062889
+
+ -- Benjamin Drung <bdrung@debian.org>  Wed, 28 Feb 2024 20:02:25 +0000
+
 minidjvu (0.8.svn.2010.05.06+dfsg-6) unstable; urgency=medium
 
   [ Ondřej Nový ]
