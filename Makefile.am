@@ -3,16 +3,17 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = include doc po
 
 AM_CPPFLAGS = -Iinclude
-AM_CPPFLAGS += -D__STRICT_ANSI__
 AM_CPPFLAGS += -DNDEBUG
 
 WARNFLAGS = -Wall
 WARNFLAGS += -Wshadow
 WARNFLAGS += -pedantic-errors -Wpointer-arith -Waggregate-return
 WARNFLAGS += -Wlong-long -Wredundant-decls -Wcast-qual -Wcast-align
-WARNFLAGS += -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
 
-AM_CFLAGS = $(WARNFLAGS)
+C_WARNFLAGS = $(WARNFLAGS)
+C_WARNFLAGS += -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
+
+AM_CFLAGS = -D__STRICT_ANSI__ $(C_WARNFLAGS)
 AM_CXXFLAGS = $(WARNFLAGS)
 
 localedir = $(datadir)/locale
