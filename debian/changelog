@@ -1,3 +1,10 @@
+minidjvu (0.8.svn.2010.05.06+dfsg-8) unstable; urgency=medium
+
+  * misc packaging updates
+  * GCC-16 fixes (closes: #1133551)
+
+ -- Barak A. Pearlmutter <bap@debian.org>  Tue, 14 Apr 2026 21:57:55 +0100
+
 minidjvu (0.8.svn.2010.05.06+dfsg-7) unstable; urgency=medium
 
   * bump policy
